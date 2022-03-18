@@ -36,15 +36,7 @@ axios.interceptors.response.use(
     },
     async (resError) => {
         const originalConfig = resError.config;
-
         const reftoken = GetCookie("bsrefToken");
-        if (String(resError.config.url).includes("user/refreshtoken") && !(reftoken && reftoken.length > 10) || (resError.response.status === 401 && originalConfig._retry)) {
-            RemoveCookie("bsmtoken");
-            RemoveCookie("bsreftoken");
-            window.location.href = "/login";
-            return Promise.reject(resError);
-        }
-
         if (resError.message === "Network Error" && !resError.response) {
             openNotification(
                 "error",
@@ -53,45 +45,53 @@ axios.interceptors.response.use(
                 "bottomLeft"
             );
         }
+        else {
+            if (String(resError.config.url).includes("user/refreshtoken") && !(reftoken && reftoken.length > 10) || (resError.response.status === 401 && originalConfig._retry)) {
+                RemoveCookie("bsmtoken");
+                RemoveCookie("bsreftoken");
+                window.location.href = "/login";
+                return Promise.reject(resError);
+            }
 
-        if (resError.response) {
-            // Access Token was expired
-            if (resError.response.status === 401 && !originalConfig._retry) {
-                originalConfig._retry = true;
+            if (resError.response) {
+                // Access Token was expired
+                if (resError.response.status === 401 && !originalConfig._retry) {
+                    originalConfig._retry = true;
 
-                try {
-                    const rs = await axios.post("/user/refreshtoken", {
-                        reftoken: reftoken,
-                    });
-                    const accessToken: IRefTokenValues = rs.data;
-                    if (accessToken == null || accessToken == undefined) {
+                    try {
+                        const rs = await axios.post("/user/refreshtoken", {
+                            reftoken: reftoken,
+                        });
+                        const accessToken: IRefTokenValues = rs.data;
+                        if (accessToken == null || accessToken == undefined) {
+                            RemoveCookie("bstoken");
+                            RemoveCookie("bsreftoken");
+                            window.location.href = "/login";
+                            return Promise.reject(resError);
+                        }
+
+                        AddCookie("bstoken", `${accessToken.token}`);
+                        AddCookie("bsreftoken", `${accessToken.refreshToken}`);
+
+                        originalConfig.headers.Authorization = `Bearer ${accessToken.token}`;
+                        return axios(originalConfig);
+                    } catch (_error) {
                         RemoveCookie("bstoken");
                         RemoveCookie("bsreftoken");
                         window.location.href = "/login";
                         return Promise.reject(resError);
                     }
-
-                    AddCookie("bstoken", `${accessToken.token}`);
-                    AddCookie("bsreftoken", `${accessToken.refreshToken}`);
-
-                    originalConfig.headers.Authorization = `Bearer ${accessToken.token}`;
-                    return axios(originalConfig);
-                } catch (_error) {
-                    RemoveCookie("bstoken");
-                    RemoveCookie("bsreftoken");
-                    window.location.href = "/login";
-                    return Promise.reject(resError);
                 }
-            }
-            else if (resError.response.status === 500) {
-                openNotification(
-                    "error",
-                    "خطای سرور",
-                    "خطای سرور رخ داده است",
-                    "bottomLeft"
-                );
-            }
+                else if (resError.response.status === 500) {
+                    openNotification(
+                        "error",
+                        "خطای سرور",
+                        "خطای سرور رخ داده است",
+                        "bottomLeft"
+                    );
+                }
 
+            }
         }
 
         return Promise.reject(resError);

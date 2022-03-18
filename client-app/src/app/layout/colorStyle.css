@@ -1,0 +1,106 @@
+/*row*/
+.bsRow {
+    background-color: rgb(240, 242, 245);
+    height: 100vh;
+    width: 100vw;
+    overflow:auto;
+}
+.bsRow>div{
+    box-shadow:0px 2px 8px -4px rgb(0 0 0 / 90%);
+    min-width: 320px;
+    width: 20vw;
+    max-width: 400px;
+}
+
+/*button*/
+.bsBtn {
+    color: white !important;
+    background-color: #3018b1 !important;
+    border-color: #3018b1 !important;
+}
+
+.bsBtn:hover {
+    background-color: #4627fa !important;
+}
+
+/*icon button*/
+.bsBtnIcon {
+    background-color: #f1f2f6;
+    width: 34px;
+    height: 34px;
+}
+
+.bsBtnIcon:hover, .bsBtnIcon:focus {
+    border-color: #3018b1 !important;
+    color: #3018b1 !important;
+}
+
+/*card*/
+.bsCard {
+    text-align: center !important;
+    margin-inline: auto;
+    margin-bottom: -10px !important;
+    margin-top: 5px !important;
+}
+
+.bsCard div {
+    padding: 0 !important;
+}
+
+.bsCard img {
+    max-width: 126px !important;
+}
+
+/*link*/
+.bsLink {
+    color: #3018b1 !important;
+    font-size: 0.8 rem;
+}
+
+/*input*/
+.ant-input-affix-wrapper:hover {
+    border-color: #3018b1 !important;
+}
+
+.ant-input-affix-wrapper-focused {
+    border-color: #3018b1 !important;
+    box-shadow: 0 0 0 2px rgba(48, 24, 177, 0.2) !important;
+}
+
+/*loading*/
+.bsLoading {
+    width: 100vw;
+    height: 100vh;
+    display: flex !important;
+    align-items: center !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+}
+
+.bsLoading div {
+    margin-top: 10px !important;
+    font-size: 80%;
+    font-weight: 500;
+    color: #3018b1;
+}
+
+.bsLoading i {
+    background-color: #3018b1;
+}
+
+.bsDivider {
+    font-size: 0.9rem !important;
+    margin-top: -1rem !important;
+    color: rgba(0, 0, 0, .4) !important;
+}
+
+/*header*/
+.bsHeader  {
+    background-color: #ffffff;
+    box-shadow: 0 5px 5px -7px rgba(0,0,0,0.9);
+    height: 50px;
+    display: flex;
+    justify-content: space-between;
+    padding-left: 20px;
+    align-items: center;
+};

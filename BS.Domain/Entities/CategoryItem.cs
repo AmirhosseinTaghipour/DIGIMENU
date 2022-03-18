@@ -1,0 +1,28 @@
+﻿using BS.Domain.Common;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BS.Domain.Entities
+{
+    public class CategoryItem : AuditableBaseEntity
+    {
+        [Required]
+        [MaxLength(100)]
+        public int Title { get; set; }
+        public Guid? DepartmentId { get; set; }
+        public Guid CategoryId { get; set; }
+
+        public bool IsDeleted { get; set; }
+
+        [ForeignKey("DepartmentId")]
+        public Department Department { get; set; }
+
+        [ForeignKey("CategoryId")]
+        public Category Category { get; set; }
+    }
+}

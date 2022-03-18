@@ -1,0 +1,13 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "library": "typescript@4.4.3",
+      "destination": "src/features/main/dashboardContent/TabPages/NTPrograms/typescript/",
+      "files": [
+        "typescript.min.js"
+      ]
+    }
+  ]
+}

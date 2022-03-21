@@ -2,11 +2,13 @@ import React, { useContext, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { RootStoreContext } from "../../app/stores/rootStore";
 import { IUserFormValues } from "../../app/models/user";
-import { Form, Input, Button, Row, Card, Alert } from "antd";
-import { LockOutlined } from "@ant-design/icons";
+import { Form, Input, Button, Row, Card, Alert, Divider, Space } from "antd";
+import { BarcodeOutlined, LockOutlined } from "@ant-design/icons";
 import Meta from "antd/lib/card/Meta";
 import Avatar from "antd/lib/avatar/avatar";
 import { AxiosResponse } from "axios";
+import { checkJustNumber } from "../../app/common/util/util";
+import Captcha from "../common/Captcha/Captcha";
 
 const ChangePassword = () => {
     const rootStore = useContext( RootStoreContext );
@@ -38,36 +40,17 @@ const ChangePassword = () => {
         <Row
             justify="center"
             align="middle"
-            style={ {
-                backgroundColor: "rgb(240, 242, 245)",
-                minHeight: "100vh",
-            } }
+            className="bsRow"
         >
             <Card
                 title={
                     <Row>
-                        <Meta
-                            avatar={ <Avatar shape="square" size={ 64 } src="logo.png" /> }
-                            title={
-                                <h2 style={ { marginTop: "5px" } }>شبکه کشوری آزمایشگاهی</h2>
-                            }
-                            description={
-                                <p style={ { marginTop: "-8px", textAlign: "center" } }>
-                                    سازمان غذا و دارو
-                </p>
-                            }
+                        <Meta className="bsCard"
+                            avatar={<img src="../../assets/Images/bslogo.png" />}
                         />
                     </Row>
                 }
-                bordered={ false }
-                style={ {
-                    borderTop: "2px solid #fa983a",
-                    borderRadius: "5px",
-                    boxShadow: "0 5px 5px -7px rgba(0,0,0,0.9)",
-                    minWidth: 320,
-                    width: "20vw",
-                    maxWidth: 400,
-                } }
+                bordered={false}
             >
                 <Form
                     form={ form }
@@ -76,34 +59,43 @@ const ChangePassword = () => {
                     initialValues={ { remember: true } }
                     onFinish={ onFinish }
                 >
+                    <Divider
+                        className="bsDivider" 
+                    >
+                        تغییر رمز عبور
+                    </Divider>
                     <Form.Item
                         name="password"
                         rules={ [
-                            {
-                                required: true,
-                                message: "لطفا رمز ورود را وارد نمایید",
-                            },
+                            { required: true, message: "لطفا رمز ورود را وارد نمایید" },
                             {
                                 min: 6,
                                 message: "رمز نباید کمتر از ۶ حرف باشد",
 
                             },
                             {
-                                pattern: new RegExp( "^[a-zA-Z0-9!@#$%^&*)(+=._-]+$" ),
+                                pattern: new RegExp("^[a-zA-Z0-9!@#$%^&*)(+=._-]+$"),
                                 message: "تنها کاراکترهای لاتین برای پسورد مجاز است",
                             },
                             {
-                                pattern: new RegExp( "[0-9]+|[!@#$%^&*)(+=._-]+]" ),
-                                message:
-                                    "پسورد باید شامل اعداد یا کاراکتر های خاص (*,&,-,...) باشد",
-                            },
-                            {
-                                pattern: new RegExp( "([A-Z])" ),
+                                required: true,
                                 message: "پسورد باید شامل حروف بزرگ باشد",
+                                validator: async (rule: any, value: any) => {
+                                    if (!!form.getFieldValue('password') && form.getFieldValue('password').length >= 6)
+                                        if (!/[A-Z]/.test(form.getFieldValue('password'))) {
+                                            throw new Error("Something wrong!");
+                                        }
+                                },
                             },
                             {
-                                pattern: new RegExp( "([a-z])" ),
+                                required: true,
                                 message: "پسورد باید شامل حروف کوچک باشد",
+                                validator: async (rule: any, value: any) => {
+                                    if (!!form.getFieldValue('password') && form.getFieldValue('password').length >= 6)
+                                        if (!/[a-z]/.test(form.getFieldValue('password'))) {
+                                            throw new Error("Something wrong!");
+                                        }
+                                },
                             },
                         ] }
                     >
@@ -136,6 +128,30 @@ const ChangePassword = () => {
                             } }
                             onPressEnter={ () => form.submit() }
                         />
+                    </Form.Item>
+                    <Form.Item
+                        name="captchaText"
+                        rules={[
+                            { required: true, message: "لطفا تصویر امنیتی را وارد کنید" },
+                            {
+                                pattern: new RegExp("^[a-zA-Z0-9!@#$%^&*)(+=._-]+$"),
+                                message: "تنها حروف و اعداد لاتین مجاز است",
+                            },
+                        ]}
+                    >
+                        <Space size={6} align="start" >
+                            <Input
+                                prefix={<BarcodeOutlined />}
+                                placeholder="تصویر امنیتی"
+                                maxLength={4}
+                                autoSave="off"
+                                autoComplete="off"
+                                onKeyDown={(e) => {
+                                    checkJustNumber(e);
+                                }}
+                            />
+                            <Captcha />
+                        </Space>
                     </Form.Item>
 
                     <Form.Item>

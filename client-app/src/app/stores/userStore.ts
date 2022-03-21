@@ -1,11 +1,9 @@
 ﻿import { observable, computed, action, runInAction, makeAutoObservable } from "mobx";
-import { ICaptchaImage, ICheckNationalCode, IForgotPasswordFormValues, ILoginFormValues, IRealPerson, IRealPersonFormValues, IRegisterFormValues, IUser, IUserFormValues } from "../models/user";
+import { ICaptchaImage, ICheckNationalCode, IConfirmCodeFormValues, IForgotPasswordFormValues, ILoginFormValues, IRegisterFormValues, IUser, IUserFormValues } from "../models/user";
 import agent from "../api/agent";
 import { RootStore } from "./rootStore";
 import { IComboBoxType } from "../models/common";
 import { openNotification } from "../common/util/util";
-
-// import { TimeoutError } from "@microsoft/signalr";
 
 export default class UserStore {
     rootStore: RootStore;
@@ -16,19 +14,11 @@ export default class UserStore {
 
     @observable user: IUser | null = null;
     @observable submitting = false;
-    @observable readOnlyRrealPersonfield = false;
-    @observable registeringRrealPerson = false;
-    @observable sendingRealPersonConfirmCode = false;
-    @observable realPersonCheckingNationalCode = false;
-    @observable realPersonConfirmeCodeSended = false;
-    @observable loadingUserRoles = false;
-    @observable UserRolesComboRegistery = new Map();
-    @observable forgotPasswordResponse = "";
-    @observable DepartmentColorRegistery = new Map();
-    @observable userSelectedColors: string[] = [];
+    @observable userRolesComboRegistery = new Map();
     @observable captchaImage: ICaptchaImage | null = null;
     @observable loadingCaptchaImage = false;
     @observable loadingRefreshToken = false;
+    @observable isChangePasswordMode: boolean = false
     @observable resetCounter: number = 0;
 
 
@@ -36,6 +26,9 @@ export default class UserStore {
         this.resetCounter += 1;
     }
 
+    @action setChangePasswordMode = () => {
+        this.isChangePasswordMode = true;
+    }
 
     @action login = async (values: ILoginFormValues) => {
         try {
@@ -107,7 +100,7 @@ export default class UserStore {
         try {
             this.submitting = true;
             values.token = this.captchaImage && this.captchaImage!.token;
-            const res = await agent.User.forgotPassword(values);
+            await agent.User.forgotPassword(values);
             runInAction(() => {
                 this.submitting = false;
             });
@@ -124,25 +117,26 @@ export default class UserStore {
         }
     };
 
-    @action confirmSMS = async (values: IUserFormValues) => {
+    @action confirmSMS = async (values: IConfirmCodeFormValues) => {
         try {
             this.submitting = true;
-            const user = await agent.User.confirmSMS(values);
+            values.token = this.captchaImage && this.captchaImage!.token;
+            values.isChangePasswordMode = this.isChangePasswordMode
+            const res = await agent.User.confirmSMS(values);
             runInAction(() => {
-                this.user = user;
-                // this.rootStore.commonStore.setToken(user.token);
-                // this.rootStore.commonStore.setRefToken(user.refreshToken);
-                //this.changePasswordFlag = true;
-                // this.rootStore.modalStore.closeModal();
+                this.rootStore.commonStore.setToken(res.token);
+                this.rootStore.commonStore.setRefToken(res.refreshToken);
                 this.submitting = false;
-                // history.push("/");
-                // window.location.reload();
-                // window.location.replace("/");
             });
-        } catch (error) {
+        } catch (err: any) {
             runInAction(() => {
                 this.submitting = false;
-                throw error;
+                openNotification(
+                    "error",
+                    "خطا",
+                    `${err?.response?.data?.Message!}`,
+                    "topRight");
+                throw err;
             });
         }
     };
@@ -191,26 +185,7 @@ export default class UserStore {
         })
     };
 
-    @action loadUserRolesComboList = async () => {
-        try {
-            this.loadingUserRoles = true;
-            let userRoleListRawData: IComboBoxType[] = [];
 
-            userRoleListRawData = await agent.User.GetCurrentUserRoles();
-            runInAction(() => {
-                this.UserRolesComboRegistery.clear();
-                userRoleListRawData.forEach((role) => {
-                    this.UserRolesComboRegistery.set(role.key, role);
-                });
-                this.loadingUserRoles = false;
-            });
-        } catch (error) {
-            runInAction(() => {
-                this.loadingUserRoles = false;
-                console.log(error);
-            });
-        }
-    };
 
     @action createNewRefreshToken = async () => {
 
@@ -229,19 +204,9 @@ export default class UserStore {
         }
     };
 
-    @action LoadSelectedWorkflowColors = async () => {
-        try {
-            const res = await agent.User.GetSelectedWorkflowColors();
-            runInAction(() => {
-                this.userSelectedColors = res;
-            });
-        } catch (error) {
-            throw error;
-        }
-    };
 
     @computed get UserRolesList() {
-        return Array.from(this.UserRolesComboRegistery.values());
+        return Array.from(this.userRolesComboRegistery.values());
     }
 
     @computed get isLoggedIn() {

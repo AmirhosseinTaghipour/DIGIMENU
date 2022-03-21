@@ -79,7 +79,7 @@ namespace BS.Application.Features.Users.Commands
                 user.IsActived = false;
                 user.ActivationCode = activationCode;
                 user.InsertDate = DateTime.Now;
-                user.CodeExpiredTime = DateTime.Now.AddSeconds(expireDuration);
+                user.CodeExpiredTime = DateTime.Now.AddMinutes(expireDuration);
 
                 await _unitOfWork.userRepositoryAsync.AddAsync(user);
                 var success = await _unitOfWork.SaveAsync() > 0;

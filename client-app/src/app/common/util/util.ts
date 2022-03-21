@@ -456,13 +456,13 @@ export const jsonToFormData = (data: any) => {
     return formData;
 }
 
+
 export const validateNationalCode = (input: string): boolean => {
     if (!/^\d{10}$/.test(input)) return false;
 
     //Check if all the numbers are same
     let allNumbersSame = true;
-    for (let i = 1; i < 10; i++)
-    {
+    for (let i = 1; i < 10; i++) {
         allNumbersSame = (input[0] == input[i]);
         if (!allNumbersSame) break;
     }
@@ -472,32 +472,32 @@ export const validateNationalCode = (input: string): boolean => {
     const sum = input.split('').slice(0, 9).reduce((acc, x, i) => acc + +x * (10 - i), 0) % 11;
     return sum < 2 ? check === sum : check + sum === 11;
 }
-//export const validateNationalCode = (nationalCode: string | null): boolean => {
-//    debugger;
-//    if (nationalCode == null)
-//        return true;
-//    try {
-//        if (/^\d{10}$/.test(nationalCode))
-//            return false;
 
-//        //Check if all the numbers are same
-//        let AreAllNumbersSame = true;
-//        for (let i = 1; i < 10; i++) {
-//            AreAllNumbersSame = (nationalCode[0] == nationalCode[i]);
-//            if (!AreAllNumbersSame) break;
-//        }
-//        if (AreAllNumbersSame) return false;
+export const validateNationalLegalId = (input: string): boolean => {
+    if (!/^\d{11}$/.test(input)) return false;
 
-//        let num3;
-//        let a = 0;
-//        for (let i = 2; i < 11; i++) {
-//            let ch = nationalCode[i - 2];
-//            a += parseInt(ch.toString()) * (12 - i);
-//        }
-//        //Math.DivRem(a, 11, out num3);
-//        num3 = a % 11;
-//        let num4 = parseInt(nationalCode[9].toString());
-//        return ((((num3 == 0) && (num4 == 0)) || ((num3 == 1) && (num4 == 1))) || (num4 == (11 - num3)));
-//    }
-//    catch { return false; }
-//}
+    let c, d, s;
+    c = parseInt(input.substr(10, 1));
+    d = parseInt(input.substr(9, 1)) + 2;
+    let z = [29, 27, 23, 19, 17];
+    s = 0;
+    for (let i = 0; i < 10; i++)
+        s += (d + parseInt(input.substr(i, 1))) * z[i % 5];
+    s = s % 11;
+    if (s == 10) s = 0;
+    return (c == s);
+
+}
+
+export const checkJustNumber = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!/^[0-9]*$/.test(e.key) && ![8, 9, 13, 17, 37, 39, 46, 67, 86, 88].includes(e.keyCode))
+        e.preventDefault();
+}
+
+export const validateEmail = (input: string): boolean => {
+    var res = false
+    var regExp = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    if (regExp.test(input.toLowerCase()))
+        res = true
+    return res;
+}; 

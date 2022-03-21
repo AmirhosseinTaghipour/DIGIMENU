@@ -51,6 +51,7 @@ namespace BS.Infrastructure.Shared.Services
                 KeyPrameter=request.KeyParam,
                 UserId=!string.IsNullOrEmpty(request.UserId)? new Guid(request.UserId):null
             });
+            await _unitOfWork.SaveAsync();
         }
     }
 }

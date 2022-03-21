@@ -95,5 +95,13 @@ namespace BS.API.Controllers
         {
             return await Mediator.Send(new UserAppMenu.UserAppMenuQuery());
         }
+
+
+        [AllowAnonymous]
+        [HttpPost("ConfirmSMS")]
+        public async Task<ActionResult<RefreshTokenDTO>> ConfirmSMS(ConfirmSMS.ConfirmSMSCommand command)
+        {
+            return await Mediator.Send(command);
+        }
     }
 }

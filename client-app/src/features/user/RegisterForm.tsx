@@ -8,6 +8,7 @@ import Meta from "antd/lib/card/Meta";
 import { Redirect } from "react-router-dom";
 import Captcha from "../../features/common/Captcha/Captcha";
 import ConfirmCodeForm from "./InsertConfirmCode";
+import { checkJustNumber } from "../../app/common/util/util";
 
 const layout = {
     labelCol: { span: 24 },
@@ -20,16 +21,22 @@ const RegisterForm = () => {
     const [form] = Form.useForm();
 
     const [activeForm, setactiveForm] = useState<String>("register");
+    const [notEqual, setNotEqual] = useState(false);
+
 
     const onFinish = async (values: IRegisterFormValues) => {
-        await register(values).then(success => {
-            setactiveForm("confirmCode");
-        }, error => {
-            setactiveForm("register")
-        }).finally(() => {
-            getCaptchaImage();
-            form.resetFields(["captchaText"]);
-        })
+        if (values.password === values.repreatedPassword) {
+            await register(values).then(success => {
+                setactiveForm("confirmCode");
+            }, error => {
+                setactiveForm("register")
+            }).finally(() => {
+                getCaptchaImage();
+                form.resetFields(["captchaText"]);
+            })
+        }
+        else
+            setNotEqual(true);
     }
 
 
@@ -66,7 +73,7 @@ const RegisterForm = () => {
 
                 >
                     <Divider
-                    className="bsDivider"   
+                        className="bsDivider"
                     >
                         ثبت نام
                     </Divider>
@@ -76,7 +83,7 @@ const RegisterForm = () => {
                             { required: true, message: "لطفا نام و نام خانوادگی خود را وارد کنید" },
                             {
                                 pattern: new RegExp(
-                                    "^[\u0600-\u06FF\s]+$"
+                                    "^[\u0600-\u06FF\s ]+$"
                                 ),
                                 message: "تنها حروف فارسی مجاز می باشد",
                             },
@@ -85,25 +92,48 @@ const RegisterForm = () => {
                         <Input
                             prefix={<UserOutlined className="site-form-item-icon" />}
                             placeholder="نام و نام خانوادگی"
-                            maxLength={25}
+                            maxLength={100}
                         />
                     </Form.Item>
                     <Form.Item
                         name="mobile"
                         rules={[
                             { required: true, message: "لطفا تلفن همراه خود را وارد کنید" },
+                            {
+                                min: 11,
+                                message: "شماره تلفن همراه باید 11 رقم باشد",
+                            },
+                            {
+                                required: true,
+                                message: "لطفا شماره موبایل را با پیش شماره 09 وارد نمایید",
+                                validator: async (rule: any, value: any) => {
+                                    if (!!form.getFieldValue('mobile') && form.getFieldValue('mobile').length == 11)
+                                        if (form.getFieldValue('mobile').substr(0, 2) != "09") {
+                                            throw new Error("Something wrong!");
+                                        }
+                                },
+                            },
                         ]}
                     >
                         <Input
                             prefix={<MobileOutlined className="site-form-item-icon" />}
                             placeholder="تلفن همراه"
                             maxLength={11}
+                            onKeyDown={(e) => {
+                                checkJustNumber(e);
+                            }}
                         />
                     </Form.Item>
                     <Form.Item
                         name="userName"
                         rules={[
                             { required: true, message: "لطفا نام کاربری خود را وارد کنید" },
+                            {
+                                pattern: new RegExp(
+                                    "^[a-z|A-Z|0-9|@|#|$|%|^|&|*|)|(|+|=|.|_|-|!]+$"
+                                ),
+                                message: "تنها حروف لاتین، اعداد و کاراکترهای خاص مجاز می باشد",
+                            },
                         ]}
                     >
                         <Input
@@ -117,10 +147,33 @@ const RegisterForm = () => {
                         rules={[
                             { required: true, message: "لطفا رمز ورود را وارد نمایید" },
                             {
-                                pattern: new RegExp(
-                                    "^[a-z|A-Z|0-9|@|#|$|%|^|&|*|)|(|+|=|.|_|!]+$"
-                                ),
-                                message: "تنها حروف لاتین، اعداد و کاراکترهای خاص مجاز می باشد",
+                                min: 6,
+                                message: "رمز نباید کمتر از ۶ حرف باشد",
+
+                            },
+                            {
+                                pattern: new RegExp("^[a-zA-Z0-9!@#$%^&*)(+=._-]+$"),
+                                message: "تنها کاراکترهای لاتین برای پسورد مجاز است",
+                            },
+                            {
+                                required: true,
+                                message: "پسورد باید شامل حروف بزرگ باشد",
+                                validator: async (rule: any, value: any) => {
+                                    if (!!form.getFieldValue('password') && form.getFieldValue('password').length >= 6)
+                                        if (!/[A-Z]/.test(form.getFieldValue('password'))) {
+                                            throw new Error("Something wrong!");
+                                        }
+                                },
+                            },
+                            {
+                                required: true,
+                                message: "پسورد باید شامل حروف کوچک باشد",
+                                validator: async (rule: any, value: any) => {
+                                    if (!!form.getFieldValue('password') && form.getFieldValue('password').length >= 6)
+                                        if (!/[a-z]/.test(form.getFieldValue('password'))) {
+                                            throw new Error("Something wrong!");
+                                        }
+                                },
                             },
                         ]}
                     >
@@ -162,6 +215,9 @@ const RegisterForm = () => {
                                 maxLength={4}
                                 autoSave="off"
                                 autoComplete="off"
+                                onKeyDown={(e) => {
+                                    checkJustNumber(e);
+                                }}
                             />
                             <Captcha />
                         </Space>
@@ -189,6 +245,15 @@ const RegisterForm = () => {
                         </Button>
                     </Form.Item>
                 </Form>
+                {notEqual && (
+                    <Alert
+                        message="خطا"
+                        description="رمز و تکرار رمز یکسان نیستند."
+                        type="error"
+                        closable
+                        onClose={() => setNotEqual(false)}
+                    />
+                )}
             </Card>
         </Row>
     );

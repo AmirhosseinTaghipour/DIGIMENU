@@ -8,6 +8,7 @@ import Meta from "antd/lib/card/Meta";
 import Avatar from "antd/lib/avatar/avatar";
 import { Redirect } from "react-router-dom";
 import Captcha from "../../features/common/Captcha/Captcha";
+import { checkJustNumber } from "../../app/common/util/util";
 
 
 const LoginForm = () => {
@@ -117,6 +118,9 @@ const LoginForm = () => {
                                 maxLength={4}
                                 autoSave="off"
                                 autoComplete="off"
+                                onKeyDown={(e) => {
+                                    checkJustNumber(e);
+                                }}
                             />
                             <Captcha />
                         </Space>

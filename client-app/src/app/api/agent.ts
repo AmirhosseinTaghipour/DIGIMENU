@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 /*import { toast } from "react-toastify";*/
 import { openNotification, jsonToFormData } from "../common/util/util";
-import { ICaptchaImage, ICheckNationalCode, IForgotPasswordFormValues, ILoginFormValues, IRealPerson, IRealPersonFormValues, IRegisterFormValues, IUser, IUserFormValues } from "../models/user";
+import { ICaptchaImage, ICheckNationalCode, IConfirmCodeFormValues, IForgotPasswordFormValues, ILoginFormValues, IRegisterFormValues, IUser, IUserFormValues } from "../models/user";
 
 import { IMainMenu } from "../models/main";
 
@@ -125,23 +125,23 @@ const requests = {
 const User = {
     current: (): Promise<IUser> => requests.get("/user"),
 
-    login: (user: ILoginFormValues): Promise<IRefTokenValues> =>
-        requests.post("/user/Login", user),
+    login: (values: ILoginFormValues): Promise<IRefTokenValues> =>
+        requests.post("/user/Login", values),
 
-    register: (user: IRegisterFormValues): Promise<IResultType> =>
-        requests.post("/user/UserRegister", user),
+    register: (values: IRegisterFormValues): Promise<IResultType> =>
+        requests.post("/user/UserRegister", values),
 
     createRefreshToken: (): Promise<string> =>
         requests.post("/user/Refreshtoken", {}),
 
-    forgotPassword: (user: IForgotPasswordFormValues): Promise<IResultType> =>
-        requests.post("/user/ForgetPassword", user),
+    forgotPassword: (values: IForgotPasswordFormValues): Promise<IResultType> =>
+        requests.post("/user/ForgetPassword", values),
 
-    confirmSMS: (user: IUserFormValues): Promise<IUser> =>
-        requests.post("/user/confirmSMS", user),
+    confirmSMS: (values: IConfirmCodeFormValues): Promise<IRefTokenValues> =>
+        requests.post("/user/ConfirmSMS", values),
 
-    changePassword: (user: IUserFormValues): Promise<IUser> =>
-        requests.post("/user/changePassword", user),
+    changePassword: (values: IUserFormValues): Promise<IUser> =>
+        requests.post("/user/changePassword", values),
 
     GetCurrentUserDefaultRoleCode: (): Promise<string> =>
         requests.get("/user/defaultrolecode"),
@@ -161,14 +161,6 @@ const User = {
     GetCaptchaImage: (): Promise<ICaptchaImage> =>
         requests.get("/User/CaptchaImage"),
 
-    RegisterRrealPerson: (realPerson: IRealPersonFormValues): Promise<IResultType> =>
-        requests.post("/user/realPersonRegister", realPerson),
-
-    SendRealPersonConfirmCode: (realPerson: IRealPersonFormValues): Promise<IResultType> =>
-        requests.post("/user/realPersonSendConfirmCode", realPerson),
-
-    RealPersonCheckNationalCode: (value: ICheckNationalCode): Promise<IRealPerson> =>
-        requests.post("/user/realPersonCheckNationalCode", value),
 };
 
 const Main = {

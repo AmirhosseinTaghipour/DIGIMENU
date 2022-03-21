@@ -33,11 +33,6 @@ export interface IRegisterFormValues {
     token: string | null;
 }
 
-export interface IRefTokenValues {
-    token: string;
-    refreshToken: string;
-}
-
 export interface IUserFormValues {
     username: string;
     password: string;
@@ -53,40 +48,42 @@ export interface ICaptchaImage {
     token: string | null;
 }
 
-export interface IColor {
-    color: string;
-    time?: number;
-}
-
-
-export interface IRealPersonFormValues {
-    name: string | null;
-    lastName: string | null;
-    mobileNumber: string | null;
-    nationalCode: string | null;
-    birthDate: string | null;
-    fatherName: string | null;
+export interface IConfirmCodeFormValues {
     userName: string | null;
-    password: string | null;
-    repeatedPassword: string | null;
-    sex: number | null;
-    domainList: string | null;
-    activationCode: string | null;
+    code: string | null;
+    isChangePasswordMode: boolean | null;
+    captchaText: string;
     token: string | null;
-    captchaText: string | null;
-}
-
-export interface IRealPerson {
-    name: string | null;
-    lastName: string | null;
-    mobileNumber: string | null;
-    nationalCode: string | null;
-    birthDate: string | null;
-    fatherName: string | null;
-    sex: number | null;
 }
 
 export interface ICheckNationalCode {
     nationalCode: string | null;
     birthDate: string | null;
 }
+
+// export interface IRealPersonFormValues {
+//     name: string | null;
+//     lastName: string | null;
+//     mobileNumber: string | null;
+//     nationalCode: string | null;
+//     birthDate: string | null;
+//     fatherName: string | null;
+//     userName: string | null;
+//     password: string | null;
+//     repeatedPassword: string | null;
+//     sex: number | null;
+//     domainList: string | null;
+//     activationCode: string | null;
+//     token: string | null;
+//     captchaText: string | null;
+// }
+
+// export interface IRealPerson {
+//     name: string | null;
+//     lastName: string | null;
+//     mobileNumber: string | null;
+//     nationalCode: string | null;
+//     birthDate: string | null;
+//     fatherName: string | null;
+//     sex: number | null;
+// }

@@ -9,6 +9,7 @@ import "react-client-captcha/dist/index.css";
 import ConfirmCodeForm from "./InsertConfirmCode";
 import { Redirect } from "react-router-dom";
 import Captcha from "../../features/common/Captcha/Captcha";
+import { checkJustNumber } from "../../app/common/util/util";
 
 const ForgotPassword = () => {
     const rootStore = useContext(RootStoreContext);
@@ -94,6 +95,9 @@ const ForgotPassword = () => {
                             prefix={<MobileOutlined className="site-form-item-icon" />}
                             placeholder="تلفن همراه"
                             maxLength={11}
+                            onKeyDown={(e) => {
+                                checkJustNumber(e);
+                            }}
                         />
                     </Form.Item>
 
@@ -114,6 +118,9 @@ const ForgotPassword = () => {
                                 maxLength={4}
                                 autoSave="off"
                                 autoComplete="off"
+                                onKeyDown={(e) => {
+                                    checkJustNumber(e);
+                                }}
                             />
                             <Captcha />
                         </Space>

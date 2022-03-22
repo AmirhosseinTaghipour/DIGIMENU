@@ -1,6 +1,7 @@
 ﻿using BS.Application.Interfaces.Repositories;
 using BS.Domain.Entities;
 using BS.Infrastructure.Persistence.Contexts;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,5 +14,15 @@ namespace BS.Infrastructure.Persistence.Repositories
     {
         public SMSLogRepositoryAsync(Storage context) : base(context) { }
 
+        public async Task<int> LastSendedSMSCount(Guid userId, DateTime from)
+        {
+            return await Query()
+                 .Where(n => n.UserId == userId
+                 && n.Response == 1
+                 && DateTime.Compare(n.InsertDate, from) > 0)
+                 .OrderByDescending(n => n.InsertDate)
+                 .AsNoTracking()
+                 .CountAsync();
+        }
     }
 }

@@ -92,6 +92,8 @@ namespace BS.Application.Features.Users.Commands
 
                 user.IsActived = true;
                 user.IsMobileConfirmed = true;
+                user.UpdateDate = DateTime.Now;
+                user.UpdateUser = request.UserName.ToLower().Trim();
                 _unitOfWork.userRepositoryAsync.Update(user);
 
                 await _unitOfWork.userLogRepositoryAsync.AddAsync(new UserLog()

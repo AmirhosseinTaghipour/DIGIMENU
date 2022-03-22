@@ -40,7 +40,7 @@ namespace BS.Application.Features.Users.Queries
                 int height = 34;
                 var captchaCode = _captcha.GenerateCaptchaCode();
                 var captchaImage = _captcha.GenerateCaptchaImage(width, height, captchaCode);
-                var captchaToken = _captcha.CreateToken(captchaCode, DateTime.Now.AddMinutes(2));
+                var captchaToken = _captcha.CreateToken(captchaCode, DateTime.Now.AddMinutes(10));
 
                 if (captchaImage != null)
                 {

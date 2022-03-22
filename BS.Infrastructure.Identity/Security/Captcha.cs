@@ -102,7 +102,7 @@ namespace BS.Infrastructure.Identity.Security
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = expiers ?? DateTime.Now.AddMinutes(2),
+                Expires = expiers ?? DateTime.Now.AddMinutes(10),
                 SigningCredentials = creds,
                 EncryptingCredentials = encryptingCreds
             };

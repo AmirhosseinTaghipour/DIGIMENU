@@ -43,13 +43,14 @@ namespace BS.Infrastructure.Shared.Services
             await _unitOfWork.smsLogRepositoryAsync.AddAsync(new SMSLog()
             {
                 Id = Guid.NewGuid(),
-                InsertUser =request.UserName,
+                InsertUser = request.UserName,
                 InsertDate = DateTime.Now,
                 MessageBody = request.Body,
                 Mobile = request.To,
-                Type=request.Type,
-                KeyPrameter=request.KeyParam,
-                UserId=!string.IsNullOrEmpty(request.UserId)? new Guid(request.UserId):null
+                Type = request.Type,
+                KeyPrameter = request.KeyParam,
+                Response = response.RetStatus,
+                UserId = !string.IsNullOrEmpty(request.UserId) ? new Guid(request.UserId) : null
             });
             await _unitOfWork.SaveAsync();
         }

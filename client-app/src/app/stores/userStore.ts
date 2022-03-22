@@ -1,9 +1,10 @@
 ﻿import { observable, computed, action, runInAction, makeAutoObservable } from "mobx";
-import { ICaptchaImage, ICheckNationalCode, IConfirmCodeFormValues, IForgotPasswordFormValues, ILoginFormValues, IRegisterFormValues, IUser, IUserFormValues } from "../models/user";
+import { ICaptchaImage, IChangePasswordFormValues, ICheckNationalCode, IConfirmCodeFormValues, IForgotPasswordFormValues, ILoginFormValues, IRegisterFormValues, IResendCodeFormValues, IUser, IUserFormValues } from "../models/user";
 import agent from "../api/agent";
 import { RootStore } from "./rootStore";
 import { IComboBoxType } from "../models/common";
 import { openNotification } from "../common/util/util";
+import { BsTextIndentRight } from "react-icons/bs";
 
 export default class UserStore {
     rootStore: RootStore;
@@ -18,6 +19,7 @@ export default class UserStore {
     @observable captchaImage: ICaptchaImage | null = null;
     @observable loadingCaptchaImage = false;
     @observable loadingRefreshToken = false;
+    @observable resendingCode = false;
     @observable isChangePasswordMode: boolean = false
     @observable resetCounter: number = 0;
 
@@ -29,6 +31,32 @@ export default class UserStore {
     @action setChangePasswordMode = () => {
         this.isChangePasswordMode = true;
     }
+
+    @action resendCode = async (values:IResendCodeFormValues) => { 
+        try {
+            this.resendingCode = true;
+            values.token = this.captchaImage && this.captchaImage!.token;
+            const res = await agent.User.resendCode(values);
+            runInAction(() => {
+                openNotification(
+                    "success",
+                    "ارسال مجدد",
+                    `${res?.message!}`,
+                    "topRight");
+                this.resendingCode = false;
+            });
+        } catch (err: any) {
+            runInAction(() => {
+                this.submitting = false;
+                openNotification(
+                    "error",
+                    "خطا",
+                    `${err?.response?.data?.Message!}`,
+                    "topRight");
+                throw err;
+            });
+        }
+    };
 
     @action login = async (values: ILoginFormValues) => {
         try {
@@ -100,9 +128,15 @@ export default class UserStore {
         try {
             this.submitting = true;
             values.token = this.captchaImage && this.captchaImage!.token;
-            await agent.User.forgotPassword(values);
+            const res = await agent.User.forgotPassword(values);
             runInAction(() => {
+                this.setChangePasswordMode();
                 this.submitting = false;
+                openNotification(
+                    "success",
+                    "بازیابی کلمه عبور",
+                    `${res?.message!}`,
+                    "topRight");
             });
         } catch (err: any) {
             runInAction(() => {
@@ -141,23 +175,29 @@ export default class UserStore {
         }
     };
 
-    @action changePassword = async (values: IUserFormValues) => {
+    @action changePassword = async (values: IChangePasswordFormValues) => {
         try {
             this.submitting = true;
-            await agent.User.changePassword(values);
+            const res = await agent.User.changePassword(values);
             runInAction(() => {
-                //this.changePasswordFlag = false;
-                this.rootStore.commonStore.setToken(null);
-                this.rootStore.commonStore.setRefToken(null);
                 this.user = null;
+                openNotification(
+                    "success",
+                    "تغییر رمز عبور",
+                    `${res?.message!}`,
+                    "topRight");
                 this.submitting = false;
-
                 window.location.replace("/");
             });
-        } catch (error) {
+        } catch (err: any) {
             runInAction(() => {
                 this.submitting = false;
-                throw error;
+                openNotification(
+                    "error",
+                    "خطا",
+                    `${err?.response?.data?.Message!}`,
+                    "topRight");
+                throw err;
             });
         }
     };

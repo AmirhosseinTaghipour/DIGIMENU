@@ -9,5 +9,7 @@ namespace BS.Application.Interfaces.Repositories
 {
     public interface ISMSLogRepositoryAsync:IGenericRepositoryAsync<SMSLog>
     {
+        Task<int> LastSendedSMSCount(Guid userId, DateTime from);
+
     }
 }

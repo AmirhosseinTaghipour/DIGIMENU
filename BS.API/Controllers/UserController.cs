@@ -96,6 +96,12 @@ namespace BS.API.Controllers
             return await Mediator.Send(new UserAppMenu.UserAppMenuQuery());
         }
 
+        [AllowAnonymous]
+        [HttpPost("ResendCode")]
+        public async Task<ActionResult<ResultDTO<string>>> ResendCode(ResendCode.ResendCodeCommand command)
+        {
+            return await Mediator.Send(command);
+        }
 
         [AllowAnonymous]
         [HttpPost("ConfirmSMS")]

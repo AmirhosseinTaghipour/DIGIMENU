@@ -56,6 +56,19 @@ export interface IConfirmCodeFormValues {
     token: string | null;
 }
 
+export interface IResendCodeFormValues {
+    userName: string | null;
+    mobile: string | null;
+    isChangePasswordMode: boolean | null;
+    captchaText: string;
+    token: string | null;
+}
+
+export interface IChangePasswordFormValues {
+    password: string;
+    repeatedPassword: string;
+}
+
 export interface ICheckNationalCode {
     nationalCode: string | null;
     birthDate: string | null;

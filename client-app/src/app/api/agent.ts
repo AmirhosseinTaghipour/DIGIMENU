@@ -1,13 +1,14 @@
 import axios, { AxiosResponse } from "axios";
 /*import { toast } from "react-toastify";*/
 import { openNotification, jsonToFormData } from "../common/util/util";
-import { ICaptchaImage, ICheckNationalCode, IConfirmCodeFormValues, IForgotPasswordFormValues, ILoginFormValues, IRegisterFormValues, IUser, IUserFormValues } from "../models/user";
+import { ICaptchaImage, IChangePasswordFormValues, ICheckNationalCode, IConfirmCodeFormValues, IForgotPasswordFormValues, ILoginFormValues, IRegisterFormValues, IResendCodeFormValues, IUser, IUserFormValues } from "../models/user";
 
 import { IMainMenu } from "../models/main";
 
 import { IComboBoxType, IRefTokenValues, IResultType } from "../models/common";
 
 import { AddCookie, GetCookie, RemoveCookie } from "../common/util/util";
+import { values } from "mobx";
 
 axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 
@@ -35,6 +36,7 @@ axios.interceptors.response.use(
         return response;
     },
     async (resError) => {
+        debugger;
         const originalConfig = resError.config;
         const reftoken = GetCookie("bsrefToken");
         if (resError.message === "Network Error" && !resError.response) {
@@ -140,23 +142,11 @@ const User = {
     confirmSMS: (values: IConfirmCodeFormValues): Promise<IRefTokenValues> =>
         requests.post("/user/ConfirmSMS", values),
 
-    changePassword: (values: IUserFormValues): Promise<IUser> =>
-        requests.post("/user/changePassword", values),
+    changePassword: (values: IChangePasswordFormValues): Promise<IResultType> =>
+        requests.post("/user/ChangePassword", values),
 
-    GetCurrentUserDefaultRoleCode: (): Promise<string> =>
-        requests.get("/user/defaultrolecode"),
-
-    GetCurrentDepartmentId: (): Promise<string> =>
-        requests.get("/user/userdepartmentid"),
-
-    GetCurrentUserRoles: (): Promise<IComboBoxType[]> =>
-        requests.get("/user/CurrentUserRoles"),
-
-    SetCurrentUserDefaultRole: (id: string): Promise<void> =>
-        requests.post("/user/SetDefaultRole", { id }),
-
-    GetSelectedWorkflowColors: (): Promise<string[]> =>
-        requests.get("/User/selectedWorkflowColors"),
+    resendCode: (values:IResendCodeFormValues): Promise<IResultType> =>
+        requests.post("/user/ResendCode",values),
 
     GetCaptchaImage: (): Promise<ICaptchaImage> =>
         requests.get("/User/CaptchaImage"),

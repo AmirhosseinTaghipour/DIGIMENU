@@ -1,35 +1,40 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { RootStoreContext } from "../../app/stores/rootStore";
-import { IConfirmCodeFormValues, IUserFormValues } from "../../app/models/user";
+import { IConfirmCodeFormValues, IResendCodeFormValues, IUserFormValues } from "../../app/models/user";
 import { Form, Input, Button, Row, Card, Alert, Divider, Space } from "antd";
 import { UserOutlined, BarcodeOutlined } from "@ant-design/icons";
 import Meta from "antd/lib/card/Meta";
-import { AxiosResponse } from "axios";
 import "react-client-captcha/dist/index.css";
 import LoginForm from "./LoginForm";
 import ChangePassword from "./ChangePassword";
-import { Redirect } from "react-router-dom";
 import { checkJustNumber } from "../../app/common/util/util";
 import Captcha from "../common/Captcha/Captcha";
+import { inherits } from "util";
 
 interface IProps {
     userName: string;
+    mobile: string;
 }
 const defaultProps: any = {
 };
 
-const InsertConfirmCode: React.FC<IProps> = ({ userName }) => {
+const InsertConfirmCode: React.FC<IProps> = ({ userName, mobile }) => {
     const rootStore = useContext(RootStoreContext);
     const {
         confirmSMS,
         submitting,
-        isChangePasswordMode
+        isChangePasswordMode,
+        resendCode,
+        resendingCode,
+        getCaptchaImage
     } = rootStore.userStore;
     const [form] = Form.useForm();
 
-    const [loginPage, setLoginPage] = useState(false);
-    const [changePassword, setChangePassword] = useState(false);
+    const [loginPage, setLoginPage] = useState<boolean>(false);
+    const [changePassword, setChangePassword] = useState<boolean>(false);
+    const [sendButtonActive, setSendButtonActive] = useState<boolean>(false);
+    const [counter, setCounter] = useState<number>(120);
 
     const onFinish = (values: IConfirmCodeFormValues) => {
         confirmSMS(values).then(success => {
@@ -38,6 +43,48 @@ const InsertConfirmCode: React.FC<IProps> = ({ userName }) => {
                 window.location.replace("/")
         })
     };
+
+    const onResendCode = () => {
+        form.validateFields(["captchaText"]).then(() => {
+            let values: IResendCodeFormValues = {
+                mobile: mobile,
+                userName: userName,
+                isChangePasswordMode: isChangePasswordMode,
+                captchaText: form.getFieldValue("captchaText"),
+                token: null
+            };
+            resendCode(values)
+                .then(success => {
+                    setSendButtonActivation();
+                })
+                .finally(
+                    () => getCaptchaImage()
+                )
+        })
+
+    }
+
+    const setSendButtonActivation = () => {
+        setSendButtonActive(false);
+        setCounter(120);
+        setTimeout(() => setSendButtonActive(true), 125000);
+    }
+
+    useEffect(() => {
+        var sendCodeInterval = setInterval(() => {
+            if (counter > 0)
+                setCounter(counter - 1)
+            else
+                clearInterval(sendCodeInterval);
+        }, 1000);
+        return () => {
+            clearInterval(sendCodeInterval);
+        };
+    }, [counter]);
+
+    useEffect(() => {
+        setSendButtonActivation();
+    }, []);
 
     if (loginPage) {
         return <LoginForm />;
@@ -49,35 +96,17 @@ const InsertConfirmCode: React.FC<IProps> = ({ userName }) => {
         <Row
             justify="center"
             align="middle"
-            style={{
-                backgroundColor: "rgb(240, 242, 245)",
-                minHeight: "100vh",
-            }}
+            className="bsRow"
         >
             <Card
                 title={
                     <Row>
-                        <Meta
-                            title={
-                                <h2 style={{ marginTop: "5px" }}>دیجی منو</h2>
-                            }
-                            description={
-                                <p style={{ marginTop: "-8px", textAlign: "center" }}>
-                                    منو دیجیتال رستوران، کافی شاپ و ...
-                                </p>
-                            }
+                        <Meta className="bsCard"
+                            avatar={<img src="../../assets/Images/bslogo.png" />}
                         />
                     </Row>
                 }
                 bordered={false}
-                style={{
-                    borderTop: "2px solid #fa983a",
-                    borderRadius: "5px",
-                    boxShadow: "0 5px 5px -7px rgba(0,0,0,0.9)",
-                    minWidth: 320,
-                    width: "20vw",
-                    maxWidth: 400,
-                }}
             >
                 <Form
                     form={form}
@@ -87,11 +116,7 @@ const InsertConfirmCode: React.FC<IProps> = ({ userName }) => {
                     onFinish={onFinish}
                 >
                     <Divider
-                        style={{
-                            fontSize: ".9rem",
-                            marginTop: "-1rem",
-                            color: "rgba(0,0,0,.4)",
-                        }}
+                        className="bsDivider"
                     >
                         {isChangePasswordMode ?
                             "بازیابی رمز عبور"
@@ -166,16 +191,47 @@ const InsertConfirmCode: React.FC<IProps> = ({ userName }) => {
                     </Form.Item>
 
                     <Form.Item>
-                        <Button
-                            block
-                            type="primary"
-                            htmlType="submit"
-                            className="login-form-button"
-                            style={{ background: "#13c2c2" }}
-                            loading={submitting}
-                        >
-                            ورود
-                        </Button>
+                        <Space size={6} className="spaceBtn" style={{ width: "100%" }}>
+                            <Button
+                                block
+                                type="primary"
+                                htmlType="submit"
+                                className="bsBtn"
+                                loading={submitting}
+                            >{
+                                    isChangePasswordMode ?
+                                        "ثبت کد بازیابی" :
+                                        "ورود"
+                                }
+                            </Button>
+                            {sendButtonActive ?
+                                <Button
+                                    block
+                                    type="primary"
+                                    className="bsBtn"
+                                    loading={resendingCode}
+                                    onClick={() => {
+                                        onResendCode()
+                                    }}
+                                >
+                                    ارسال مجدد
+                                </Button>
+                                :
+                                <Button
+                                    block
+                                    type="primary"
+                                    disabled
+                                    style={{
+                                        backgroundColor: "#a9a9a9",
+                                        borderColor: "#a9a9a9",
+                                        color: "#3c3c3c"
+                                    }}
+                                >
+                                    {`${counter} ثانیه دیگر`}
+                                </Button>
+                            }
+
+                        </Space>
                     </Form.Item>
                     <Form.Item>
                         <Button
@@ -183,7 +239,7 @@ const InsertConfirmCode: React.FC<IProps> = ({ userName }) => {
                             onClick={() => {
                                 setLoginPage(true);
                             }}
-                            style={{ fontSize: "0.8rem" }}
+                            className="bsLink"
                         >
                             بازگشت به صفحه ورود
                         </Button>

@@ -40,7 +40,7 @@ const ForgotPassword = () => {
         case "login":
             return <Redirect to="/login" />;
         case "confirmCode":
-            return (<ConfirmCodeForm userName={form.getFieldValue("userName")} />);
+            return (<ConfirmCodeForm userName={form.getFieldValue("userName")} mobile={form.getFieldValue("mobile")} />);
         default: break;
     }
 

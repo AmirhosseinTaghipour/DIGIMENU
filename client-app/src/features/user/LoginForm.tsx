@@ -16,7 +16,7 @@ const LoginForm = () => {
     const { login, submitting, getCaptchaImage } = rootStore.userStore;
     const [form] = Form.useForm();
 
-    const [activeForm, setactiveForm] = useState("login");
+    const [activeForm, setactiveForm] = useState<string>("login");
 
 
     const onFinish = async (values: ILoginFormValues) => {

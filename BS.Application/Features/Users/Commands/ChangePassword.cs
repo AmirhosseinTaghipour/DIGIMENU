@@ -18,8 +18,7 @@ namespace BS.Application.Features.Users.Commands
         public class ChangePasswordCommand : IRequest<ResultDTO<string>>
         {
             public string Password { get; set; }
-            public string NewPassword { get; set; }
-            public string RepeatedNewPassword { get; set; }
+            public string RepeatedPassword { get; set; }
         }
 
         public class ChangePasswordHandler : IRequestHandler<ChangePasswordCommand, ResultDTO<string>>
@@ -27,6 +26,7 @@ namespace BS.Application.Features.Users.Commands
             private readonly IUnitOfWork _unitOfWork;
             private readonly IUserAccessor _userAccessor;
             private readonly IPasswordHelper _passwordHelper;
+
 
             public ChangePasswordHandler(IUnitOfWork unitOfWork, IUserAccessor userAccessor, IPasswordHelper passwordHelper)
             {
@@ -40,14 +40,11 @@ namespace BS.Application.Features.Users.Commands
                 if (user == null)
                     throw new RestException(HttpStatusCode.NotFound, "خطا، رکوردی یافت نشد");
 
-                if (request.NewPassword != request.RepeatedNewPassword)
+                if (request.Password != request.RepeatedPassword)
                     throw new RestException(HttpStatusCode.BadRequest, "تکرار کلمه عبور با کلمه عبور یکسان نیست");
 
-                if (user.Password != _passwordHelper.GetEncryptedPassword(request.NewPassword, user.PasswordSalt))
-                    throw new RestException(HttpStatusCode.BadRequest, "کلمه عبور صحیح نیست");
-
                 user.PasswordSalt = _passwordHelper.GenerateSalt();
-                user.Password = _passwordHelper.GetEncryptedPassword(request.NewPassword, user.PasswordSalt);
+                user.Password = _passwordHelper.GetEncryptedPassword(request.Password, user.PasswordSalt);
                 user.UpdateDate = DateTime.Now;
                 user.UpdateUser = _userAccessor.GetCurrentUserName();
                 _unitOfWork.userRepositoryAsync.Update(user);

@@ -37,7 +37,7 @@ axios.interceptors.response.use(
     },
     async (resError) => {
         const originalConfig = resError.config;
-        const reftoken = GetCookie("bsrefToken");
+        const reftoken = GetCookie("bsreftoken");
         if (resError.message === "Network Error" && !resError.response) {
             openNotification(
                 "error",
@@ -47,41 +47,41 @@ axios.interceptors.response.use(
             );
         }
         else {
-            if (String(resError.config.url).includes("user/refreshtoken") && !(reftoken && reftoken.length > 10) || (resError.response.status === 401 && originalConfig._retry)) {
-                RemoveCookie("bsmtoken");
+            if (String(originalConfig.url).includes("user/RefreshToken") && resError.response.status === 401 ) {
+                RemoveCookie("bstoken");
                 RemoveCookie("bsreftoken");
-                window.location.href = "/login";
-                return Promise.reject(resError);
+                window.location.replace("/");
             }
 
             if (resError.response) {
                 // Access Token was expired
-                if (resError.response.status === 401 && !originalConfig._retry) {
-                    originalConfig._retry = true;
-
+                if (resError.response.status === 401 && !!reftoken) {
                     try {
-                        const rs = await axios.post("/user/refreshtoken", {
-                            reftoken: reftoken,
+                        const rs = await axios.post("/user/RefreshToken", {
+                            refreshToken: reftoken,
                         });
                         const accessToken: IRefTokenValues = rs.data;
                         if (accessToken == null || accessToken == undefined) {
                             RemoveCookie("bstoken");
                             RemoveCookie("bsreftoken");
-                            window.location.href = "/login";
-                            return Promise.reject(resError);
+                            window.location.replace("/");
                         }
 
-                        AddCookie("bstoken", `${accessToken.token}`);
-                        AddCookie("bsreftoken", `${accessToken.refreshToken}`);
+                        AddCookie("bstoken", accessToken.token);
+                        AddCookie("bsreftoken", accessToken.refreshToken);
 
                         originalConfig.headers.Authorization = `Bearer ${accessToken.token}`;
                         return axios(originalConfig);
                     } catch (_error) {
                         RemoveCookie("bstoken");
                         RemoveCookie("bsreftoken");
-                        window.location.href = "/login";
-                        return Promise.reject(resError);
+                        window.location.replace("/");
                     }
+                }
+                else if (!reftoken) {
+                    RemoveCookie("bstoken");
+                    RemoveCookie("bsreftoken");
+                    window.location.replace("/");
                 }
                 else if (resError.response.status === 500) {
                     openNotification(
@@ -132,9 +132,6 @@ const User = {
     register: (values: IRegisterFormValues): Promise<IResultType> =>
         requests.post("/user/UserRegister", values),
 
-    createRefreshToken: (): Promise<string> =>
-        requests.post("/user/Refreshtoken", {}),
-
     forgotPassword: (values: IForgotPasswordFormValues): Promise<IResultType> =>
         requests.post("/user/ForgetPassword", values),
 
@@ -144,8 +141,8 @@ const User = {
     changePassword: (values: IChangePasswordFormValues): Promise<IResultType> =>
         requests.post("/user/ChangePassword", values),
 
-    resendCode: (values:IResendCodeFormValues): Promise<IResultType> =>
-        requests.post("/user/ResendCode",values),
+    resendCode: (values: IResendCodeFormValues): Promise<IResultType> =>
+        requests.post("/user/ResendCode", values),
 
     GetCaptchaImage: (): Promise<ICaptchaImage> =>
         requests.get("/User/CaptchaImage"),

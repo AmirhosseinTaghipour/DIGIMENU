@@ -225,26 +225,6 @@ export default class UserStore {
         })
     };
 
-
-
-    @action createNewRefreshToken = async () => {
-
-        try {
-            this.loadingRefreshToken = true;
-            const res = await agent.User.createRefreshToken();
-            runInAction(() => {
-                this.rootStore.commonStore.setRefToken(res);
-                this.loadingRefreshToken = false;
-            })
-        } catch (error) {
-            runInAction(() => {
-                this.loadingRefreshToken = false;
-                throw error;
-            })
-        }
-    };
-
-
     @computed get UserRolesList() {
         return Array.from(this.userRolesComboRegistery.values());
     }

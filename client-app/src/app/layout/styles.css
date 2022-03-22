@@ -507,39 +507,6 @@ input::-ms-input-placeholder {
     justify-content: center;
 }
 
-.sidebarMenu.ant-menu-dark {
-    color: #bbbbbb !important;
-}
-
-    .sidebarMenu.ant-menu-dark .ant-menu-item {
-        color: #bbbbbb !important;
-    }
-
-.sidebarMenu .ant-menu-submenu-title {
-    font-size: 0.71rem;
-    font-weight: bold;
-    height: 1.5rem !important;
-    line-height: 1.5rem !important;
-}
-
-.sidebarMenu .ant-menu-item {
-    font-size: 0.71rem;
-    font-weight: bold;
-    height: 1.5rem !important;
-    line-height: 1.5rem !important;
-}
-
-sidebarMenu .ant-menu-submenu-popup li {
-    font-size: 0.71rem;
-    font-weight: bold;
-    height: 1.5rem !important;
-    line-height: 1.5rem !important;
-}
-
-.sidebarMenu .ant-menu-item-selected {
-    background-color: rgba(255, 255, 255, 0.2) !important;
-}
-
 .ant-modal-content {
     border-radius: 0.3rem;
     overflow: hidden;

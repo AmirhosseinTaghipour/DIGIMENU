@@ -16,7 +16,7 @@ const Dashboard: React.FC = () => {
 
   return (
     <Layout dir="rtl">
-      <Sider trigger={null} collapsible collapsed={toggle} width="290px">
+      <Sider trigger={null} collapsible collapsed={toggle} className="bsSider" width={220}>
         <MainSidebar toggle={toggle} />
       </Sider>
       <Layout>
@@ -26,22 +26,6 @@ const Dashboard: React.FC = () => {
         </Content>
       </Layout>
     </Layout>
-
-    // <Segment basic attached style={{ margin: "0", padding: "0" }}>
-    //   <MainHeader onToggleSidebar={onToggleSidebar} />
-    //   {/* <div className="ui attached pushable" style={{ height: "100vh" }}> */}
-    //   <Sidebar.Pushable as={Segment} style={{ height: "calc(100vh - 54px)", marginTop:'0' }}>
-    //     <Sidebar visible={toggle} direction="right" animation="push" style={{backgroundColor:'#1b1c1d'}}>
-    //       <MainSidebar />
-    //     </Sidebar>
-
-    //     <Sidebar.Pusher
-    //       style={{direction:'rtl' , width: `${toggle ? "calc(100% - 260px)" : "100%"}` , right:`${toggle ? "-260px" : "0"}`}}
-    //     >
-    //       <MainContent />
-    //     </Sidebar.Pusher>
-    //   </Sidebar.Pushable>
-    // </Segment>
   );
 };
 export default Dashboard;

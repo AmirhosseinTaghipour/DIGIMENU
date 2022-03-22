@@ -7,6 +7,7 @@ using BS.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,8 +38,10 @@ namespace BS.Application.Features.Users.Commands
             private readonly IRefreshJwtToken _refreshJwtToken;
             private readonly IJwtGenerator _jwtGenerator;
             private readonly IPersianDate _persianDate;
+            private readonly ISMSService _smsService;
+            private readonly IConfiguration _configuration;
 
-            public LoginHandler(IUnitOfWork unitOfWork, IPasswordHelper passwordHelper, ICaptcha captcha, IRefreshJwtToken refreshJwtToken, IJwtGenerator jwtGenerator, IHttpContextAccessor httpContextAccessor, IPersianDate persianDate)
+            public LoginHandler(IUnitOfWork unitOfWork, IPasswordHelper passwordHelper, ICaptcha captcha, IRefreshJwtToken refreshJwtToken, IJwtGenerator jwtGenerator, IHttpContextAccessor httpContextAccessor, IPersianDate persianDate, IConfiguration configuration, ISMSService smsService)
             {
                 _unitOfWork = unitOfWork;
                 _passwordHelper = passwordHelper;
@@ -47,6 +50,8 @@ namespace BS.Application.Features.Users.Commands
                 _captcha = captcha;
                 _httpContextAccessor = httpContextAccessor;
                 _persianDate = persianDate;
+                _configuration = configuration;
+                _smsService = smsService;
 
             }
             public async Task<RefreshTokenDTO> Handle(LoginCommand request, CancellationToken cancellationToken)
@@ -60,11 +65,47 @@ namespace BS.Application.Features.Users.Commands
                     throw new RestException(HttpStatusCode.NotFound, "کاربری با این نام کاربری وجود ندارد.");
 
                 var user = await _unitOfWork.userRepositoryAsync.GetFirstAsync(n => n.Username == request.UserName.ToLower().Trim() && n.IsDeleted == false);
-
-                if (!user.IsActived)
-                    throw new RestException(HttpStatusCode.Locked, "حساب شما فعال نشده است.");
                 var clientIp = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
                 var previewsMinutes = DateTime.Now.AddMinutes(-30);
+
+                if (!user.IsActived)
+                {
+                    var smsCount = await _unitOfWork.smsLogRepositoryAsync.LastSendedSMSCount(user.Id, previewsMinutes);
+                    var allowedSMSCount = int.Parse(_configuration["ProjectConfig:allowedSMSCountPer30Min"].ToString());
+
+                    if (smsCount >= allowedSMSCount)
+                        throw new RestException(HttpStatusCode.BadRequest, "در 30 دقیقه اخیر، 3 پیامک برای شما ارسال شده است. 30 دقیقه بعد مجددا اقدام نمائید.");
+
+                    var code = _smsService.GenerateConfirmCode(5);
+                    int expireDuration = int.Parse(_configuration["ProjectConfig:ExpireDuration"].ToString());
+                    user.ActivationCode = code;
+                    user.CodeExpiredTime = DateTime.Now.AddMinutes(expireDuration);
+                    user.UpdateDate = DateTime.Now;
+                    user.UpdateUser = user.Username;
+                    _unitOfWork.userRepositoryAsync.Update(user);
+                    var success = await _unitOfWork.SaveAsync() > 0;
+                    if (success)
+                    {
+                        StringBuilder message = new StringBuilder();
+                        message.AppendLine($"کد فعال سازی : {code}");
+                        message.AppendLine("دیجی منو");
+
+                        var smsRequest = new SMSRequest()
+                        {
+                            To = user.Mobile,
+                            Body = message.ToString().TrimEnd(),
+                            Type = "register",
+                            UserId = user.Id.ToString(),
+                            UserName = user.Username,
+                            KeyParam = code
+                        };
+                        await _smsService.SendSMSAsync(smsRequest);
+                        throw new RestException(HttpStatusCode.PreconditionRequired, "حساب شما فعال نشده است، کد فعالسازی برای شما پیامک شد.");
+                    }
+                    throw new RestException(HttpStatusCode.BadRequest, "خطا در ارسال پیامک فعالسازی");
+
+                }
+
                 var passwordSalt = user.PasswordSalt;
                 var password = request.Password.Trim();
                 var hashedPassword = _passwordHelper.GetEncryptedPassword(password, passwordSalt);

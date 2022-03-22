@@ -16,13 +16,15 @@ namespace BS.Infrastructure.Persistence.Repositories
 
         public async Task<int> LastSendedSMSCount(Guid userId, DateTime from)
         {
-            return await Query()
-                 .Where(n => n.UserId == userId
-                 && n.Response == 1
-                 && DateTime.Compare(n.InsertDate, from) > 0)
-                 .OrderByDescending(n => n.InsertDate)
-                 .AsNoTracking()
-                 .CountAsync();
+            var res = 0;
+            res = await Query()
+                .Where(n => n.UserId == userId
+                && n.Response == 1
+                && DateTime.Compare(n.InsertDate, from) > 0)
+                .OrderByDescending(n => n.InsertDate)
+                .AsNoTracking()
+                .CountAsync();
+            return res;
         }
     }
 }

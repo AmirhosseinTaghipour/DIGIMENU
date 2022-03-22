@@ -50,6 +50,12 @@ namespace BS.Application.Features.Users.Commands
                 var user = await _unitOfWork.userRepositoryAsync.GetFirstAsync(n => n.Username == request.UserName.ToLower().Trim() && n.Mobile == request.Mobile.Trim() && n.IsDeleted == false);
                 if (user == null)
                     throw new RestException(HttpStatusCode.NotFound, "خطا، اطلاعات تطابق ندارد");
+               
+                var previewsMinutes = DateTime.Now.AddMinutes(-30);
+                var allowedSMSCount= int.Parse(_configuration["ProjectConfig:allowedSMSCountPer30Min"].ToString());
+                var smsCount = await _unitOfWork.smsLogRepositoryAsync.LastSendedSMSCount(user.Id, previewsMinutes);
+                if (smsCount >= allowedSMSCount)
+                    throw new RestException(HttpStatusCode.BadRequest, "در 30 دقیقه اخیر، 3 پیامک برای شما ارسال شده است. 30 دقیقه بعد مجددا اقدام نمائید.");
 
                 var code = _smsService.GenerateConfirmCode(5);
                 int expireDuration = int.Parse(_configuration["ProjectConfig:ExpireDuration"].ToString());

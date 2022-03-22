@@ -58,7 +58,9 @@ namespace BS.Application.Features.Users.Commands
                 var previewsMinutes = DateTime.Now.AddMinutes(-30);
 
                 var smsCount = await _unitOfWork.smsLogRepositoryAsync.LastSendedSMSCount(user.Id, previewsMinutes);
-                if (smsCount > 3)
+                var allowedSMSCount = int.Parse(_configuration["ProjectConfig:allowedSMSCountPer30Min"].ToString());
+
+                if (smsCount >= allowedSMSCount)
                     throw new RestException(HttpStatusCode.BadRequest, "در 30 دقیقه اخیر، 3 پیامک برای شما ارسال شده است. 30 دقیقه بعد مجددا اقدام نمائید.");
 
 

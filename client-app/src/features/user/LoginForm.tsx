@@ -9,6 +9,8 @@ import Avatar from "antd/lib/avatar/avatar";
 import { Redirect } from "react-router-dom";
 import Captcha from "../../features/common/Captcha/Captcha";
 import { checkJustNumber } from "../../app/common/util/util";
+import ConfirmCodeForm from "./InsertConfirmCode";
+
 
 
 const LoginForm = () => {
@@ -16,13 +18,18 @@ const LoginForm = () => {
     const { login, submitting, getCaptchaImage } = rootStore.userStore;
     const [form] = Form.useForm();
 
-    const [activeForm, setactiveForm] = useState<string>("login");
+    const [activeForm, setActiveForm] = useState<string>("login");
 
 
     const onFinish = async (values: ILoginFormValues) => {
-        await login(values).catch(() => {
+        await login(values).catch((err: any) => {
             getCaptchaImage();
             form.resetFields(["captchaText"]);
+            //send to confirm code when the caccount is not active.
+            if (err?.response?.data?.Code === 428) {
+                setActiveForm("confirmCode");
+            }
+
         })
     }
 
@@ -31,6 +38,8 @@ const LoginForm = () => {
             return <Redirect to="/forgotpassword" />;
         case "register":
             return <Redirect to="/register" />;
+        case "confirmCode":
+            return (<ConfirmCodeForm userName={form.getFieldValue("userName")} mobile={form.getFieldValue("mobile")} />);
         default: break;
     }
 
@@ -141,7 +150,7 @@ const LoginForm = () => {
                             <Button
                                 type="link"
                                 onClick={() => {
-                                    setactiveForm("register");
+                                    setActiveForm("register");
                                 }}
                                 className="bsLink"
                             >
@@ -150,7 +159,7 @@ const LoginForm = () => {
                             <Button
                                 type="link"
                                 onClick={() => {
-                                    setactiveForm("forgotpassword");
+                                    setActiveForm("forgotpassword");
                                 }}
                                 className="bsLink"
                             >

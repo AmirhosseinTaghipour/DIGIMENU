@@ -36,7 +36,6 @@ axios.interceptors.response.use(
         return response;
     },
     async (resError) => {
-        debugger;
         const originalConfig = resError.config;
         const reftoken = GetCookie("bsrefToken");
         if (resError.message === "Network Error" && !resError.response) {

@@ -47,7 +47,7 @@ export default class UserStore {
             });
         } catch (err: any) {
             runInAction(() => {
-                this.submitting = false;
+                this.resendingCode = false;
                 openNotification(
                     "error",
                     "خطا",

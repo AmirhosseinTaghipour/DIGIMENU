@@ -20,7 +20,7 @@ namespace BS.Infrastructure.Persistence
             services.AddDbContext<Storage>(options =>
             options.UseSqlServer(
                configuration.GetConnectionString("DefaultConnection"),
-               b => b.MigrationsAssembly(typeof(Storage).Assembly.FullName)));
+               b => b.MigrationsAssembly(typeof(Storage).Assembly.FullName)).EnableSensitiveDataLogging());
             #endregion
 
             #region  Injection Services

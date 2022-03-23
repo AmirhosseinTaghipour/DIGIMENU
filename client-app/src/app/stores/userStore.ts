@@ -1,10 +1,9 @@
 ﻿import { observable, computed, action, runInAction, makeAutoObservable } from "mobx";
-import { ICaptchaImage, IChangePasswordFormValues, ICheckNationalCode, IConfirmCodeFormValues, IForgotPasswordFormValues, ILoginFormValues, IRegisterFormValues, IResendCodeFormValues, IUser, IUserFormValues } from "../models/user";
+import { ICaptchaImage, IChangePasswordFormValues, IConfirmCodeFormValues, IForgotPasswordFormValues, ILoginFormValues, IRegisterFormValues, IResendCodeFormValues, IUser, IUserFormValues } from "../models/user";
 import agent from "../api/agent";
 import { RootStore } from "./rootStore";
 import { IComboBoxType } from "../models/common";
 import { openNotification } from "../common/util/util";
-import { BsTextIndentRight } from "react-icons/bs";
 
 export default class UserStore {
     rootStore: RootStore;
@@ -14,15 +13,14 @@ export default class UserStore {
     }
 
     @observable user: IUser | null = null;
-    @observable submitting = false;
     @observable userRolesComboRegistery = new Map();
     @observable captchaImage: ICaptchaImage | null = null;
     @observable loadingCaptchaImage = false;
     @observable loadingRefreshToken = false;
     @observable resendingCode = false;
+    @observable submitting = false;
     @observable isChangePasswordMode: boolean = false
     @observable resetCounter: number = 0;
-
 
     @action setResetCounter = () => {
         this.resetCounter += 1;
@@ -32,7 +30,7 @@ export default class UserStore {
         this.isChangePasswordMode = true;
     }
 
-    @action resendCode = async (values:IResendCodeFormValues) => { 
+    @action resendCode = async (values: IResendCodeFormValues) => {
         try {
             this.resendingCode = true;
             values.token = this.captchaImage && this.captchaImage!.token;

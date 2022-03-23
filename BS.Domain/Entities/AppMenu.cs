@@ -14,6 +14,7 @@ namespace BS.Domain.Entities
         public string MenuTitle { get; set; }
         [MaxLength(100)]
         public string MenuCode { get; set; }
+        public int MenuOrder { get; set; }
         [Required]
         public bool IsActived { get; set; }
         public bool IsDeleted { get; set; }

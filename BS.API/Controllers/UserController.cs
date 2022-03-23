@@ -90,11 +90,6 @@ namespace BS.API.Controllers
             return await Mediator.Send(new CurrentUser.CurrentUserQuery());
         }
 
-        [HttpGet("GetAppMenu")]
-        public async Task<ActionResult<List<AppMenuDTO>>> GetAppMenu()
-        {
-            return await Mediator.Send(new UserAppMenu.UserAppMenuQuery());
-        }
 
         [AllowAnonymous]
         [HttpPost("ResendCode")]

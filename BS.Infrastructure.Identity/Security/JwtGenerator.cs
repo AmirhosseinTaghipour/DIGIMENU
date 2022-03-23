@@ -31,6 +31,8 @@ namespace BS.Infrastructure.Identity.Security
             {
                 new Claim("Id", currentUserID.ToString()),
                 new Claim(ClaimTypes.Role, roleCode),
+                new Claim("UserName", currentUserName),
+                new Claim("RoleId", currentRoleId.ToString()),
             };
 
             // generate signing credentials
@@ -40,7 +42,7 @@ namespace BS.Infrastructure.Identity.Security
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = expiers ?? DateTime.Now.AddMinutes(1),
+                Expires = expiers ?? DateTime.Now.AddMinutes(2),
                 SigningCredentials = creds,
                 EncryptingCredentials = encryptingCreds,
             };

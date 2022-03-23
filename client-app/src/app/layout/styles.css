@@ -111,6 +111,11 @@ body {
     line-height: 1;
 }
 
+.bsLayout {
+    min-height: 500px !important;
+    height: 100vh !important;
+}
+
 ol,
 ul {
     list-style: none;
@@ -121,13 +126,13 @@ q {
     quotes: none;
 }
 
-    blockquote:before,
-    blockquote:after,
-    q:before,
-    q:after {
-        content: "";
-        content: none;
-    }
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+    content: "";
+    content: none;
+}
 
 table {
     border-collapse: collapse;
@@ -183,7 +188,7 @@ html {
 } */
 
 .ui.inverted.top.fixed.menu {
-    background-image: linear-gradient( 135deg, rgb(32, 167, 172) 0%, rgb(33, 138, 174) 69%, rgb(24, 42, 115) 89% ) !important;
+    background-image: linear-gradient(135deg, rgb(32, 167, 172) 0%, rgb(33, 138, 174) 69%, rgb(24, 42, 115) 89%) !important;
 }
 
 .ui .input input {
@@ -213,20 +218,20 @@ div img {
     height: 100vh;
 }
 
-    .masthead .ui.menu .ui.button,
-    .ui.menu a.ui.inverted.button {
-        margin-left: 0.5rem;
-    }
+.masthead .ui.menu .ui.button,
+.ui.menu a.ui.inverted.button {
+    margin-left: 0.5rem;
+}
 
-    .masthead h1.ui.header {
-        font-size: 4rem;
-        font-weight: normal;
-    }
+.masthead h1.ui.header {
+    font-size: 4rem;
+    font-weight: normal;
+}
 
-    .masthead h2 {
-        font-size: 1.7rem;
-        font-weight: normal;
-    }
+.masthead h2 {
+    font-size: 1.7rem;
+    font-weight: normal;
+}
 
 .img-profile {
     width: 10rem !important;
@@ -236,14 +241,14 @@ div img {
     position: relative;
 }
 
-    .img-profile img {
-        height: 100% !important;
-        width: auto !important;
-        position: relative;
-        /* right: -50%; */
-        max-width: unset !important;
-        max-height: 100% !important;
-    }
+.img-profile img {
+    height: 100% !important;
+    width: auto !important;
+    position: relative;
+    /* right: -50%; */
+    max-width: unset !important;
+    max-height: 100% !important;
+}
 
 /*end home page styles*/
 
@@ -251,9 +256,9 @@ div img {
     text-align: justify;
 }
 
-    .postContent img {
-        height: unset !important;
-    }
+.postContent img {
+    height: unset !important;
+}
 
 .homePageFirstBox {
     background-color: #efefef !important;
@@ -278,9 +283,9 @@ input::-ms-input-placeholder {
     margin-bottom: 0 !important;
 }
 
-    .ant-tabs-nav::before {
-        display: none;
-    }
+.ant-tabs-nav::before {
+    display: none;
+}
 
 .ant-tabs-tab-btn {
     font-size: x-small;
@@ -316,11 +321,11 @@ input::-ms-input-placeholder {
     width: 100%;
 }
 
-    .ant-form-item-label > label {
-        font-size: 0.75rem !important;
-        font-weight: bold;
-        color: rgba(0, 0, 0, 0.6) !important;
-    }
+.ant-form-item-label>label {
+    font-size: 0.75rem !important;
+    font-weight: bold;
+    color: rgba(0, 0, 0, 0.6) !important;
+}
 
 .ant-select-item {
     text-align: right;
@@ -330,9 +335,9 @@ input::-ms-input-placeholder {
     width: 100%;
 }
 
-    .DatePicker > input {
-        width: 100%;
-    }
+.DatePicker>input {
+    width: 100%;
+}
 
 /* .DatePicker__calendarContainer * {
   padding: 0;
@@ -374,10 +379,7 @@ input::-ms-input-placeholder {
   }
 } */
 
-.ant-table.ant-table-small
-.ant-table-tbody
-.ant-table-wrapper:only-child
-.ant-table {
+.ant-table.ant-table-small .ant-table-tbody .ant-table-wrapper:only-child .ant-table {
     margin: -8px 25px -8px -8px;
 }
 
@@ -420,7 +422,7 @@ input::-ms-input-placeholder {
 }
 
 .isSelected .ant-table-cell {
-    background-color: rgba(255, 190, 118,.15) !important;
+    background-color: rgba(255, 190, 118, .15) !important;
 }
 
 .ant-table-thead .ant-table-cell-scrollbar {
@@ -604,7 +606,7 @@ input::-ms-input-placeholder {
     background-color: rgba(0, 175, 255, 0.063);
 }
 
-.DatePicker > input {
+.DatePicker>input {
     width: 100%;
     font-size: 0.8rem;
     font-weight: 500;
@@ -691,12 +693,12 @@ input::-ms-input-placeholder {
     height: 29.7cm;
 }
 
-    .A4 .portrait {
-        display: flex;
-        flex-direction: column;
-        width: 29.7cm;
-        height: 21cm;
-    }
+.A4 .portrait {
+    display: flex;
+    flex-direction: column;
+    width: 29.7cm;
+    height: 21cm;
+}
 
 .A3 {
     display: flex;
@@ -719,12 +721,12 @@ div .page .A3 .portrait {
     height: 21cm;
 }
 
-    .A5.portrait {
-        display: flex;
-        flex-direction: column;
-        width: 21cm;
-        height: 14.8cm;
-    }
+.A5.portrait {
+    display: flex;
+    flex-direction: column;
+    width: 21cm;
+    height: 14.8cm;
+}
 
 .unliminHeight {
     height: unset;
@@ -863,28 +865,28 @@ div .page .A3 .portrait {
     margin: 0;
 }
 
-    .customNav ul li {
-        border-bottom: none;
-        display: inline-block;
-        margin: 0 auto;
-    }
+.customNav ul li {
+    border-bottom: none;
+    display: inline-block;
+    margin: 0 auto;
+}
 
-        .customNav ul li a {
-            text-decoration: none;
-            color: #000000;
-            display: block;
-            transition: 0.3s background-color;
-            padding: 0 24px;
-            text-align: right;
-        }
+.customNav ul li a {
+    text-decoration: none;
+    color: #000000;
+    display: block;
+    transition: 0.3s background-color;
+    padding: 0 24px;
+    text-align: right;
+}
 
-            .customNav ul li a:hover {
-                color: #1890ff;
-            }
+.customNav ul li a:hover {
+    color: #1890ff;
+}
 
-        .customNav ul li:hover {
-            border-bottom: 2px solid #1890ff;
-        }
+.customNav ul li:hover {
+    border-bottom: 2px solid #1890ff;
+}
 
 .customNav a {
     border-bottom: none;
@@ -913,17 +915,20 @@ div .page .A3 .portrait {
     border: 1px solid #1890ff;
 }
 
-    .customNav ul li ul li {
-        display: block;
-        float: none !important; /* newly added */
-        height: auto; /* newly added */
-        line-height: 34px; /* newly added */
-    }
+.customNav ul li ul li {
+    display: block;
+    float: none !important;
+    /* newly added */
+    height: auto;
+    /* newly added */
+    line-height: 34px;
+    /* newly added */
+}
 
-        .customNav ul li ul li:hover {
-            color: #1890ff;
-            border-bottom: none;
-        }
+.customNav ul li ul li:hover {
+    color: #1890ff;
+    border-bottom: none;
+}
 
 .Toastify__toast {
     z-index: 9999;
@@ -991,9 +996,9 @@ div .page .A3 .portrait {
     width: 100%;
 }
 
-    .full-width-dropdown button:first-child {
-        width: 100% !important;
-    }
+.full-width-dropdown button:first-child {
+    width: 100% !important;
+}
 
 .timer-wrapper {
     display: flex;

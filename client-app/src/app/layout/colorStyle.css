@@ -100,6 +100,8 @@
     background-color: #ffffff;
     box-shadow: 0 5px 5px -7px rgba(0, 0, 0, 0.9);
     height: 50px;
+    min-height: 50px;
+    min-height: 50px;
     display: flex;
     justify-content: space-between;
     padding-left: 20px;
@@ -118,36 +120,50 @@
 }
 
 /*sider*/
-.bsSider{
+.bsSider {
     background-color: #230156 !important;
 }
-.ant-layout-sider-collapsed{
+
+.ant-layout-sider-collapsed {
     min-width: 60px !important;
     flex: 0 0 60px !important;
 }
+
 .bsSiderHeader {
     overflow: hidden;
     line-height: 3.12rem;
     height: 3.12rem;
-    background-color: rgba(255,255,255,0.05);
+    background-color: rgba(255, 255, 255, 0.05);
     color: #ffffff;
     display: flex;
     align-items: center;
     justify-content: start;
     white-space: nowrap;
-} 
+}
 
-.sidebarMenu{
+.sidebarMenu {
     background-color: inherit !important;
 }
-.sidebarMenu li{
+
+.sidebarMenu li {
     color: #c9c9c9 !important;
-    text-overflow:ellipsis !important;
+    text-overflow: ellipsis !important;
     padding-right: 15px !important;
 }
-.sidebarMenu .ant-menu-item-icon{
+
+.sidebarMenu .ant-menu-item-icon {
     font-size: 24px !important;
 }
-.sidebarMenu .ant-menu-title-content{
+
+.sidebarMenu .ant-menu-title-content {
     font-size: 14px !important;
+}
+
+.bsContent {
+    margin: 10px;
+    overflow: hidden auto;
+    background-color: #ffffff;
+    border-radius: 5px;
+    border-top: 2px solid #fcbf62;
+    padding: 15px;
 }

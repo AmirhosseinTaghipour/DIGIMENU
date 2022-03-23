@@ -15,13 +15,13 @@ const Dashboard: React.FC = () => {
 
 
   return (
-    <Layout dir="rtl">
+    <Layout dir="rtl" className="bsLayout">
       <Sider trigger={null} collapsible collapsed={toggle} className="bsSider" width={220}>
         <MainSidebar toggle={toggle} />
       </Sider>
       <Layout>
         <MainHeader toggle={toggle} onToggleSidebar={onToggleSidebar} />
-        <Content>
+        <Content className="bsContent">
           <MainContent />
         </Content>
       </Layout>

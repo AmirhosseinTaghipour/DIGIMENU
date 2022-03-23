@@ -1,5 +1,5 @@
 ﻿using BS.Application.Common;
-using BS.Application.Features.Users.DTOs;
+using BS.Application.Features.Main.DTOs;
 using BS.Application.Interfaces;
 using BS.Application.Interfaces.Repositories;
 using MediatR;
@@ -12,28 +12,28 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace BS.Application.Features.Users.Queries
+namespace BS.Application.Features.Main.Queries
 {
-    public class UserAppMenu
+    public class AppMenu
     {
-        public class UserAppMenuQuery : IRequest<List<AppMenuDTO>>
+        public class AppMenuQuery : IRequest<List<AppMenuDTO>>
         {
         }
 
-        public class UserAppMenuHandler : IRequestHandler<UserAppMenuQuery, List<AppMenuDTO>>
+        public class AppMenuHandler : IRequestHandler<AppMenuQuery, List<AppMenuDTO>>
         {
             private readonly IUnitOfWork _unitOfWork;
             private readonly IUserAccessor _userAccessor;
             private readonly IDataHelper _dataHelper;
 
-            public UserAppMenuHandler(IUnitOfWork unitOfWork, IUserAccessor userAccessor, IDataHelper dataHelper)
+            public AppMenuHandler(IUnitOfWork unitOfWork, IUserAccessor userAccessor, IDataHelper dataHelper)
             {
                 _unitOfWork = unitOfWork;
                 _userAccessor = userAccessor;
                 _dataHelper = dataHelper;
             }
 
-            public async Task<List<AppMenuDTO>> Handle(UserAppMenuQuery request, CancellationToken cancellationToken)
+            public async Task<List<AppMenuDTO>> Handle(AppMenuQuery request, CancellationToken cancellationToken)
             {
                 var roleId = _userAccessor.GetCurrentRoleId();
                 if (_dataHelper.isSQL_Injection(roleId.ToString()))
@@ -41,9 +41,10 @@ namespace BS.Application.Features.Users.Queries
                 try
                 {
                     var AppMenues = await _unitOfWork.appMenuRepositoryAsync.Query()
-                                          .Where(a=> a.IsActived == true && a.IsDeleted == false)
-                                          .Include(a => a.Roles.Where(r=> r.Id.Equals(roleId)))
-                                          .Select(a => new AppMenuDTO { MenuCode = a.MenuCode, MenuTitle = a.MenuTitle })
+                                          .Where(a => a.IsActived == true && a.IsDeleted == false)
+                                          .Include(a => a.Roles.Where(r => r.Id.Equals(roleId)))
+                                          .OrderBy(a => a.MenuOrder)
+                                          .Select(a => new AppMenuDTO { MenuId = a.Id.ToString(), MenuCode = a.MenuCode, MenuTitle = a.MenuTitle })
                                           .AsNoTracking()
                                           .ToListAsync();
                     return AppMenues;

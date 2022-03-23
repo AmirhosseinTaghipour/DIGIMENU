@@ -1,14 +1,11 @@
 import axios, { AxiosResponse } from "axios";
-/*import { toast } from "react-toastify";*/
 import { openNotification, jsonToFormData } from "../common/util/util";
-import { ICaptchaImage, IChangePasswordFormValues, ICheckNationalCode, IConfirmCodeFormValues, IForgotPasswordFormValues, ILoginFormValues, IRegisterFormValues, IResendCodeFormValues, IUser, IUserFormValues } from "../models/user";
-
-import { IMainMenu } from "../models/main";
-
+import { ICaptchaImage, IChangePasswordFormValues, IConfirmCodeFormValues, IForgotPasswordFormValues, ILoginFormValues, IRegisterFormValues, IResendCodeFormValues, IUser, IUserFormValues } from "../models/user";
 import { IComboBoxType, IRefTokenValues, IResultType } from "../models/common";
 
 import { AddCookie, GetCookie, RemoveCookie } from "../common/util/util";
 import { values } from "mobx";
+import { IAppMenu } from "../models/main";
 
 axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 
@@ -19,7 +16,6 @@ axios.interceptors.request.use(
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
             config.headers["Access-Control-Allow-Origin"] = "*";
-            /*     config.headers[ "Origin" ] = window.origin;*/
             config.headers["Access-Control-Allow-Credentials"] = true;
         }
 
@@ -47,7 +43,7 @@ axios.interceptors.response.use(
             );
         }
         else {
-            if (String(originalConfig.url).includes("user/RefreshToken") && resError.response.status === 401 ) {
+            if (String(originalConfig.url).includes("user/RefreshToken") && resError.response.status === 401) {
                 RemoveCookie("bstoken");
                 RemoveCookie("bsreftoken");
                 window.location.replace("/");
@@ -66,12 +62,11 @@ axios.interceptors.response.use(
                             RemoveCookie("bsreftoken");
                             window.location.replace("/");
                         }
-
                         AddCookie("bstoken", accessToken.token);
                         AddCookie("bsreftoken", accessToken.refreshToken);
-
                         originalConfig.headers.Authorization = `Bearer ${accessToken.token}`;
                         return axios(originalConfig);
+
                     } catch (_error) {
                         RemoveCookie("bstoken");
                         RemoveCookie("bsreftoken");
@@ -91,10 +86,8 @@ axios.interceptors.response.use(
                         "bottomLeft"
                     );
                 }
-
             }
         }
-
         return Promise.reject(resError);
     }
 );
@@ -145,12 +138,11 @@ const User = {
         requests.post("/user/ResendCode", values),
 
     GetCaptchaImage: (): Promise<ICaptchaImage> =>
-        requests.get("/User/CaptchaImage"),
-
+        requests.get("/user/CaptchaImage"),
 };
 
 const Main = {
-    getMainMenu: (): Promise<IMainMenu[]> => requests.get("/main/menu"),
+    getAppMenu: (): Promise<IAppMenu[]> => requests.get("/main/GetAppMenu"),
 };
 
 

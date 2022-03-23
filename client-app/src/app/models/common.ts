@@ -34,17 +34,8 @@ export interface IRefTokenValues {
     refreshToken: string;
 }
 
-export interface IFieldsMetaData {
-    id: string | null;
-    fieldName: string | null;
-    displayName: string | null;
-    placeholder: string | null;
-    fieldType: string | null;
-    editableStatus: number | null;
-    visibleStatus: number | null;
-    arrengment: number | null;
-    requierdStatus: number | null;
-    requierdMessage: string | null;
+export interface IDictionary<T> {
+    [Key: string]: T;
 }
 
 

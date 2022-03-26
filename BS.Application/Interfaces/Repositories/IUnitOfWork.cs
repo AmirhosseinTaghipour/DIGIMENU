@@ -17,6 +17,7 @@ namespace BS.Application.Interfaces.Repositories
         public ISMSLogRepositoryAsync smsLogRepositoryAsync { get; }
         public IFileRepositoryAsync fileRepositoryAsync { get; }
         public IAppMenuRepositoryAsync appMenuRepositoryAsync { get; }
+        public IPaymentRepositoryAsync paymentRepositoryAsync { get; }
         Task<int> SaveAsync();
     }
 }

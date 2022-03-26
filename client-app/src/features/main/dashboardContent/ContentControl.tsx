@@ -18,15 +18,15 @@ const ContentControl: React.FC<IProps> = ({ menuCode }) => {
     if (!!menuCode) {
         switch (menuCode) {
             case "unit-info":
-                return <Suspense fallback={<LoadingComponent />}> <UnitInformation /></Suspense>;
+                return <Suspense fallback={<LoadingComponent content="در حال بارگذاری ..." />}> <UnitInformation /></Suspense>;
             case "create-item":
-                return <Suspense fallback={<LoadingComponent />}> <CategoryItem /></Suspense>;
+                return <Suspense fallback={<LoadingComponent content="در حال بارگذاری ..." />}> <CategoryItem /></Suspense>;
             case "create-category":
-                return <Suspense fallback={<LoadingComponent />}> <MenuCategory /></Suspense>;
+                return <Suspense fallback={<LoadingComponent content="در حال بارگذاری ..." />}> <MenuCategory /></Suspense>;
             case "payment":
-                return <Suspense fallback={<LoadingComponent />}> <Payment /></Suspense>;
+                return <Suspense fallback={<LoadingComponent content="در حال بارگذاری ..." />}> <Payment /></Suspense>;
             case "create-menu":
-                return <Suspense fallback={<LoadingComponent />}> <UnitMenu /></Suspense>;
+                return <Suspense fallback={<LoadingComponent content="در حال بارگذاری ..." />}> <UnitMenu /></Suspense>;
             default:
                 return null;
         }

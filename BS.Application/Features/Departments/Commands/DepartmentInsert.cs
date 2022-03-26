@@ -26,6 +26,7 @@ namespace BS.Application.Features.Departments.Commands
             public decimal? Xpos { get; set; }
             public decimal? Ypos { get; set; }
             public IFormFile Image { get; set; }
+            public IFormFile Logo { get; set; }
         }
 
         public class DepartmentInsertHandler : IRequestHandler<DepartmentInsertCommand, ResultDTO<string>>

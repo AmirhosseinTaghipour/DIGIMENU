@@ -4,14 +4,16 @@ using BS.Infrastructure.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BS.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(Storage))]
-    partial class StorageModelSnapshot : ModelSnapshot
+    [Migration("20220324114451_add-payment")]
+    partial class addpayment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -309,60 +311,6 @@ namespace BS.Infrastructure.Persistence.Migrations
                     b.HasIndex("DepartmentId");
 
                     b.ToTable("Menus");
-                });
-
-            modelBuilder.Entity("BS.Domain.Entities.Payment", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Amount")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("EntityId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("EntityName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<DateTime>("InsertDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("InsertUser")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("PDate")
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
-
-                    b.Property<string>("PTime")
-                        .HasMaxLength(8)
-                        .HasColumnType("nvarchar(8)");
-
-                    b.Property<int>("PaymentStatus")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RefId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RefNo")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("UpdateDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdateUser")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Payments");
                 });
 
             modelBuilder.Entity("BS.Domain.Entities.RefCode", b =>

@@ -18,7 +18,7 @@ interface IProps {
 }
 
 
-const CustomUploadBlob : React.FC<IProps> = ( { name, relatedFunction, relatedObject, propertyName, /*files,*/ validateField } ) => {
+const FileUploader : React.FC<IProps> = ( { name, relatedFunction, relatedObject, propertyName, /*files,*/ validateField } ) => {
     const map = new Map(Object.entries(relatedObject));
 
     const rootStore = useContext(RootStoreContext);
@@ -142,4 +142,4 @@ const CustomUploadBlob : React.FC<IProps> = ( { name, relatedFunction, relatedOb
 }
 
 
-export default observer(CustomUploadBlob);
+export default observer(FileUploader);

@@ -23,8 +23,9 @@ namespace BS.Infrastructure.Persistence.Contexts
         public DbSet<SMSLog> SMSLogs { get; set; }
         public DbSet<File> Files { get; set; }
         public DbSet<AppMenu> AppMenus { get; set; }
+        public DbSet<Payment> Payments { get; set; }
 
-
+        
         // On model creating function will provide us with the ability to manage the tables properties
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

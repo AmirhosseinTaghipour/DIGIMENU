@@ -1,3 +1,21 @@
+/*media query*/
+@media only screen and (max-width: 767px) {
+    .bsSider {
+        position: absolute !important;
+        z-index: 1000 !important;
+    }
+
+    .bsToggleOpen, .bsToggleClose {
+        display: inline !important;
+    }
+}
+
+@media only screen and (min-width: 768px) {
+    .bsToggleOpen, .bsToggleClose {
+        display: none !important;
+    }
+}
+
 /*row*/
 .bsRow {
     background-color: rgb(240, 242, 245);
@@ -103,12 +121,33 @@
     min-height: 50px;
     min-height: 50px;
     display: flex;
-    justify-content: space-between;
+    flex-direction: row-reverse !important;
     padding-left: 20px;
     align-items: center;
 }
 
-;
+.bsToggleClose {
+    color: rgba(0, 0, 0, 0.8);
+    cursor: pointer;
+    font-size: 1.5rem;
+    position: absolute;
+    top: 10px;
+    right: 205px;
+    z-index: 10;
+    transition: all 0.2s !important;
+}
+
+.bsToggleOpen {
+    color: rgba(0, 0, 0, 0.8);
+    cursor: pointer;
+    font-size: 1.5rem;
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    z-index: 10;
+    transition: all 0.2s !important;
+}
+
 
 /*space Button*/
 .spaceBtn {
@@ -122,11 +161,14 @@
 /*sider*/
 .bsSider {
     background-color: #230156 !important;
+    height: 100vh !important;
 }
 
 .ant-layout-sider-collapsed {
-    min-width: 60px !important;
-    flex: 0 0 60px !important;
+    min-width: 0px !important;
+    flex: 0 0 0px !important;
+    width: 0px !important;
+    overflow: hidden !important;
 }
 
 .bsSiderHeader {
@@ -236,6 +278,11 @@
 }
 
 /*Uploader*/
+.img-crop-modal .ant-modal-header, .img-crop-modal .ant-modal-footer {
+    background-color: #230156 !important;
+    color: #c9c9c9 !important;
+}
+
 .ant-upload, .ant-upload button {
     width: 100% !important;
 }
@@ -244,9 +291,15 @@
     width: 90% !important;
     top: 1.5rem;
 }
-.bsModal .ant-modal-body{
+
+.bsModal .ant-modal-body {
     padding: 0 !important;
     min-height: 200px !important;
     max-height: calc(100vh - 8rem) !important;
     overflow: hidden !important;
+}
+
+.bsModal .ant-modal-header, .bsModal .ant-modal-footer {
+    background-color: #230156 !important;
+    color: #c9c9c9 !important;
 }

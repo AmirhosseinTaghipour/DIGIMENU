@@ -7,6 +7,8 @@ import {
     CaretDownOutlined,
     UserOutlined,
     PoweroffOutlined,
+    MenuOutlined,
+    CloseOutlined,
 } from "@ant-design/icons";
 import { Row, Menu, Dropdown, Avatar, Select } from "antd";
 import { IComboBoxType } from "../../../app/models/common";
@@ -47,17 +49,18 @@ const Header: React.FC<IProps> = ({ onToggleSidebar, toggle }) => {
     );
     return (
         <Row className="bsHeader">
-            <DoubleRightOutlined
-                style={{
-                    color: toggle ? "rgba(0,0,0,0.8)" : "rgba(0,0,0,0.4)",
-                    cursor: "pointer",
-                    fontSize: "1.5rem",
-                    marginRight: "10px",
-                    zIndex: 10,
-                }}
-                rotate={toggle ? 180 : 0}
-                onClick={onToggleSidebar}
-            />
+            {toggle
+                ?
+                <MenuOutlined
+                className="bsToggleOpen"
+                    onClick={onToggleSidebar}
+                />
+                :
+                <CloseOutlined
+                className="bsToggleClose"
+                    onClick={onToggleSidebar}
+                />
+            }
 
             <Dropdown
                 overlay={dropdownMenu}
@@ -87,7 +90,7 @@ const Header: React.FC<IProps> = ({ onToggleSidebar, toggle }) => {
                         icon={<UserOutlined />}
                     />
                     {user?.userTitle}
-                    <CaretDownOutlined style={{ top: "3px", position: "relative", paddingRight:"5px" }} />
+                    <CaretDownOutlined style={{ top: "3px", position: "relative", paddingRight: "5px" }} />
                 </span>
             </Dropdown>
         </Row>

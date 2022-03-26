@@ -1,7 +1,8 @@
 import React, { Fragment, useContext, useEffect, useState } from "react"
 import { Input, Layout, Menu, Row, Form, Col, Modal, Button, Upload } from "antd";
+import ImgCrop from 'antd-img-crop';
 import { observer } from "mobx-react-lite"
-import { AppstoreOutlined, CloseOutlined, FormOutlined, LoadingOutlined, SaveTwoTone, UploadOutlined } from "@ant-design/icons";
+import { CloseOutlined, FormOutlined, LoadingOutlined, SaveTwoTone, UploadOutlined } from "@ant-design/icons";
 import { RootStoreContext } from "../../../../../app/stores/rootStore";
 import { IDepartmentFormValues } from "../../../../../app/models/department";
 import { checkJustNumber } from "../../../../../app/common/util/util";
@@ -192,15 +193,18 @@ const UnitInformation: React.FC = () => {
                                     name="image"
                                     initialValue={departmentInfo.image}
                                 >
-                                    <Upload
-                                        name="image"
-                                        accept={".png, .jpg, .jpeg, "}
-                                        multiple={false}
-                                        maxCount={1}
-                                        fileList={[]}
-                                    >
-                                        <Button icon={<UploadOutlined />}>انتخاب تصویر</Button>
-                                    </Upload>
+                                    <ImgCrop grid rotate modalTitle="انتخاب تصویر">
+                                        <Upload
+                                            name="image"
+                                            listType="picture-card"
+                                            accept={".png, .jpg, .jpeg, "}
+                                            multiple={false}
+                                            maxCount={1}
+                                            fileList={[]}
+                                        >
+                                            بارگذاری تصویر
+                                        </Upload>
+                                    </ImgCrop>
                                 </Form.Item>
                             </Col>
 
@@ -210,19 +214,20 @@ const UnitInformation: React.FC = () => {
                                     name="logo"
                                     initialValue={departmentInfo.logo}
                                     rules={[{
-                                        required: true, message: 'فیلد لوگو نمی تواند خالی باشد', 
+                                        required: true, message: 'فیلد لوگو نمی تواند خالی باشد',
                                     }]}
                                 >
-                                    <Upload
-                                        name="logo"
-                                        accept={".png, .jpg, .jpeg, "}
-                                        multiple={false}
-                                        maxCount={1}
-                                        fileList={[]}
-                                    >
-
-                                        <Button icon={<UploadOutlined />}>انتخاب تصویر</Button>
-                                    </Upload>
+                                    <ImgCrop grid rotate modalTitle="انتخاب لوگو">
+                                        <Upload
+                                            name="logo"
+                                            accept={".png, .jpg, .jpeg, "}
+                                            multiple={false}
+                                            maxCount={1}
+                                            fileList={[]}
+                                        >
+                                            <Button icon={<UploadOutlined />}>انتخاب تصویر</Button>
+                                        </Upload>
+                                    </ImgCrop>
                                 </Form.Item>
                             </Col>
                             <Col xs={24} sm={24} md={12} lg={8} xl={8} xxl={8}>

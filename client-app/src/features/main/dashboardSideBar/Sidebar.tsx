@@ -9,7 +9,7 @@ import { IAppMenu } from "../../../app/models/main";
 const { SubMenu } = Menu;
 
 interface IProps {
-    toggle: boolean;
+    onToggleClose: () => void;
 }
 const menuIconDictionay: IDictionary<React.RefAttributes<HTMLSpanElement>> = {}
 menuIconDictionay["unit-info"] = <ShopOutlined />;
@@ -18,7 +18,7 @@ menuIconDictionay["create-category"] = <SwitcherOutlined />;
 menuIconDictionay["create-item"] = <ProfileOutlined />;
 menuIconDictionay["payment"] = <DollarOutlined />;
 
-const Sidebar: React.FC<IProps> = ({ toggle }) => {
+const Sidebar: React.FC<IProps> = ({ onToggleClose }) => {
     const rootStore = useContext(RootStoreContext);
     const {
         loadAppMenu,
@@ -34,7 +34,10 @@ const Sidebar: React.FC<IProps> = ({ toggle }) => {
                 mode="inline"
                 className="sidebarMenu"
                 style={{ marginTop: "20px" }}
-                onClick={(event) => handleClick(event.key)}
+                onClick={(event) => {
+                    onToggleClose();
+                    handleClick(event.key);
+                }}
             //defaultOpenKeys={["5"]}
             >
                 {appMenuList.map((menu: IAppMenu) => {
@@ -65,6 +68,7 @@ const Sidebar: React.FC<IProps> = ({ toggle }) => {
         else
             setActiveMenuCode(null);
     };
+
     return (
         <Fragment>
             <Row className="bsSiderHeader">
@@ -72,7 +76,7 @@ const Sidebar: React.FC<IProps> = ({ toggle }) => {
                     style={{
                         width: "200px",
                         paddingRight: "10px",
-                        display: toggle ? "none" : "inline",
+                        display: "inline",
                         fontSize: "1.1rem",
                         fontWeight: "bold",
                         whiteSpace: "nowrap",

@@ -1,5 +1,5 @@
 import React, { Fragment, useContext, useEffect, useState } from "react"
-import { Input, Layout, Menu, Row, Form, Col, Modal, Button, Upload } from "antd";
+import { Input, Layout, Menu, Row, Form, Col, Modal, Button, Upload, message } from "antd";
 import ImgCrop from 'antd-img-crop';
 import { observer } from "mobx-react-lite"
 import { CloseOutlined, FormOutlined, LoadingOutlined, SaveTwoTone, UploadOutlined } from "@ant-design/icons";
@@ -8,6 +8,10 @@ import { IDepartmentFormValues } from "../../../../../app/models/department";
 import { checkJustNumber } from "../../../../../app/common/util/util";
 import { SiGooglemaps } from "react-icons/si";
 import LeafletMap from "../../../../common/Map/LeafletMap";
+import SkeletonImage from "antd/lib/skeleton/Image";
+import { UploadChangeParam } from "antd/lib/upload";
+import { ok } from "assert";
+import { UploadRequestOption } from "rc-upload/lib/interface";
 
 
 const { Content, Header } = Layout;
@@ -43,8 +47,32 @@ const UnitInformation: React.FC = () => {
         form.validateFields(['location']);
     }
 
+
+    const setImage = async (input: UploadChangeParam) => {
+        if (input.file.status != "removed")
+            departmentInfo.image = input.file.originFileObj as Blob;
+        else
+            departmentInfo.image = null
+        form.validateFields(['image']);
+    }
+
+    const setLogo = async (input: UploadChangeParam) => {
+        if (input.file.status != "removed")
+            departmentInfo.logo = input.file.originFileObj as Blob;
+        else
+            departmentInfo.logo = null
+        form.validateFields(['logo']);
+
+    }
     //سابمیت فرم 
     const onFinish = async (values: IDepartmentFormValues) => {
+        form.setFieldsValue({
+            ["xpos"]: departmentInfo.xpos,
+            ["ypos"]: departmentInfo.ypos,
+            ["image"]: departmentInfo.image,
+            ["logo"]: departmentInfo.logo,
+        });
+        await insertDepartment(values);
     };
 
     //اعتبار سنجی های مورد نیاز فرم
@@ -195,14 +223,22 @@ const UnitInformation: React.FC = () => {
                                 >
                                     <ImgCrop grid rotate modalTitle="انتخاب تصویر">
                                         <Upload
+                                            beforeUpload={(file) => {
+                                                const isAllowedFormat = ["image/png", "image/jpg", "image/jpeg"]
+                                                    .includes(file.type);
+                                                if (!isAllowedFormat) {
+                                                    message.error("تصویر باید دارای یکی از فرمت های png، jpg یا jpeg باشد.");
+                                                }
+                                                return isAllowedFormat;
+                                            }}
                                             name="image"
-                                            listType="picture-card"
                                             accept={".png, .jpg, .jpeg, "}
                                             multiple={false}
                                             maxCount={1}
-                                            fileList={[]}
+                                            customRequest={(e: any) => e.onSuccess("Ok")}
+                                            onChange={setImage}
                                         >
-                                            بارگذاری تصویر
+                                            <Button icon={<UploadOutlined />}>انتخاب تصویر</Button>
                                         </Upload>
                                     </ImgCrop>
                                 </Form.Item>
@@ -215,17 +251,31 @@ const UnitInformation: React.FC = () => {
                                     initialValue={departmentInfo.logo}
                                     rules={[{
                                         required: true, message: 'فیلد لوگو نمی تواند خالی باشد',
+                                        validator: async () => {
+                                            if (!departmentInfo.logo)
+                                                throw new Error("Something wrong!");
+                                        },
                                     }]}
                                 >
                                     <ImgCrop grid rotate modalTitle="انتخاب لوگو">
                                         <Upload
+                                            beforeUpload={(file) => {
+                                                const isAllowedFormat = ["image/png", "image/jpg", "image/jpeg"]
+                                                    .includes(file.type);
+                                                if (!isAllowedFormat) {
+                                                    message.error("تصویر باید دارای یکی از فرمت های png، jpg یا jpeg باشد.");
+                                                }
+                                                return isAllowedFormat;
+                                            }}
                                             name="logo"
-                                            accept={".png, .jpg, .jpeg, "}
+                                            accept={".png, .jpg, .jpeg"}
                                             multiple={false}
                                             maxCount={1}
-                                            fileList={[]}
+                                            customRequest={(e: any) => e.onSuccess("Ok")}
+                                            onChange={setLogo}
+
                                         >
-                                            <Button icon={<UploadOutlined />}>انتخاب تصویر</Button>
+                                            <Button icon={<UploadOutlined />}>انتخاب لوگو</Button>
                                         </Upload>
                                     </ImgCrop>
                                 </Form.Item>
@@ -233,7 +283,6 @@ const UnitInformation: React.FC = () => {
                             <Col xs={24} sm={24} md={12} lg={8} xl={8} xxl={8}>
                                 <Form.Item
                                     label="موقعیت مجموعه"
-                                    name="location"
                                     initialValue={departmentInfo.address}
                                     rules={[{
                                         required: true, message: 'موقعیت روی نقشه، انتخاب شنده است.',
@@ -253,6 +302,14 @@ const UnitInformation: React.FC = () => {
                                         <span>انتخاب از روی تقشه</span>
                                     </Button>
                                 </Form.Item>
+                                <Form.Item
+                                    name="xpos"
+                                    hidden 
+                                />
+                                 <Form.Item
+                                    name="ypos"
+                                    hidden 
+                                />
                             </Col>
                         </Row>
                     </Form>

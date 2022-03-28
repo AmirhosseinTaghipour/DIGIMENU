@@ -109,7 +109,7 @@ const requests = {
     postForm: (url: string, body: {}) => {
         let formData = jsonToFormData(body);
 
-        return axios.post(url, formData, {
+        return axios.post(url, body, {
             headers: { 'Content-type': 'multipart/form-data' }
         }).then(responseBody)
 

@@ -46,6 +46,7 @@ export default class DepartmentStore {
     };
 
     @action insertDepartment = async (values: IDepartmentFormValues) => {
+        debugger;
         try {
             this.insertingDepartment = true;
             const res = await agent.Department.insertDepartmentInfo(values);

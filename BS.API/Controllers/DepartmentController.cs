@@ -12,7 +12,7 @@ namespace BS.API.Controllers
     public class DepartmentController : BaseController
     {
         [HttpPost("DepartmentInsert")]
-        public async Task<ActionResult<ResultDTO<string>>> DepartmentInsert(DepartmentInsert.DepartmentInsertCommand command)
+        public async Task<ActionResult<ResultDTO<string>>> DepartmentInsert([FromForm]DepartmentInsert.DepartmentInsertCommand command)
         {
             return await Mediator.Send(command);
         }

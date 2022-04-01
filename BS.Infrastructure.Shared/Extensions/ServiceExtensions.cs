@@ -1,4 +1,5 @@
 ﻿using BS.Application.Interfaces;
+using BS.Infrastructure.Shared.Files;
 using BS.Infrastructure.Shared.Persian;
 using BS.Infrastructure.Shared.Services;
 using Microsoft.Extensions.Configuration;
@@ -20,6 +21,7 @@ namespace BS.Infrastructure.Shared
             services.AddScoped<ISMSService, SMSService>();
             services.AddScoped<IAdjustChar, AdjustChar>();
             services.AddScoped<IPersianDate, PersianDate>();
+            services.AddScoped<IFileHelper, FileHelper>();
             #endregion
         }
     }

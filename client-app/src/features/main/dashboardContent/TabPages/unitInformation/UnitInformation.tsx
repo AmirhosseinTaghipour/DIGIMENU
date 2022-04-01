@@ -157,9 +157,15 @@ const UnitInformation: React.FC = () => {
                                     label="تلفن ثابت"
                                     name="phone"
                                     initialValue={departmentInfo.phone}
-                                    rules={[{
-                                        required: true, message: 'فیلد تلفن ثابت نمی تواند خالی باشد',
-                                    }]}
+                                    rules={[
+                                        {
+                                            required: true, message: 'فیلد تلفن ثابت نمی تواند خالی باشد',
+                                        },
+                                        {
+                                            pattern: new RegExp("^[0-9]+$"),
+                                            message: "تنها اعداد مجاز می باشد",
+                                        }
+                                    ]}
 
                                 >
                                     <Input
@@ -176,6 +182,12 @@ const UnitInformation: React.FC = () => {
                                     label="کد پستی"
                                     name="postalCode"
                                     initialValue={departmentInfo.postalCode}
+                                    rules={[
+                                        {
+                                            pattern: new RegExp("^[0-9]+$"),
+                                            message: "تنها اعداد مجاز می باشد",
+                                        }
+                                    ]}
                                 >
                                     <Input
                                         maxLength={10}
@@ -219,9 +231,19 @@ const UnitInformation: React.FC = () => {
                                 <Form.Item
                                     label="تصویر"
                                     name="image"
-                                    initialValue={departmentInfo.image}
+                                    rules={[
+                                        {
+                                            message: "حجم تصویر باید کمتر از یک مگابایت باشد",
+                                            validator: async (rule: any, value: any) => {
+                                                if (departmentInfo.image?.size! > 1000)
+
+                                                    throw new Error("Something wrong!");
+
+                                            },
+                                        },
+                                    ]}
                                 >
-                                    <ImgCrop grid rotate modalTitle="انتخاب تصویر">
+                                    <ImgCrop grid shape="rect" aspect={16 / 9} quality={1} rotate modalTitle="انتخاب تصویر">
                                         <Upload
                                             beforeUpload={(file) => {
                                                 const isAllowedFormat = ["image/png", "image/jpg", "image/jpeg"]
@@ -257,7 +279,7 @@ const UnitInformation: React.FC = () => {
                                         },
                                     }]}
                                 >
-                                    <ImgCrop grid rotate modalTitle="انتخاب لوگو">
+                                    <ImgCrop shape="round" quality={1} rotate modalTitle="انتخاب لوگو">
                                         <Upload
                                             beforeUpload={(file) => {
                                                 const isAllowedFormat = ["image/png", "image/jpg", "image/jpeg"]
@@ -283,7 +305,6 @@ const UnitInformation: React.FC = () => {
                             <Col xs={24} sm={24} md={12} lg={8} xl={8} xxl={8}>
                                 <Form.Item
                                     label="موقعیت مجموعه"
-                                    initialValue={departmentInfo.address}
                                     rules={[{
                                         required: true, message: 'موقعیت روی نقشه، انتخاب شنده است.',
                                         validator: async () => {
@@ -304,11 +325,11 @@ const UnitInformation: React.FC = () => {
                                 </Form.Item>
                                 <Form.Item
                                     name="xpos"
-                                    hidden 
+                                    hidden
                                 />
-                                 <Form.Item
+                                <Form.Item
                                     name="ypos"
-                                    hidden 
+                                    hidden
                                 />
                             </Col>
                         </Row>

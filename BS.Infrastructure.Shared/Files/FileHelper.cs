@@ -4,6 +4,7 @@ using BS.Application.Interfaces.Repositories;
 using BS.Domain.Entities;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,11 +18,13 @@ namespace BS.Infrastructure.Shared.Files
 {
     public class FileHelper : IFileHelper
     {
-        private IWebHostEnvironment _environment;
+        private readonly IWebHostEnvironment _environment;
+        private readonly IConfiguration _configuration;
 
-        public FileHelper(IWebHostEnvironment environment)
+        public FileHelper(IWebHostEnvironment environment, IConfiguration configuration)
         {
             _environment = environment;
+            _configuration = configuration;
         }
 
         public bool DeleteFile(string fileId, string fileExtension, FileDirectorey directorey)
@@ -39,23 +42,50 @@ namespace BS.Infrastructure.Shared.Files
         }
 
 
-        public IFormFile GetFile(string fileId, string fileName, FileDirectorey directorey)
+        public string GetFilePath(string fileId, string fileName, FileDirectorey directorey)
         {
             try
             {
-                IFormFile file;
-                string pathString = Path.Combine(_environment.WebRootPath, directorey.ToString());
-                var fileStream = System.IO.File.OpenRead(Path.Combine(pathString, fileId + Path.GetExtension(fileName)));
-                using (var stream = fileStream)
+                if (string.IsNullOrEmpty(fileName))
+                    return "";
+                string subString = Path.Combine(directorey.ToString(), fileId + Path.GetExtension(fileName));
+                string fullString = Path.Combine(_environment.WebRootPath, subString);
+
+                if (System.IO.File.Exists(fullString))
                 {
-                    file = new FormFile(stream, 0, stream.Length, "file", fileName);
+                    return subString;
                 }
-                return file;
+                return "";
             }
             catch (Exception ex)
             {
-                throw new RestException(HttpStatusCode.Conflict, "خطا در هنگام خواندن فایل");
+                return "";
             }
+        }
+
+        public bool IsValidFile(IFormFile file)
+        {
+            var allowableFileList = _configuration.GetSection("FileConfig:AllowedFileType").Get<string[]>();
+            bool res = true;
+            if (file != null)
+                if (!allowableFileList.Contains(file.ContentType))
+                    res = false;
+            return res;
+        }
+
+        public bool IsValidSize(IFormFile file)
+        {
+            var size = int.Parse(_configuration["FileConfig:AllowedFileSize"].ToString());
+
+            if (file == null)
+            {
+                return true;
+            }
+            if (file.Length > size * 1024)
+            {
+                return false;
+            }
+            return true;
         }
 
         public async Task<bool> SaveFileAsync(IFormFile file, FileDirectorey directorey, string fileId)

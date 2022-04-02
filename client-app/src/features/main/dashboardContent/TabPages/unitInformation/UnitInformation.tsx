@@ -21,13 +21,16 @@ const layout = {
     labelCol: { span: 24 },
     wrapperCol: { span: 24 },
 };
+const imgSize = 5000000;
 const UnitInformation: React.FC = () => {
     const rootStore = useContext(RootStoreContext);
     const { insertingDepartment,
         insertDepartment,
+        updateDepartment,
         loadDepartment,
         loadingDepartment,
-        departmentInfo
+        departmentInfo,
+        setDepartmentInfo
     } = rootStore.departmentStore;
     const [form] = Form.useForm();
 
@@ -42,8 +45,11 @@ const UnitInformation: React.FC = () => {
     };
 
     const onClickMap = (point: L.LatLng) => {
-        departmentInfo.xpos = point.lat;
-        departmentInfo.ypos = point.lng;
+        setDepartmentInfo({
+            ...departmentInfo,
+            xpos: point.lat,
+            ypos: point.lng
+        })
         form.validateFields(['location']);
     }
 
@@ -53,6 +59,10 @@ const UnitInformation: React.FC = () => {
             departmentInfo.image = input.file.originFileObj as Blob;
         else
             departmentInfo.image = null
+        setDepartmentInfo({
+            ...departmentInfo,
+            isImageChanged: true
+        })
         form.validateFields(['image']);
     }
 
@@ -60,26 +70,35 @@ const UnitInformation: React.FC = () => {
         if (input.file.status != "removed")
             departmentInfo.logo = input.file.originFileObj as Blob;
         else
-            departmentInfo.logo = null
+            departmentInfo.logo = null;
+        setDepartmentInfo({
+            ...departmentInfo,
+            isLogChanged: true
+        })
         form.validateFields(['logo']);
-
     }
     //سابمیت فرم 
-    const onFinish = async (values: IDepartmentFormValues) => {
-        form.setFieldsValue({
-            ["xpos"]: departmentInfo.xpos,
-            ["ypos"]: departmentInfo.ypos,
-            ["image"]: departmentInfo.image,
-            ["logo"]: departmentInfo.logo,
+    const onFinish = async (formValues: IDepartmentFormValues) => {
+        setDepartmentInfo({
+            ...departmentInfo,
+            title: formValues.title,
+            description: formValues.description,
+            address: formValues.address,
+            postalCode: formValues.postalCode,
+            phone: formValues.phone
         });
-        await insertDepartment(values);
+        if (departmentInfo.isUpdateMode)
+            await updateDepartment(departmentInfo);
+        else
+            await insertDepartment(departmentInfo);
     };
-
-    //اعتبار سنجی های مورد نیاز فرم
-    const isFormValid = (): boolean => {
-        let res = true;
-        return res;
+    const setInitialConfig = () => {
+        loadDepartment();
     }
+    useEffect(() => {
+        setInitialConfig();
+    }, []);
+
     return <Fragment>
         <Row className="bsFormHeader">
             <div className="bsFormTitle"> <FormOutlined />
@@ -233,17 +252,15 @@ const UnitInformation: React.FC = () => {
                                     name="image"
                                     rules={[
                                         {
-                                            message: "حجم تصویر باید کمتر از یک مگابایت باشد",
+                                            message: "حجم تصویر باید بیش از جد مجاز است",
                                             validator: async (rule: any, value: any) => {
-                                                if (departmentInfo.image?.size! > 1000)
-
+                                                if (departmentInfo.image?.size! > imgSize)
                                                     throw new Error("Something wrong!");
-
                                             },
                                         },
                                     ]}
                                 >
-                                    <ImgCrop grid shape="rect" aspect={16 / 9} quality={1} rotate modalTitle="انتخاب تصویر">
+                                    <ImgCrop grid shape="rect" aspect={8 / 5} quality={0.9} rotate modalTitle="انتخاب تصویر">
                                         <Upload
                                             beforeUpload={(file) => {
                                                 const isAllowedFormat = ["image/png", "image/jpg", "image/jpeg"]
@@ -276,10 +293,17 @@ const UnitInformation: React.FC = () => {
                                         validator: async () => {
                                             if (!departmentInfo.logo)
                                                 throw new Error("Something wrong!");
+                                        }
+                                    },
+                                    {
+                                        message: "حجم تصویر باید بیش از جد مجاز است",
+                                        validator: async (rule: any, value: any) => {
+                                            if (departmentInfo.logo?.size! > 1000000000)
+                                                throw new Error("Something wrong!");
                                         },
-                                    }]}
+                                    },]}
                                 >
-                                    <ImgCrop shape="round" quality={1} rotate modalTitle="انتخاب لوگو">
+                                    <ImgCrop shape="rect" aspect={1 / 1} quality={0.9} rotate modalTitle="انتخاب لوگو">
                                         <Upload
                                             beforeUpload={(file) => {
                                                 const isAllowedFormat = ["image/png", "image/jpg", "image/jpeg"]
@@ -323,14 +347,6 @@ const UnitInformation: React.FC = () => {
                                         <span>انتخاب از روی تقشه</span>
                                     </Button>
                                 </Form.Item>
-                                <Form.Item
-                                    name="xpos"
-                                    hidden
-                                />
-                                <Form.Item
-                                    name="ypos"
-                                    hidden
-                                />
                             </Col>
                         </Row>
                     </Form>

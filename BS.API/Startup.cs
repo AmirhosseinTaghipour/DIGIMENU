@@ -60,6 +60,7 @@ namespace BS.API
             {
                 app.UseHttpsRedirection();
             }
+            app.UseStaticFiles();
             app.UseMiddleware<ExceptionHandlingMiddleware>();
             app.UseXContentTypeOptions();
             app.UseReferrerPolicy(opt => opt.NoReferrer());

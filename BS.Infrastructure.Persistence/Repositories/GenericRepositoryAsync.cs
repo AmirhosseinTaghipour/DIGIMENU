@@ -51,25 +51,25 @@ namespace BS.Infrastructure.Persistence.Repositories
                 .AsNoTracking()
                 .ToListAsync();
         }
-        public virtual async Task<IEnumerable<T>> GetAsync(Expression<Func<T, bool>> whereCondition, Expression<Func<T, IOrderedQueryable<T>>> orderBy)
+        public virtual async Task<IEnumerable<T>> GetAsync(Expression<Func<T, bool>> whereCondition, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy)
         {
             IQueryable<T> query = _dbSet;
             if (whereCondition != null)
                 query.Where(whereCondition);
             if (orderBy != null)
-                query.OrderBy(orderBy);
+                query = orderBy(query);
             return await query
                 .AsNoTracking()
                 .ToListAsync();
         }
 
-        public virtual async Task<IEnumerable<TType>> GetAsync<TType>(Expression<Func<T, bool>> whereCondition, Expression<Func<T, IOrderedQueryable<T>>> orderBy, Expression<Func<T, TType>> selectField) where TType : class
+        public virtual async Task<IEnumerable<TType>> GetAsync<TType>(Expression<Func<T, bool>> whereCondition, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy, Expression<Func<T, TType>> selectField) where TType : class
         {
             IQueryable<T> query = _dbSet;
             if (whereCondition != null)
                 query.Where(whereCondition);
             if (orderBy != null)
-                query.OrderBy(orderBy);
+                query=orderBy(query);
 
             return await query.Select(selectField)
                 .AsNoTracking()
@@ -89,24 +89,24 @@ namespace BS.Infrastructure.Persistence.Repositories
             return await query.FirstOrDefaultAsync();
         }
 
-        public async Task<T> GetFirstAsync(Expression<Func<T, bool>> whereCondition, Expression<Func<T, IOrderedQueryable<T>>> orderBy)
+        public async Task<T> GetFirstAsync(Expression<Func<T, bool>> whereCondition, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy)
         {
             IQueryable<T> query = _dbSet;
             if (whereCondition != null)
                 query.Where(whereCondition);
             if (orderBy != null)
-                query.OrderBy(orderBy);
+                query=orderBy(query);
             return await query
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<TType> GetFirstAsync<TType>(Expression<Func<T, bool>> whereCondition, Expression<Func<T, IOrderedQueryable<T>>> orderBy, Expression<Func<T, TType>> selectField) where TType : class
+        public async Task<TType> GetFirstAsync<TType>(Expression<Func<T, bool>> whereCondition, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy, Expression<Func<T, TType>> selectField) where TType : class
         {
             IQueryable<T> query = _dbSet;
             if (whereCondition != null)
                 query.Where(whereCondition);
             if (orderBy != null)
-                query.OrderBy(orderBy);
+                query=orderBy(query);
             return await query
                 .Select(selectField)
                 .FirstOrDefaultAsync();
@@ -120,11 +120,11 @@ namespace BS.Infrastructure.Persistence.Repositories
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<T>> GetPagedReponseAsync(int pageNumber, int pageSize, Expression<Func<T, IOrderedQueryable<T>>> orderBy)
+        public async Task<IEnumerable<T>> GetPagedReponseAsync(int pageNumber, int pageSize, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy)
         {
             IQueryable<T> query = _dbSet;
             if (orderBy != null)
-                query.OrderBy(orderBy);
+                query=orderBy(query);
 
             return await query.Skip((pageNumber - 1) * pageSize)
                .Take(pageSize)
@@ -132,13 +132,13 @@ namespace BS.Infrastructure.Persistence.Repositories
                .ToListAsync();
         }
 
-        public async Task<IEnumerable<T>> GetPagedReponseAsync(int pageNumber, int pageSize, Expression<Func<T, IOrderedQueryable<T>>> orderBy, Expression<Func<T, bool>> whereCondition)
+        public async Task<IEnumerable<T>> GetPagedReponseAsync(int pageNumber, int pageSize, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy, Expression<Func<T, bool>> whereCondition)
         {
             IQueryable<T> query = _dbSet;
             if (whereCondition != null)
                 query.Where(whereCondition);
             if (orderBy != null)
-                query.OrderBy(orderBy);
+                query=orderBy(query);
 
             return await query.Skip((pageNumber - 1) * pageSize)
                .Take(pageSize)
@@ -146,13 +146,13 @@ namespace BS.Infrastructure.Persistence.Repositories
                .ToListAsync();
         }
 
-        public async Task<IEnumerable<TType>> GetPagedReponseAsync<TType>(int pageNumber, int pageSize, Expression<Func<T, IOrderedQueryable<T>>> orderBy, Expression<Func<T, bool>> whereCondition, Expression<Func<T, TType>> selectField) where TType : class
+        public async Task<IEnumerable<TType>> GetPagedReponseAsync<TType>(int pageNumber, int pageSize, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy, Expression<Func<T, bool>> whereCondition, Expression<Func<T, TType>> selectField) where TType : class
         {
             IQueryable<T> query = _dbSet;
             if (whereCondition != null)
                 query.Where(whereCondition);
             if (orderBy != null)
-                query.OrderBy(orderBy);
+                query=orderBy(query);
 
             return await query.Skip((pageNumber - 1) * pageSize)
                .Take(pageSize)

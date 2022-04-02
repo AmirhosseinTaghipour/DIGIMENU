@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BS.Application.Features.Departments.DTOs;
 using BS.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -15,8 +16,9 @@ namespace BS.Application.Mapping
         {
             //CreateMap<Product, GetAllProductsViewModel>().ReverseMap();
             CreateMap<UserRegisterCommand, User>();
-            CreateMap<DepartmentInsertCommand, Department>();
-            CreateMap<DepartmentUpdateCommand, Department>();
+            CreateMap<DepartmentInsertCommand, Department>().ReverseMap();
+            CreateMap<DepartmentUpdateCommand, Department>().ReverseMap();
+            CreateMap<DepartmentDTO, Department>().ReverseMap();
         }
     }
 }

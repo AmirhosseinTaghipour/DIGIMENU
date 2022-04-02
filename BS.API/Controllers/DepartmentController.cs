@@ -1,5 +1,6 @@
 ﻿using BPJ.LMSR.Application.Common;
 using BS.Application.Features.Departments.Commands;
+using BS.Application.Features.Departments.DTOs;
 using BS.Application.Features.Departments.Queries;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -12,15 +13,21 @@ namespace BS.API.Controllers
     public class DepartmentController : BaseController
     {
         [HttpPost("DepartmentInsert")]
-        public async Task<ActionResult<ResultDTO<string>>> DepartmentInsert([FromForm]DepartmentInsert.DepartmentInsertCommand command)
+        public async Task<ActionResult<ResultDTO<string>>> DepartmentInsert([FromForm] DepartmentInsert.DepartmentInsertCommand command)
         {
             return await Mediator.Send(command);
         }
 
         [HttpPost("DepartmentUpdate")]
-        public async Task<ActionResult<ResultDTO<string>>> DepartmentUpdate(DepartmentUpdate.DepartmentUpdateCommand command)
+        public async Task<ActionResult<ResultDTO<string>>> DepartmentUpdate([FromForm] DepartmentUpdate.DepartmentUpdateCommand command)
         {
             return await Mediator.Send(command);
+        }
+
+        [HttpGet("DepartmentLoad")]
+        public async Task<ActionResult<DepartmentDTO>> DepartmentLoad()
+        {
+            return await Mediator.Send(new DepartmentLoad.DepartmentLoadQuery());
         }
 
         [HttpGet("GetDepartmentById/{id}")]

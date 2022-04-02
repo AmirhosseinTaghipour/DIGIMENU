@@ -151,7 +151,7 @@ const Department = {
         requests.postForm("/department/DepartmentInsert", values),
 
     getDepartmentInfo: (): Promise<IDepartmentFormValues> =>
-        requests.get("/department/GetDepartment"),
+        requests.get("/department/DepartmentLoad"),
 }
 
 

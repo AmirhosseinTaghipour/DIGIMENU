@@ -78,7 +78,7 @@ const App: React.FC<RouteComponentProps> = ({ location, match }) => {
     if (!appLoaded)
         return (
             <ConfigProvider direction="rtl" locale={faIR}>
-                <LoadingComponent content="در حال بارگذاری ..." spinnerSize="large" />
+                <LoadingComponent/>
             </ConfigProvider>
         );
 
@@ -98,7 +98,7 @@ const App: React.FC<RouteComponentProps> = ({ location, match }) => {
                 path={"/(.+)"}
                 render={() => (
                     <Fragment>
-                        <Suspense fallback={<LoadingComponent content="در حال بارگذاری ..." spinnerSize="large" />}>
+                        <Suspense fallback={<LoadingComponent />}>
                             <Switch>
                                 <Route exact path="/">
                                     {(!!token && isLoggedIn) ? (

@@ -2,16 +2,18 @@ import React, { Fragment, useContext, useEffect, useState } from "react"
 import { Input, Layout, Menu, Row, Form, Col, Modal, Button, Upload, message } from "antd";
 import ImgCrop from 'antd-img-crop';
 import { observer } from "mobx-react-lite"
-import { CloseOutlined, FormOutlined, LoadingOutlined, SaveTwoTone, UploadOutlined } from "@ant-design/icons";
+import { CloseOutlined, FormOutlined, LoadingOutlined, PaperClipOutlined, SaveTwoTone, UploadOutlined } from "@ant-design/icons";
 import { RootStoreContext } from "../../../../../app/stores/rootStore";
 import { IDepartmentFormValues } from "../../../../../app/models/department";
-import { checkJustNumber } from "../../../../../app/common/util/util";
+import { checkJustNumber, IsNullOrEmpty } from "../../../../../app/common/util/util";
 import { SiGooglemaps } from "react-icons/si";
 import LeafletMap from "../../../../common/Map/LeafletMap";
 import SkeletonImage from "antd/lib/skeleton/Image";
 import { UploadChangeParam } from "antd/lib/upload";
 import { ok } from "assert";
 import { UploadRequestOption } from "rc-upload/lib/interface";
+import LoadingComponent from "../../../../../app/layout/LoadingComponent";
+import FileViewer from "../../../../common/FileViewer/FileViewer";
 
 
 const { Content, Header } = Layout;
@@ -35,7 +37,11 @@ const UnitInformation: React.FC = () => {
     const [form] = Form.useForm();
 
     const [locationVisible, setLocationVisible] = useState(false);
+    const [fileViewerVisible, setFileViewerVisible] = useState<string | null>(null);
 
+    const closeFileViewer = () => {
+        setFileViewerVisible(null);
+    }
     const handleOk = (e: any) => {
         setLocationVisible(false);
     };
@@ -93,7 +99,9 @@ const UnitInformation: React.FC = () => {
             await insertDepartment(departmentInfo);
     };
     const setInitialConfig = () => {
-        loadDepartment();
+        loadDepartment().then(() => {
+            form.resetFields();
+        })
     }
     useEffect(() => {
         setInitialConfig();
@@ -109,6 +117,7 @@ const UnitInformation: React.FC = () => {
                 <CloseOutlined />
             </Button>
         </Row>
+
         <Row className="bsFormBody">
             <Layout className="formBodyLayout">
                 <Header>
@@ -278,6 +287,26 @@ const UnitInformation: React.FC = () => {
                                             onChange={setImage}
                                         >
                                             <Button icon={<UploadOutlined />}>انتخاب تصویر</Button>
+                                            {departmentInfo.imageUrl &&
+                                                <div className="ant-upload-list-item ant-upload-list-item-default ant-upload-list-item-list-type-text">
+                                                    <div className="ant-upload-list-item-info">
+                                                        <span className="ant-upload-span">
+                                                            <Button
+                                                                style={{ height: "auto", padding: 0 }}
+                                                                title={`${departmentInfo.imageName}`}
+                                                                onClick={(e) => {
+                                                                    setFileViewerVisible("image");
+                                                                    e.stopPropagation();
+                                                                }}
+                                                                type="link"
+                                                                icon={<PaperClipOutlined />}
+                                                            >
+                                                                {departmentInfo.imageName}
+                                                            </Button>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            }
                                         </Upload>
                                     </ImgCrop>
                                 </Form.Item>
@@ -322,6 +351,26 @@ const UnitInformation: React.FC = () => {
 
                                         >
                                             <Button icon={<UploadOutlined />}>انتخاب لوگو</Button>
+                                            {departmentInfo.logoUrl&&
+                                                <div className="ant-upload-list-item ant-upload-list-item-default ant-upload-list-item-list-type-text">
+                                                    <div className="ant-upload-list-item-info">
+                                                        <span className="ant-upload-span">
+                                                            <Button
+                                                                style={{ height: "auto", padding: 0 }}
+                                                                title={`${departmentInfo.logoName}`}
+                                                                onClick={(e) => {
+                                                                    setFileViewerVisible("logo");
+                                                                    e.stopPropagation();
+                                                                }}
+                                                                type="link"
+                                                                icon={<PaperClipOutlined />}
+                                                            >
+                                                                {departmentInfo.logoName}
+                                                            </Button>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            }
                                         </Upload>
                                     </ImgCrop>
                                 </Form.Item>
@@ -354,6 +403,8 @@ const UnitInformation: React.FC = () => {
             </Layout>
         </Row>
 
+
+
         <Modal
             className="bsModal"
             footer
@@ -367,6 +418,24 @@ const UnitInformation: React.FC = () => {
             <LeafletMap onclickMap={onClickMap} latitude={departmentInfo.xpos} longitude={departmentInfo.ypos} markerPopup={departmentInfo?.address!} showMarker />
 
         </Modal>
+
+        {
+            !!fileViewerVisible ?
+                fileViewerVisible === "logo" ?
+                    <FileViewer
+                        close={closeFileViewer}
+                        fileName={departmentInfo.logoName}
+                        fileUrl={departmentInfo.logoUrl}
+                    />
+                    :
+                    <FileViewer
+                        close={closeFileViewer}
+                        fileName={departmentInfo.imageName}
+                        fileUrl={departmentInfo.imageUrl}
+                    />
+                :
+                null
+        }
     </Fragment>
 
 };

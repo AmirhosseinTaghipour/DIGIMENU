@@ -1,5 +1,3 @@
-import { UploadFile } from "antd/lib/upload/interface";
-
 export interface IDepartmentFormValues {
     Id: string | null;
     title: string | null;
@@ -10,7 +8,11 @@ export interface IDepartmentFormValues {
     xpos: number | null;
     ypos: number | null;
     image: Blob | null;
+    imageName: string | null;
+    imageUrl: string | null;
     logo: Blob | null;
+    logoName: string | null;
+    logoUrl: string | null;
     isImageChanged: boolean;
     isLogChanged: boolean;
     isUpdateMode:boolean;

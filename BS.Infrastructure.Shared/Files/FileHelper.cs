@@ -44,6 +44,8 @@ namespace BS.Infrastructure.Shared.Files
 
         public string GetFilePath(string fileId, string fileName, FileDirectorey directorey)
         {
+            var baseUrl = _configuration["ProjectConfig:Host"].ToString();
+
             try
             {
                 if (string.IsNullOrEmpty(fileName))
@@ -53,7 +55,7 @@ namespace BS.Infrastructure.Shared.Files
 
                 if (System.IO.File.Exists(fullString))
                 {
-                    return subString;
+                    return Path.Combine(baseUrl, subString);
                 }
                 return "";
             }

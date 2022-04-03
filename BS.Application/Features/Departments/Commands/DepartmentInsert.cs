@@ -20,21 +20,9 @@ namespace BS.Application.Features.Departments.Commands
 {
     public class DepartmentInsert
     {
-        public class DepartmentInsertCommand : IRequest<ResultDTO<string>>
+        public class DepartmentInsertCommand : DepartmentDTO, IRequest<ResultDTO<string>>
         {
-            public string Id { get; set; }
-            public string Title { get; set; }
-            public string Description { get; set; }
-            public string Address { get; set; }
-            public string PostalCode { get; set; }
-            public string Phone { get; set; }
-            public decimal? Xpos { get; set; }
-            public decimal? Ypos { get; set; }
-            public IFormFile Image { get; set; }
-            public IFormFile Logo { get; set; }
-            public bool IsLogoChanged { get; set; } = false;
-            public bool IsImageChanged { get; set; } = false;
-            public bool IsUpdateMode { get; set; } = false;
+            
         }
 
         public class DepartmentInsertHandler : IRequestHandler<DepartmentInsertCommand, ResultDTO<string>>

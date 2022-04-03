@@ -23,7 +23,11 @@ export default class DepartmentStore {
         xpos: null,
         ypos: null,
         image: null,
+        imageName: null,
+        imageUrl: null,
         logo: null,
+        logoName: null,
+        logoUrl: null,
         isImageChanged:false,
         isLogChanged:false,
         isUpdateMode:false
@@ -39,7 +43,11 @@ export default class DepartmentStore {
             this.departmentInfo.xpos=values.xpos;
             this.departmentInfo.ypos=values.ypos;
             this.departmentInfo.image=values.image;
+            this.departmentInfo.imageName=values.imageName;
+            this.departmentInfo.imageUrl=values.imageUrl;
             this.departmentInfo.logo=values.logo;
+            this.departmentInfo.logoName=values.logoName;
+            this.departmentInfo.logoUrl=values.logoUrl;
             this.departmentInfo.isImageChanged=values.isImageChanged;
             this.departmentInfo.isLogChanged=values.isLogChanged;
             this.departmentInfo.isUpdateMode=values.isUpdateMode;
@@ -47,15 +55,16 @@ export default class DepartmentStore {
     }
     @action loadDepartment = async () => {
         try {
-            this.insertingDepartment = true;
+            debugger
+            this.loadingDepartment = true;
             const res = await agent.Department.getDepartmentInfo();
             runInAction(() => {
                 this.departmentInfo = res;
-                this.insertingDepartment = false;
+                this.loadingDepartment = false;
             });
         } catch (err: any) {
             runInAction(() => {
-                this.insertingDepartment = false;
+                this.loadingDepartment = false;
                 openNotification(
                     "error",
                     "خطا",

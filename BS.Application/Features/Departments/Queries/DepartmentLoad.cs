@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BPJ.LMSR.Application.Common;
 using BS.Application.Common;
+using BS.Application.Common.DTOs;
 using BS.Application.Common.Enums;
 using BS.Application.Features.Departments.DTOs;
 using BS.Application.Interfaces;
@@ -59,11 +60,16 @@ namespace BS.Application.Features.Departments.Queries
 
                 var image = await _unitOfWork.fileRepositoryAsync.GetFirstAsync(
                     whereCondition: n => n.EntityName == EntityName.Department.ToString() && n.EntityId == new Guid(department.Id) && n.DepartmentId == new Guid(department.Id),
-                    orderBy: n=> n.OrderByDescending(x=>x.UpdateDate??x.InsertDate),
+                    orderBy: n => n.OrderByDescending(x => x.UpdateDate ?? x.InsertDate),
                     selectField: n => new { n.Id, n.FileName });
 
-                department.LogoPath =  _fileHelper.GetFilePath(logo.Id.ToString(), logo.FileName, FileDirectorey.UnitLogo);
-                department.ImagePath =  _fileHelper.GetFilePath(image.Id.ToString(), image.FileName, FileDirectorey.UnitImage);
+
+                department.LogoUrl = _fileHelper.GetFilePath(logo.Id.ToString(), logo.FileName, FileDirectorey.UnitLogo);
+                department.LogoName = logo.FileName;
+
+                    department.ImagUrl = _fileHelper.GetFilePath(image.Id.ToString(), image.FileName, FileDirectorey.UnitImage);
+                department.ImagName = image.FileName;
+
 
                 return department;
 

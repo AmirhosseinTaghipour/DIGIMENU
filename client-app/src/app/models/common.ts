@@ -38,5 +38,10 @@ export interface IDictionary<T> {
     [Key: string]: T;
 }
 
-
+export interface IFile {
+    name: string | null;
+    url: string | null;
+    file: Blob | null;
+    isChanged: boolean;
+}
 

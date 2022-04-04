@@ -2,20 +2,20 @@
 import { AppstoreOutlined, CloseOutlined, DownloadOutlined } from '@ant-design/icons';
 import { Button, Modal, Image, Alert } from 'antd';
 import LoadingComponent from '../../../app/layout/LoadingComponent';
+import { IFile } from '../../../app/models/common';
 //import { IFile } from '../../../app/models/docs';
 
 interface IProps {
     close: () => void;
-    fileName: string | null;
-    fileUrl: string | null;
+    file:IFile
 }
 
-const FileViewer: React.FC<IProps> = ({ close, fileUrl, fileName }) => {
+const FileViewer: React.FC<IProps> = ({ close, file }) => {
     return (
         <Modal
             className="bsModal"
             footer
-            title={fileName!}
+            title={file.name}
             visible
             onOk={() => close()}
             onCancel={() => close()}
@@ -24,7 +24,7 @@ const FileViewer: React.FC<IProps> = ({ close, fileUrl, fileName }) => {
             zIndex={1000}
         >
             <div style={{ width: "100%", height: "calc(100vh - 8rem)", display:"flex", alignItems:"center", justifyContent:"center" }}>
-                <Image key="imageViewer" src={fileUrl!} />
+                <Image key="imageViewer" src={file.url!} />
             </div>
         </Modal>
     );

@@ -42,7 +42,7 @@ namespace BS.Application.Features.Departments.Queries
             {
                 var user = await _unitOfWork.userRepositoryAsync.GetByIdAsync(_userAccessor.GetCurrentUserId());
                 if (user == null)
-                    throw new RestException(HttpStatusCode.NotFound, "خطا، رکوردی یافت نشد");
+                    throw new RestException(HttpStatusCode.NotFound, "خطا، کاربری یافت نشد");
 
                 if (user.DepartmentId == null || user.DepartmentId == Guid.Empty)
                     return new DepartmentDTO();
@@ -64,12 +64,17 @@ namespace BS.Application.Features.Departments.Queries
                     selectField: n => new { n.Id, n.FileName });
 
 
-                department.LogoUrl = _fileHelper.GetFilePath(logo.Id.ToString(), logo.FileName, FileDirectorey.UnitLogo);
-                department.LogoName = logo.FileName;
+                department.Logo = new FileDTO()
+                {
+                    Url = _fileHelper.GetFilePath(logo.Id.ToString(), logo.FileName, FileDirectorey.UnitLogo),
+                    Name = logo.FileName
+                };
 
-                    department.ImagUrl = _fileHelper.GetFilePath(image.Id.ToString(), image.FileName, FileDirectorey.UnitImage);
-                department.ImagName = image.FileName;
-
+                department.Image = new FileDTO()
+                {
+                    Url = _fileHelper.GetFilePath(image.Id.ToString(), image.FileName, FileDirectorey.UnitImage),
+                    Name = image.FileName
+                };
 
                 return department;
 

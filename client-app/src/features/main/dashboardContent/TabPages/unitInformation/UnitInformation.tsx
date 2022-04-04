@@ -2,7 +2,7 @@ import React, { Fragment, useContext, useEffect, useState } from "react"
 import { Input, Layout, Menu, Row, Form, Col, Modal, Button, Upload, message } from "antd";
 import ImgCrop from 'antd-img-crop';
 import { observer } from "mobx-react-lite"
-import { CloseOutlined, FormOutlined, LoadingOutlined, PaperClipOutlined, SaveTwoTone, UploadOutlined } from "@ant-design/icons";
+import { CloseOutlined, DeleteOutlined, FormOutlined, LoadingOutlined, PaperClipOutlined, SaveTwoTone, UploadOutlined } from "@ant-design/icons";
 import { RootStoreContext } from "../../../../../app/stores/rootStore";
 import { IDepartmentFormValues } from "../../../../../app/models/department";
 import { checkJustNumber, IsNullOrEmpty } from "../../../../../app/common/util/util";
@@ -32,7 +32,11 @@ const UnitInformation: React.FC = () => {
         loadDepartment,
         loadingDepartment,
         departmentInfo,
-        setDepartmentInfo
+        setDepartmentInfo,
+        imageInfo,
+        setImageInfo,
+        logoInfo,
+        setLogoInfo
     } = rootStore.departmentStore;
     const [form] = Form.useForm();
 
@@ -62,25 +66,19 @@ const UnitInformation: React.FC = () => {
 
     const setImage = async (input: UploadChangeParam) => {
         if (input.file.status != "removed")
-            departmentInfo.image = input.file.originFileObj as Blob;
+            setImageInfo({ ...imageInfo, file: input.file.originFileObj as Blob });
         else
-            departmentInfo.image = null
-        setDepartmentInfo({
-            ...departmentInfo,
-            isImageChanged: true
-        })
+            setImageInfo({ ...imageInfo, file: null });
+        setImageInfo({ ...imageInfo, isChanged: true });
         form.validateFields(['image']);
     }
 
     const setLogo = async (input: UploadChangeParam) => {
         if (input.file.status != "removed")
-            departmentInfo.logo = input.file.originFileObj as Blob;
+            setLogoInfo({ ...logoInfo, file: input.file.originFileObj as Blob });
         else
-            departmentInfo.logo = null;
-        setDepartmentInfo({
-            ...departmentInfo,
-            isLogChanged: true
-        })
+            setLogoInfo({ ...logoInfo, file: null });
+        setLogoInfo({ ...logoInfo, isChanged: true });
         form.validateFields(['logo']);
     }
     //سابمیت فرم 
@@ -91,7 +89,9 @@ const UnitInformation: React.FC = () => {
             description: formValues.description,
             address: formValues.address,
             postalCode: formValues.postalCode,
-            phone: formValues.phone
+            phone: formValues.phone,
+            image: { ...imageInfo },
+            logo: { ...logoInfo }
         });
         if (departmentInfo.isUpdateMode)
             await updateDepartment(departmentInfo);
@@ -263,7 +263,7 @@ const UnitInformation: React.FC = () => {
                                         {
                                             message: "حجم تصویر باید بیش از جد مجاز است",
                                             validator: async (rule: any, value: any) => {
-                                                if (departmentInfo.image?.size! > imgSize)
+                                                if (imageInfo.file?.size! > imgSize)
                                                     throw new Error("Something wrong!");
                                             },
                                         },
@@ -287,23 +287,30 @@ const UnitInformation: React.FC = () => {
                                             onChange={setImage}
                                         >
                                             <Button icon={<UploadOutlined />}>انتخاب تصویر</Button>
-                                            {departmentInfo.imageUrl &&
+                                            {!!imageInfo.name &&
                                                 <div className="ant-upload-list-item ant-upload-list-item-default ant-upload-list-item-list-type-text">
-                                                    <div className="ant-upload-list-item-info">
-                                                        <span className="ant-upload-span">
-                                                            <Button
-                                                                style={{ height: "auto", padding: 0 }}
-                                                                title={`${departmentInfo.imageName}`}
-                                                                onClick={(e) => {
-                                                                    setFileViewerVisible("image");
-                                                                    e.stopPropagation();
-                                                                }}
-                                                                type="link"
-                                                                icon={<PaperClipOutlined />}
-                                                            >
-                                                                {departmentInfo.imageName}
-                                                            </Button>
-                                                        </span>
+                                                    <div className="ant-upload-list-item-info bs-file-btn-box">
+                                                        <Button
+                                                            style={{ height: "auto", padding: 0 }}
+                                                            title={`${imageInfo.name}`}
+                                                            onClick={(e) => {
+                                                                setFileViewerVisible("image");
+                                                                e.stopPropagation();
+                                                            }}
+                                                            type="link"
+                                                            icon={<PaperClipOutlined />}
+                                                        >
+                                                            {imageInfo.name}
+                                                        </Button>
+                                                        <Button
+                                                            style={{ height: "auto", padding: 0 }}
+                                                            onClick={(e) => {
+                                                                setImageInfo({...imageInfo, isChanged:true, name:null, url:null})
+                                                                e.stopPropagation();
+                                                            }}
+                                                            type="link"
+                                                            icon={<DeleteOutlined />}
+                                                        />
                                                     </div>
                                                 </div>
                                             }
@@ -316,18 +323,17 @@ const UnitInformation: React.FC = () => {
                                 <Form.Item
                                     label="لوگو"
                                     name="logo"
-                                    initialValue={departmentInfo.logo}
                                     rules={[{
                                         required: true, message: 'فیلد لوگو نمی تواند خالی باشد',
                                         validator: async () => {
-                                            if (!departmentInfo.logo)
+                                            if (!logoInfo.file)
                                                 throw new Error("Something wrong!");
                                         }
                                     },
                                     {
                                         message: "حجم تصویر باید بیش از جد مجاز است",
                                         validator: async (rule: any, value: any) => {
-                                            if (departmentInfo.logo?.size! > 1000000000)
+                                            if (logoInfo.file?.size! > imgSize)
                                                 throw new Error("Something wrong!");
                                         },
                                     },]}
@@ -348,26 +354,32 @@ const UnitInformation: React.FC = () => {
                                             maxCount={1}
                                             customRequest={(e: any) => e.onSuccess("Ok")}
                                             onChange={setLogo}
-
                                         >
                                             <Button icon={<UploadOutlined />}>انتخاب لوگو</Button>
-                                            {departmentInfo.logoUrl&&
+                                            {!!logoInfo.name &&
                                                 <div className="ant-upload-list-item ant-upload-list-item-default ant-upload-list-item-list-type-text">
-                                                    <div className="ant-upload-list-item-info">
-                                                        <span className="ant-upload-span">
-                                                            <Button
-                                                                style={{ height: "auto", padding: 0 }}
-                                                                title={`${departmentInfo.logoName}`}
-                                                                onClick={(e) => {
-                                                                    setFileViewerVisible("logo");
-                                                                    e.stopPropagation();
-                                                                }}
-                                                                type="link"
-                                                                icon={<PaperClipOutlined />}
-                                                            >
-                                                                {departmentInfo.logoName}
-                                                            </Button>
-                                                        </span>
+                                                    <div className="ant-upload-list-item-info bs-file-btn-box">
+                                                        <Button
+                                                            style={{ height: "auto", padding: 0 }}
+                                                            title={`${logoInfo.name}`}
+                                                            onClick={(e) => {
+                                                                setFileViewerVisible("logo");
+                                                                e.stopPropagation();
+                                                            }}
+                                                            type="link"
+                                                            icon={<PaperClipOutlined />}
+                                                        >
+                                                            {logoInfo.name}
+                                                        </Button>
+                                                        <Button
+                                                            style={{ height: "auto", padding: 0 }}
+                                                            onClick={(e) => {
+                                                                setLogoInfo({...logoInfo, isChanged:true, name:null, url:null});
+                                                                e.stopPropagation();
+                                                            }}
+                                                            type="link"
+                                                            icon={<DeleteOutlined />}
+                                                        />
                                                     </div>
                                                 </div>
                                             }
@@ -424,14 +436,12 @@ const UnitInformation: React.FC = () => {
                 fileViewerVisible === "logo" ?
                     <FileViewer
                         close={closeFileViewer}
-                        fileName={departmentInfo.logoName}
-                        fileUrl={departmentInfo.logoUrl}
+                        file={{ ...logoInfo }}
                     />
                     :
                     <FileViewer
                         close={closeFileViewer}
-                        fileName={departmentInfo.imageName}
-                        fileUrl={departmentInfo.imageUrl}
+                        file={{ ...imageInfo }}
                     />
                 :
                 null

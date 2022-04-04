@@ -55,7 +55,7 @@ namespace BS.Infrastructure.Persistence.Repositories
         {
             IQueryable<T> query = _dbSet;
             if (whereCondition != null)
-                query.Where(whereCondition);
+                query = query.Where(whereCondition);
             if (orderBy != null)
                 query = orderBy(query);
             return await query
@@ -67,7 +67,7 @@ namespace BS.Infrastructure.Persistence.Repositories
         {
             IQueryable<T> query = _dbSet;
             if (whereCondition != null)
-                query.Where(whereCondition);
+                query = query.Where(whereCondition);
             if (orderBy != null)
                 query=orderBy(query);
 
@@ -93,7 +93,7 @@ namespace BS.Infrastructure.Persistence.Repositories
         {
             IQueryable<T> query = _dbSet;
             if (whereCondition != null)
-                query.Where(whereCondition);
+                query = query.Where(whereCondition);
             if (orderBy != null)
                 query=orderBy(query);
             return await query
@@ -104,7 +104,7 @@ namespace BS.Infrastructure.Persistence.Repositories
         {
             IQueryable<T> query = _dbSet;
             if (whereCondition != null)
-                query.Where(whereCondition);
+                query = query.Where(whereCondition);
             if (orderBy != null)
                 query=orderBy(query);
             return await query
@@ -136,7 +136,7 @@ namespace BS.Infrastructure.Persistence.Repositories
         {
             IQueryable<T> query = _dbSet;
             if (whereCondition != null)
-                query.Where(whereCondition);
+                query = query.Where(whereCondition);
             if (orderBy != null)
                 query=orderBy(query);
 
@@ -150,7 +150,7 @@ namespace BS.Infrastructure.Persistence.Repositories
         {
             IQueryable<T> query = _dbSet;
             if (whereCondition != null)
-                query.Where(whereCondition);
+                query = query.Where(whereCondition);
             if (orderBy != null)
                 query=orderBy(query);
 

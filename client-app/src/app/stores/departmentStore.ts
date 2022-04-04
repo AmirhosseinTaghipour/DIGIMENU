@@ -1,6 +1,7 @@
 import { observable, computed, action, runInAction, makeAutoObservable, values } from "mobx";
 import agent from "../api/agent";
 import { openNotification } from "../common/util/util";
+import { IFile } from "../models/common";
 import { IDepartmentFormValues } from "../models/department";
 import { RootStore } from "./rootStore";
 
@@ -13,8 +14,41 @@ export default class DepartmentStore {
 
     @observable insertingDepartment = false;
     @observable loadingDepartment = false;
+
+    @observable imageInfo: IFile = {
+        file: null,
+        name: null,
+        url: null,
+        isChanged: false,
+    };
+
+    @action setImageInfo = (values: IFile) => {
+        if (!!values) {
+            this.imageInfo.file = values.file;
+            this.imageInfo.name = values.name;
+            this.imageInfo.url = values.url;
+            this.imageInfo.isChanged = values.isChanged;
+        }
+    };
+
+    @observable logoInfo: IFile = {
+        file: null,
+        name: null,
+        url: null,
+        isChanged: false,
+    };
+
+    @action setLogoInfo = (values: IFile) => {
+        if (!!values) {
+            this.logoInfo.file = values.file;
+            this.logoInfo.name = values.name;
+            this.logoInfo.url = values.url;
+            this.logoInfo.isChanged = values.isChanged;
+        }
+    };
+
     @observable departmentInfo: IDepartmentFormValues = {
-        Id:null,
+        Id: null,
         title: null,
         description: null,
         postalCode: null,
@@ -22,43 +56,33 @@ export default class DepartmentStore {
         phone: null,
         xpos: null,
         ypos: null,
-        image: null,
-        imageName: null,
-        imageUrl: null,
-        logo: null,
-        logoName: null,
-        logoUrl: null,
-        isImageChanged:false,
-        isLogChanged:false,
-        isUpdateMode:false
+        image: this.imageInfo,
+        logo: this.logoInfo,
+        isUpdateMode: false
     };
-    @action setDepartmentInfo=(values:IDepartmentFormValues)=>{
-        if (!!values){
-            this.departmentInfo.Id=values.Id;
-            this.departmentInfo.title=values.title;
-            this.departmentInfo.description=values.description;
-            this.departmentInfo.postalCode=values.postalCode;
-            this.departmentInfo.address=values.address;
-            this.departmentInfo.phone=values.phone;
-            this.departmentInfo.xpos=values.xpos;
-            this.departmentInfo.ypos=values.ypos;
-            this.departmentInfo.image=values.image;
-            this.departmentInfo.imageName=values.imageName;
-            this.departmentInfo.imageUrl=values.imageUrl;
-            this.departmentInfo.logo=values.logo;
-            this.departmentInfo.logoName=values.logoName;
-            this.departmentInfo.logoUrl=values.logoUrl;
-            this.departmentInfo.isImageChanged=values.isImageChanged;
-            this.departmentInfo.isLogChanged=values.isLogChanged;
-            this.departmentInfo.isUpdateMode=values.isUpdateMode;
+    @action setDepartmentInfo = (values: IDepartmentFormValues) => {
+        if (!!values) {
+            this.departmentInfo.Id = values.Id;
+            this.departmentInfo.title = values.title;
+            this.departmentInfo.description = values.description;
+            this.departmentInfo.postalCode = values.postalCode;
+            this.departmentInfo.address = values.address;
+            this.departmentInfo.phone = values.phone;
+            this.departmentInfo.xpos = values.xpos;
+            this.departmentInfo.ypos = values.ypos;
+            this.departmentInfo.image = values.image;
+            this.departmentInfo.logo = values.logo;
+            this.departmentInfo.isUpdateMode = values.isUpdateMode;
         }
     }
     @action loadDepartment = async () => {
         try {
-            debugger
             this.loadingDepartment = true;
             const res = await agent.Department.getDepartmentInfo();
+            const { image, logo } = res;
             runInAction(() => {
+                this.imageInfo = image;
+                this.logoInfo = logo;
                 this.departmentInfo = res;
                 this.loadingDepartment = false;
             });
@@ -80,12 +104,14 @@ export default class DepartmentStore {
             this.insertingDepartment = true;
             const res = await agent.Department.insertDepartmentInfo(values);
             runInAction(() => {
+                this.departmentInfo.isUpdateMode = false;
                 openNotification(
                     "success",
                     "ثبت اطلاعات",
                     `${res?.message!}`,
                     "topRight");
                 this.insertingDepartment = false;
+                this.loadDepartment();
             });
         } catch (err: any) {
             runInAction(() => {

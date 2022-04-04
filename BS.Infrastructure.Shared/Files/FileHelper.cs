@@ -92,7 +92,7 @@ namespace BS.Infrastructure.Shared.Files
 
         public async Task<bool> SaveFileAsync(IFormFile file, FileDirectorey directorey, string fileId)
         {
-            if (file == null && string.IsNullOrEmpty(fileId))
+            if (file == null || string.IsNullOrEmpty(fileId))
             {
                 return false;
             }

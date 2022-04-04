@@ -22,7 +22,7 @@ namespace BS.Application.Features.Departments.Commands
     {
         public class DepartmentInsertCommand : DepartmentDTO, IRequest<ResultDTO<string>>
         {
-            
+
         }
 
         public class DepartmentInsertHandler : IRequestHandler<DepartmentInsertCommand, ResultDTO<string>>
@@ -41,10 +41,23 @@ namespace BS.Application.Features.Departments.Commands
             }
             public async Task<ResultDTO<string>> Handle(DepartmentInsertCommand request, CancellationToken cancellationToken)
             {
-                var validImgType = _fileHelper.IsValidFile(request.Image);
-                var validLogoType = _fileHelper.IsValidFile(request.Logo);
-                var validImgSize = _fileHelper.IsValidSize(request.Image);
-                var validLogoSize = _fileHelper.IsValidSize(request.Logo);
+                if (request.IsUpdateMode == true)
+                    throw new RestException(HttpStatusCode.BadRequest, "خطا، مود آپدیت...");
+
+                var user = await _unitOfWork.userRepositoryAsync.GetByIdAsync(_userAccessor.GetCurrentUserId());
+                if (user == null)
+                    throw new RestException(HttpStatusCode.NotFound, "خطا، کاربری یافت نشد");
+
+                if (user.DepartmentId != null || user.DepartmentId!=Guid.Empty)
+                    throw new RestException(HttpStatusCode.BadRequest, "خطا، مود آپدیت...");
+
+
+
+
+                var validImgType = _fileHelper.IsValidFile(request.Image.File);
+                var validLogoType = _fileHelper.IsValidFile(request.Logo.File);
+                var validImgSize = _fileHelper.IsValidSize(request.Image.File);
+                var validLogoSize = _fileHelper.IsValidSize(request.Logo.File);
 
                 if (!validImgType || !validLogoType || !validImgSize || !validLogoSize)
                     throw new RestException(HttpStatusCode.BadRequest, "خظا، فرمت یا سایز تصاویر صحیح نیست.");
@@ -60,7 +73,6 @@ namespace BS.Application.Features.Departments.Commands
                 department.IsDeleted = false;
                 await _unitOfWork.departmentRepositoryAsync.AddAsync(department);
 
-                var user = await _unitOfWork.userRepositoryAsync.GetByIdAsync(_userAccessor.GetCurrentUserId());
                 user.DepartmentId = departmentId;
                 user.UpdateDate = DateTime.Now;
                 user.UpdateUser = _userAccessor.GetCurrentUserName().ToLower();
@@ -72,12 +84,12 @@ namespace BS.Application.Features.Departments.Commands
                 var logoFileRes = true;
                 var depImgRes = true;
 
-                if (request.Logo != null)
+                if (request.Logo.File != null)
                 {
                     var logoId = Guid.NewGuid();
                     var logoFile = new File();
                     logoFile.Id = logoId;
-                    logoFile.FileName = request.Logo.FileName;
+                    logoFile.FileName = request.Logo.File.FileName;
                     logoFile.InsertDate = DateTime.Now;
                     logoFile.InsertUser = _userAccessor.GetCurrentUserName().ToLower();
                     logoFile.DepartmentId = departmentId;
@@ -86,15 +98,15 @@ namespace BS.Application.Features.Departments.Commands
                     logoFile.IsDeleted = false;
                     await _unitOfWork.fileRepositoryAsync.AddAsync(logoFile);
 
-                    logoFileRes = await _fileHelper.SaveFileAsync(request.Logo, FileDirectorey.UnitLogo, logoId.ToString());
+                    logoFileRes = await _fileHelper.SaveFileAsync(request.Logo.File, FileDirectorey.UnitLogo, logoId.ToString());
                 }
 
-                if (request.Image != null)
+                if (request.Image.File != null)
                 {
                     var depImgId = Guid.NewGuid();
                     var depImg = new File();
                     depImg.Id = depImgId;
-                    depImg.FileName = request.Image.FileName;
+                    depImg.FileName = request.Image.File.FileName;
                     depImg.InsertDate = DateTime.Now;
                     depImg.InsertUser = _userAccessor.GetCurrentUserName().ToLower();
                     depImg.DepartmentId = departmentId;
@@ -103,7 +115,7 @@ namespace BS.Application.Features.Departments.Commands
                     depImg.IsDeleted = false;
                     await _unitOfWork.fileRepositoryAsync.AddAsync(depImg);
 
-                    depImgRes = await _fileHelper.SaveFileAsync(request.Image, FileDirectorey.UnitImage, depImgId.ToString());
+                    depImgRes = await _fileHelper.SaveFileAsync(request.Image.File, FileDirectorey.UnitImage, depImgId.ToString());
                 }
 
                 if (!depImgRes || !logoFileRes)

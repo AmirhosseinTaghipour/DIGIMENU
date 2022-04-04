@@ -303,3 +303,27 @@
     background-color: #230156 !important;
     color: #c9c9c9 !important;
 }
+
+.bs-file-btn-box{
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+}
+
+.bs-file-btn-box button:nth-child(2) {
+    display: flex !important;
+    justify-content: flex-end !important;
+    color: #fd4444 !important;
+    width: 15% !important;
+}
+
+.bs-file-btn-box button:nth-child(1) {
+    display: flex !important;
+    justify-content: flex-start !important;
+    align-items: center !important;
+    width: 85% !important;
+}
+
+.bs-file-btn-box button:nth-child(2):hover {
+    color: #c71b1b !important;
+}

@@ -7,13 +7,14 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-
-
 namespace BS.Infrastructure.Shared.Files
 {
     public class FileHelper : IFileHelper
@@ -90,7 +91,7 @@ namespace BS.Infrastructure.Shared.Files
             return true;
         }
 
-        public async Task<bool> SaveFileAsync(IFormFile file, FileDirectorey directorey, string fileId)
+        public async Task<bool> SaveFileAsync(IFormFile file, FileDirectorey directorey, string fileId, bool isImage = false)
         {
             if (file == null || string.IsNullOrEmpty(fileId))
             {
@@ -106,19 +107,82 @@ namespace BS.Infrastructure.Shared.Files
                 }
                 string fileName = fileId + Path.GetExtension(file.FileName);
                 var filePath = Path.Combine(pathString, fileName);
-                using (var stream = new FileStream(filePath, FileMode.Create))
+
+                if (!isImage)
                 {
-                    await file.CopyToAsync(stream);
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await file.CopyToAsync(stream);
+                    }
+                    return true;
                 }
-                return true;
+                else
+                {
+                    var width = 100;
+                    var height = 100;
+                    var imgType = directorey.ToString();
+                    switch (imgType)
+                    {
+                        case "UnitImage":
+                            width = 640; height = 400;
+                            break;
+
+                        case "UnitLogo":
+                            width = 100; height = 100;
+                            break;
+
+                        case "categoryLogo":
+                            width = 100; height = 100;
+                            break;
+
+                        case "ItemImage":
+                            width = 640; height = 560;
+                            break;
+
+                        case "ItemImageThumbnail":
+                            width = 160; height = 140;
+                            break;
+
+                        default:
+                            break;
+                    }
+
+                    Image image = Image.FromStream(file.OpenReadStream(), true, true);
+                    var modifyImage = ResizeImage(image, width, height);
+                    modifyImage.Save(filePath);
+                    return true;
+                }
             }
             catch (Exception ex)
             {
                 throw new RestException(HttpStatusCode.Conflict, "خطا در هنگام ذخیره فایل");
             }
+        }
+        
 
+        private Image ResizeImage(Image image, int width, int height)
+        {
+            var destRect = new Rectangle(0, 0, width, height);
+            var destImage = new Bitmap(width, height);
 
+            destImage.SetResolution(image.HorizontalResolution*100, image.VerticalResolution*100);
 
+            using (var graphics = Graphics.FromImage(destImage))
+            {
+                graphics.CompositingMode = CompositingMode.SourceCopy;
+                graphics.CompositingQuality = CompositingQuality.HighQuality;
+                graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                graphics.SmoothingMode = SmoothingMode.HighQuality;
+                graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+
+                using (var wrapMode = new ImageAttributes())
+                {
+                    wrapMode.SetWrapMode(WrapMode.TileFlipXY);
+                    graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);
+                }
+            }
+
+            return destImage;
         }
     }
 }

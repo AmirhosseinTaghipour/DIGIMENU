@@ -18,6 +18,8 @@ export default class MainStore {
         this.activeMenuCode = menuCode;
     }
 
+    @action closeForm =()=> this.setActiveMenuCode(null);
+
     @action loadAppMenu = async () => {
         try {
             this.loadingAppMenu = true;

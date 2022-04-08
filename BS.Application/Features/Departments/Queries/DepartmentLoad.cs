@@ -54,12 +54,12 @@ namespace BS.Application.Features.Departments.Queries
                 department.IsUpdateMode = true;
 
                 var logo = await _unitOfWork.fileRepositoryAsync.GetFirstAsync(
-                    whereCondition: n => n.EntityName == EntityName.DepartmentLogo.ToString() && n.EntityId == new Guid(department.Id) && n.DepartmentId == new Guid(department.Id),
+                    whereCondition: n => n.EntityName == EntityName.DepartmentLogo.ToString() && n.EntityId == new Guid(department.Id) && n.DepartmentId == new Guid(department.Id) && n.IsDeleted==false,
                     orderBy: n => n.OrderByDescending(x => x.UpdateDate ?? x.InsertDate),
                     selectField: n => new { n.Id, n.FileName });
 
                 var image = await _unitOfWork.fileRepositoryAsync.GetFirstAsync(
-                    whereCondition: n => n.EntityName == EntityName.Department.ToString() && n.EntityId == new Guid(department.Id) && n.DepartmentId == new Guid(department.Id),
+                    whereCondition: n => n.EntityName == EntityName.Department.ToString() && n.EntityId == new Guid(department.Id) && n.DepartmentId == new Guid(department.Id) && n.IsDeleted == false,
                     orderBy: n => n.OrderByDescending(x => x.UpdateDate ?? x.InsertDate),
                     selectField: n => new { n.Id, n.FileName });
 

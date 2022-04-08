@@ -8,12 +8,9 @@ import { IDepartmentFormValues } from "../../../../../app/models/department";
 import { checkJustNumber, IsNullOrEmpty } from "../../../../../app/common/util/util";
 import { SiGooglemaps } from "react-icons/si";
 import LeafletMap from "../../../../common/Map/LeafletMap";
-import SkeletonImage from "antd/lib/skeleton/Image";
 import { UploadChangeParam } from "antd/lib/upload";
-import { ok } from "assert";
-import { UploadRequestOption } from "rc-upload/lib/interface";
-import LoadingComponent from "../../../../../app/layout/LoadingComponent";
 import FileViewer from "../../../../common/FileViewer/FileViewer";
+import { UploadFile } from "antd/lib/upload/interface";
 
 
 const { Content, Header } = Layout;
@@ -38,10 +35,17 @@ const UnitInformation: React.FC = () => {
         logoInfo,
         setLogoInfo
     } = rootStore.departmentStore;
+
+    const {
+        closeForm,
+    } = rootStore.mainStore;
+
     const [form] = Form.useForm();
 
     const [locationVisible, setLocationVisible] = useState(false);
     const [fileViewerVisible, setFileViewerVisible] = useState<string | null>(null);
+    const [imageFile, setImageFile] = useState<UploadFile<any>[] | any[]>([]);
+    const [logFile, setLogFile] = useState<UploadFile<any>[] | any[]>([]);
 
     const closeFileViewer = () => {
         setFileViewerVisible(null);
@@ -65,19 +69,27 @@ const UnitInformation: React.FC = () => {
 
 
     const setImage = async (input: UploadChangeParam) => {
-        if (input.file.status != "removed")
+        if (input.file.status != "removed") {
             setImageInfo({ ...imageInfo, file: input.file.originFileObj as Blob });
-        else
+            setImageFile([input.file]);
+        }
+        else {
             setImageInfo({ ...imageInfo, file: null });
+            setImageFile([]);
+        }
         setImageInfo({ ...imageInfo, isChanged: true });
         form.validateFields(['image']);
     }
 
     const setLogo = async (input: UploadChangeParam) => {
-        if (input.file.status != "removed")
+        if (input.file.status != "removed") {
             setLogoInfo({ ...logoInfo, file: input.file.originFileObj as Blob });
-        else
+            setLogFile([input.file]);
+        }
+        else {
             setLogoInfo({ ...logoInfo, file: null });
+            setLogFile([]);
+        }
         setLogoInfo({ ...logoInfo, isChanged: true });
         form.validateFields(['logo']);
     }
@@ -96,11 +108,13 @@ const UnitInformation: React.FC = () => {
         if (departmentInfo.isUpdateMode)
             await updateDepartment(departmentInfo);
         else
-            await insertDepartment(departmentInfo);
+            await insertDepartment(departmentInfo).then(()=>setInitialConfig());
     };
     const setInitialConfig = () => {
         loadDepartment().then(() => {
             form.resetFields();
+            setLogFile([]);
+            setImageFile([]);
         })
     }
     useEffect(() => {
@@ -113,9 +127,8 @@ const UnitInformation: React.FC = () => {
                 اطلاعات مجموعه
             </div>
 
-            <Button>
-                <CloseOutlined />
-            </Button>
+            <Button icon={<CloseOutlined />} onClick={closeForm} />
+
         </Row>
 
         <Row className="bsFormBody">
@@ -283,6 +296,7 @@ const UnitInformation: React.FC = () => {
                                             accept={".png, .jpg, .jpeg, "}
                                             multiple={false}
                                             maxCount={1}
+                                            fileList={imageFile}
                                             customRequest={(e: any) => e.onSuccess("Ok")}
                                             onChange={setImage}
                                         >
@@ -305,7 +319,7 @@ const UnitInformation: React.FC = () => {
                                                         <Button
                                                             style={{ height: "auto", padding: 0 }}
                                                             onClick={(e) => {
-                                                                setImageInfo({...imageInfo, isChanged:true, name:null, url:null})
+                                                                setImageInfo({ ...imageInfo, isChanged: true, name: null, url: null })
                                                                 e.stopPropagation();
                                                             }}
                                                             type="link"
@@ -326,7 +340,8 @@ const UnitInformation: React.FC = () => {
                                     rules={[{
                                         required: true, message: 'فیلد لوگو نمی تواند خالی باشد',
                                         validator: async () => {
-                                            if (!logoInfo.file)
+                                            if ((!departmentInfo.isUpdateMode && !logoInfo.file)||
+                                                 departmentInfo.isUpdateMode && !logoInfo.url)
                                                 throw new Error("Something wrong!");
                                         }
                                     },
@@ -352,6 +367,7 @@ const UnitInformation: React.FC = () => {
                                             accept={".png, .jpg, .jpeg"}
                                             multiple={false}
                                             maxCount={1}
+                                            fileList={logFile}
                                             customRequest={(e: any) => e.onSuccess("Ok")}
                                             onChange={setLogo}
                                         >
@@ -374,7 +390,7 @@ const UnitInformation: React.FC = () => {
                                                         <Button
                                                             style={{ height: "auto", padding: 0 }}
                                                             onClick={(e) => {
-                                                                setLogoInfo({...logoInfo, isChanged:true, name:null, url:null});
+                                                                setLogoInfo({ ...logoInfo, isChanged: true, name: null, url: null });
                                                                 e.stopPropagation();
                                                             }}
                                                             type="link"

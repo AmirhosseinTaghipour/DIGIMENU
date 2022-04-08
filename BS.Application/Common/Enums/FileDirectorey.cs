@@ -8,9 +8,11 @@ namespace BS.Application.Common
 {
     public enum FileDirectorey
     {
+        OtherFile,
         UnitImage,
         UnitLogo,
         categoryLogo,
-        ItemImage
+        ItemImage,
+        ItemImageThumbnail,
     }
 }

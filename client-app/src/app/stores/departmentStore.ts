@@ -111,7 +111,6 @@ export default class DepartmentStore {
                     `${res?.message!}`,
                     "topRight");
                 this.insertingDepartment = false;
-                this.loadDepartment();
             });
         } catch (err: any) {
             runInAction(() => {
@@ -129,7 +128,7 @@ export default class DepartmentStore {
     @action updateDepartment = async (values: IDepartmentFormValues) => {
         try {
             this.insertingDepartment = true;
-            const res = await agent.Department.insertDepartmentInfo(values);
+            const res = await agent.Department.updateDepartmentInfo(values);
             runInAction(() => {
                 openNotification(
                     "success",

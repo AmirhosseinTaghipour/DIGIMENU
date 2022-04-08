@@ -48,7 +48,7 @@ namespace BS.Application.Features.Departments.Commands
                 if (user == null)
                     throw new RestException(HttpStatusCode.NotFound, "خطا، کاربری یافت نشد");
 
-                if (user.DepartmentId != null || user.DepartmentId!=Guid.Empty)
+                if (user.DepartmentId != null)
                     throw new RestException(HttpStatusCode.BadRequest, "خطا، مود آپدیت...");
 
 
@@ -98,7 +98,7 @@ namespace BS.Application.Features.Departments.Commands
                     logoFile.IsDeleted = false;
                     await _unitOfWork.fileRepositoryAsync.AddAsync(logoFile);
 
-                    logoFileRes = await _fileHelper.SaveFileAsync(request.Logo.File, FileDirectorey.UnitLogo, logoId.ToString());
+                    logoFileRes = await _fileHelper.SaveFileAsync(request.Logo.File, FileDirectorey.UnitLogo, logoId.ToString(), true);
                 }
 
                 if (request.Image.File != null)
@@ -115,7 +115,7 @@ namespace BS.Application.Features.Departments.Commands
                     depImg.IsDeleted = false;
                     await _unitOfWork.fileRepositoryAsync.AddAsync(depImg);
 
-                    depImgRes = await _fileHelper.SaveFileAsync(request.Image.File, FileDirectorey.UnitImage, depImgId.ToString());
+                    depImgRes = await _fileHelper.SaveFileAsync(request.Image.File, FileDirectorey.UnitImage, depImgId.ToString(), true);
                 }
 
                 if (!depImgRes || !logoFileRes)

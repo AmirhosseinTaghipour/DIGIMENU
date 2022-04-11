@@ -18,6 +18,8 @@ namespace BS.Application.Interfaces.Repositories
         public IFileRepositoryAsync fileRepositoryAsync { get; }
         public IAppMenuRepositoryAsync appMenuRepositoryAsync { get; }
         public IPaymentRepositoryAsync paymentRepositoryAsync { get; }
+        public IMenuRepositoryAsync menuRepositoryAsync { get; }
+        
         Task<int> SaveAsync();
     }
 }

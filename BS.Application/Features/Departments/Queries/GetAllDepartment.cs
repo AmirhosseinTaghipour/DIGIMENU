@@ -1,4 +1,4 @@
-﻿using BPJ.LMSR.Application.Common;
+﻿using BS.Application.Common.DTOs;
 using MediatR;
 using System;
 using System.Collections.Generic;

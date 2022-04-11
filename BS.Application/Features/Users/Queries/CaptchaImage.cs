@@ -1,5 +1,4 @@
-﻿using BS.Application.Common;
-using BS.Application.Interfaces;
+﻿using BS.Application.Interfaces;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -9,7 +8,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-
+using BS.Application.Common.DTOs;
+using BS.Application.Common.Models;
 
 namespace BS.Application.Features.Users.Queries
 {

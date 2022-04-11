@@ -13,7 +13,7 @@ using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
 using System.Linq;
-using BS.Application.Common;
+using BS.Application.Common.Models;
 
 namespace BS.Infrastructure.Identity.Security
 {

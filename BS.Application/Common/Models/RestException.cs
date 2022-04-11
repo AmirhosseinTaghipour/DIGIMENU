@@ -2,7 +2,7 @@
 using System.Net;
 using System.Net.Http;
 
-namespace BS.Application.Common
+namespace BS.Application.Common.Models
 {
     public class RestException : Exception
     {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BS.Application.Common
+namespace BS.Application.Common.Models
 {
     public class SMSRequest
     {

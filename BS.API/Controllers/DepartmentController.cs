@@ -1,4 +1,4 @@
-﻿using BPJ.LMSR.Application.Common;
+﻿using BS.Application.Common.DTOs;
 using BS.Application.Features.Departments.Commands;
 using BS.Application.Features.Departments.DTOs;
 using BS.Application.Features.Departments.Queries;

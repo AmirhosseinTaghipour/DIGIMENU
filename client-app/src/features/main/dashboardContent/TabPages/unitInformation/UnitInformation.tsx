@@ -23,7 +23,8 @@ const layout = {
 const imgSize = 5000000;
 const UnitInformation: React.FC = () => {
     const rootStore = useContext(RootStoreContext);
-    const { insertingDepartment,
+    const { 
+        submittingDepartment,
         insertDepartment,
         updateDepartment,
         loadDepartment,
@@ -152,7 +153,7 @@ const UnitInformation: React.FC = () => {
 
                             }}
                             icon={
-                                (loadingDepartment || insertingDepartment) ? <LoadingOutlined spin /> :
+                                (loadingDepartment || submittingDepartment) ? <LoadingOutlined spin /> :
                                     <SaveTwoTone
                                         twoToneColor="#52c41a"
                                         className="bsBtnSave"

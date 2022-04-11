@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using BPJ.LMSR.Application.Common;
 using BS.Application.Interfaces;
 using BS.Application.Interfaces.Repositories;
 using MediatR;
@@ -11,8 +10,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using BS.Domain.Entities;
 using Microsoft.Extensions.Configuration;
-using BS.Application.Common;
 using System.Net;
+using BS.Application.Common.DTOs;
+using BS.Application.Common.Models;
 
 namespace BS.Application.Features.Users.Commands
 {

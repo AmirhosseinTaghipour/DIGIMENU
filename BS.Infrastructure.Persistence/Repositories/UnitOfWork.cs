@@ -20,6 +20,7 @@ namespace BS.Infrastructure.Persistence.Repositories
         public IFileRepositoryAsync fileRepositoryAsync { get; }
         public IAppMenuRepositoryAsync appMenuRepositoryAsync { get; }
         public IPaymentRepositoryAsync paymentRepositoryAsync { get; }
+        public IMenuRepositoryAsync menuRepositoryAsync { get; }
 
         public UnitOfWork(Storage context)
         {
@@ -33,6 +34,7 @@ namespace BS.Infrastructure.Persistence.Repositories
             fileRepositoryAsync = fileRepositoryAsync ?? new FileRepositoryAsync(context);
             appMenuRepositoryAsync = appMenuRepositoryAsync ?? new AppMenuRepositoryAsync(context);
             paymentRepositoryAsync = paymentRepositoryAsync ?? new PaymentRepositoryAsync(context);
+            menuRepositoryAsync = menuRepositoryAsync ?? new MenuRepositoryAsync(context);
         }
 
 

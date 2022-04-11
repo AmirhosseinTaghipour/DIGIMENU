@@ -12,7 +12,7 @@ export default class DepartmentStore {
         makeAutoObservable(this)
     }
 
-    @observable insertingDepartment = false;
+    @observable submittingDepartment = false;
     @observable loadingDepartment = false;
 
     @observable imageInfo: IFile = {
@@ -101,7 +101,7 @@ export default class DepartmentStore {
 
     @action insertDepartment = async (values: IDepartmentFormValues) => {
         try {
-            this.insertingDepartment = true;
+            this.submittingDepartment = true;
             const res = await agent.Department.insertDepartmentInfo(values);
             runInAction(() => {
                 this.departmentInfo.isUpdateMode = false;
@@ -110,11 +110,11 @@ export default class DepartmentStore {
                     "ثبت اطلاعات",
                     `${res?.message!}`,
                     "topRight");
-                this.insertingDepartment = false;
+                this.submittingDepartment = false;
             });
         } catch (err: any) {
             runInAction(() => {
-                this.insertingDepartment = false;
+                this.submittingDepartment = false;
                 openNotification(
                     "error",
                     "خطا",
@@ -127,7 +127,7 @@ export default class DepartmentStore {
 
     @action updateDepartment = async (values: IDepartmentFormValues) => {
         try {
-            this.insertingDepartment = true;
+            this.submittingDepartment = true;
             const res = await agent.Department.updateDepartmentInfo(values);
             runInAction(() => {
                 openNotification(
@@ -135,11 +135,11 @@ export default class DepartmentStore {
                     "ثبت اطلاعات",
                     `${res?.message!}`,
                     "topRight");
-                this.insertingDepartment = false;
+                this.submittingDepartment = false;
             });
         } catch (err: any) {
             runInAction(() => {
-                this.insertingDepartment = false;
+                this.submittingDepartment = false;
                 openNotification(
                     "error",
                     "خطا",

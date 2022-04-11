@@ -1,4 +1,4 @@
-﻿using BS.Application.Common;
+﻿using BS.Application.Common.Enums;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;

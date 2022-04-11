@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Text;
 
-namespace BPJ.LMSR.Application.Common
+namespace BS.Application.Common.DTOs
 {
     public class ResultDTO<T>
     {

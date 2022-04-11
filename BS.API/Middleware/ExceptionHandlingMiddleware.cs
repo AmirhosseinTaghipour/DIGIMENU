@@ -1,4 +1,4 @@
-﻿using BS.Application.Common;
+﻿using BS.Application.Common.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System;

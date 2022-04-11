@@ -14,8 +14,10 @@ namespace BS.Domain.Entities
         [Required]
         [MaxLength(100)]
         public string Title { get; set; }
-        public Guid? DepartmentId { get; set; }
 
+        [MaxLength(500)]
+        public string Description { get; set; }
+        public Guid? DepartmentId { get; set; }
         public bool IsDeleted { get; set; }
 
         [ForeignKey("DepartmentId")]

@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
-using BPJ.LMSR.Application.Common;
 using BS.Application.Common;
+using BS.Application.Common.DTOs;
 using BS.Application.Common.Enums;
+using BS.Application.Common.Models;
 using BS.Application.Features.Departments.DTOs;
 using BS.Application.Interfaces;
 using BS.Application.Interfaces.Repositories;
@@ -71,9 +72,12 @@ namespace BS.Application.Features.Departments.Commands
                 department.Address = request.Address;
                 department.Xpos = request.Xpos;
                 department.Ypos = request.Ypos;
+                _unitOfWork.departmentRepositoryAsync.Update(department);
+
 
                 var logoFileRes = true;
                 var depImgRes = true;
+
                 if (request.Image.IsChanged)
                 {
                     var image = await _unitOfWork.fileRepositoryAsync.GetFirstAsync(n => n.DepartmentId == department.Id && n.EntityId == department.Id && n.EntityName == EntityName.Department.ToString() && n.IsDeleted == false);
@@ -107,7 +111,6 @@ namespace BS.Application.Features.Departments.Commands
                         else
                         {
                             depImgRes = await _fileHelper.SaveFileAsync(request.Image.File, FileDirectorey.UnitImage, image.Id.ToString(), true);
-
                         }
                     }
 

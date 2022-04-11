@@ -1,5 +1,4 @@
-﻿using BPJ.LMSR.Application.Common;
-using BS.Application.Common;
+﻿using BS.Application.Common.DTOs;
 using BS.Application.Features.Users;
 using BS.Application.Features.Users.Commands;
 using BS.Application.Features.Users.DTOs;

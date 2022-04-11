@@ -4,6 +4,7 @@ import { configure } from "mobx";
 import CommonStore from "./commonStore";
 import MainStore from "./mainStore";
 import DepartmentStore from "./departmentStore";
+import MenuStore from "./menuStore";
 
 
 
@@ -14,6 +15,7 @@ export class RootStore {
     commonStore : CommonStore;
     mainStore : MainStore;
     departmentStore : DepartmentStore;
+    menuStore : MenuStore;
     
 
 
@@ -22,6 +24,7 @@ export class RootStore {
         this.commonStore = new CommonStore( this );
         this.mainStore = new MainStore( this );
         this.departmentStore = new DepartmentStore( this );
+        this.menuStore= new MenuStore(this);
     }
 }
 

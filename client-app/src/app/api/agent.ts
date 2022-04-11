@@ -7,6 +7,7 @@ import { AddCookie, GetCookie, RemoveCookie } from "../common/util/util";
 import { values } from "mobx";
 import { IAppMenu } from "../models/main";
 import { IDepartmentFormValues } from "../models/department";
+import { IMenuFormValues } from "../models/menu";
 
 axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 
@@ -157,11 +158,23 @@ const Department = {
         requests.get("/department/DepartmentLoad"),
 }
 
+const Menu = {
+    insertMenu: (values: IMenuFormValues): Promise<IResultType> =>
+        requests.postForm("/menu/MenuInsert", values),
+
+    updateMenu: (values: IMenuFormValues): Promise<IResultType> =>
+        requests.postForm("/menu/MenuUpdate", values),
+
+    getMenuInfo: (): Promise<IMenuFormValues> =>
+        requests.get("/menu/MenuLoad"),
+}
+
 
 
 
 export default {
     User,
     Main,
-    Department
+    Department,
+    Menu
 };

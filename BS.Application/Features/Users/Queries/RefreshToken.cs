@@ -1,5 +1,4 @@
-﻿using BS.Application.Common;
-using BS.Application.Interfaces;
+﻿using BS.Application.Interfaces;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -13,6 +12,7 @@ using BS.Application.Interfaces.Repositories;
 using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 using BS.Application.Features.Users.DTOs;
+using BS.Application.Common.Models;
 
 namespace BS.Application.Features.Users.Queries
 {

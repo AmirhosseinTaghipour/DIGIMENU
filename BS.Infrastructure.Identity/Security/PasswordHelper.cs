@@ -1,4 +1,4 @@
-﻿using BS.Application.Common;
+﻿using BS.Application.Common.Models;
 using BS.Application.Interfaces;
 using System;
 using System.Collections.Generic;

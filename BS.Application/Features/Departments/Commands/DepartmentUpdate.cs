@@ -106,6 +106,8 @@ namespace BS.Application.Features.Departments.Commands
                         if (request.Image.File == null)
                         {
                             image.IsDeleted = true;
+                            image.UpdateDate = DateTime.Now;
+                            image.UpdateUser = _userAccessor.GetCurrentUserName().ToLower().Trim();
                             _unitOfWork.fileRepositoryAsync.Update(image);
                         }
                         else
@@ -131,10 +133,10 @@ namespace BS.Application.Features.Departments.Commands
                             logoImg.InsertUser = _userAccessor.GetCurrentUserName().ToLower();
                             logoImg.DepartmentId = department.Id;
                             logoImg.EntityId = department.Id;
-                            logoImg.EntityName = EntityName.Department.ToString();
+                            logoImg.EntityName = EntityName.DepartmentLogo.ToString();
                             logoImg.IsDeleted = false;
                             await _unitOfWork.fileRepositoryAsync.AddAsync(logoImg);
-                            depImgRes = await _fileHelper.SaveFileAsync(request.Image.File, FileDirectorey.UnitImage, logoId.ToString(), true);
+                            logoFileRes = await _fileHelper.SaveFileAsync(request.Logo.File, FileDirectorey.UnitLogo, logoId.ToString(), true);
                         }
                     }
                     else
@@ -144,6 +146,8 @@ namespace BS.Application.Features.Departments.Commands
                         if (request.Image.File == null)
                         {
                             logo.IsDeleted = true;
+                            logo.UpdateDate = DateTime.Now;
+                            logo.UpdateUser = _userAccessor.GetCurrentUserName().ToLower().Trim();
                             _unitOfWork.fileRepositoryAsync.Update(logo);
                         }
                         else

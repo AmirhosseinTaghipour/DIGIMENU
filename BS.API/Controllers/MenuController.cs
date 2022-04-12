@@ -1,5 +1,7 @@
 ﻿using BS.Application.Common.DTOs;
 using BS.Application.Features.Menus.Commands;
+using BS.Application.Features.Menus.DTOs;
+using BS.Application.Features.Menus.Queries;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -22,10 +24,10 @@ namespace BS.API.Controllers
             return await Mediator.Send(command);
         }
 
-        //[HttpGet("DepartmentLoad")]
-        //public async Task<ActionResult<DepartmentDTO>> DepartmentLoad()
-        //{
-        //    return await Mediator.Send(new DepartmentLoad.DepartmentLoadQuery());
-        //}
+        [HttpGet("MenuLoad")]
+        public async Task<ActionResult<MenuDTO>> MenuLoad()
+        {
+            return await Mediator.Send(new MenuLoad.MenuLoadQuery());
+        }
     }
 }

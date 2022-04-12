@@ -160,10 +160,10 @@ const Department = {
 
 const Menu = {
     insertMenu: (values: IMenuFormValues): Promise<IResultType> =>
-        requests.postForm("/menu/MenuInsert", values),
+        requests.post("/menu/MenuInsert", values),
 
     updateMenu: (values: IMenuFormValues): Promise<IResultType> =>
-        requests.postForm("/menu/MenuUpdate", values),
+        requests.post("/menu/MenuUpdate", values),
 
     getMenuInfo: (): Promise<IMenuFormValues> =>
         requests.get("/menu/MenuLoad"),

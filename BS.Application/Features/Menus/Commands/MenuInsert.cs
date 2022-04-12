@@ -43,14 +43,14 @@ namespace BS.Application.Features.Menus.Commands
                 if (request.IsUpdateMode == true)
                     throw new RestException(HttpStatusCode.BadRequest, "خطا، مود آپدیت...");
 
-                var user = await _unitOfWork.userRepositoryAsync.GetByIdAsync(_userAccessor.GetCurrentUserId());
+                var user = await _userAccessor.GetUserData();
                 if (user == null)
                     throw new RestException(HttpStatusCode.NotFound, "خطا، کاربری یافت نشد");
 
-                if (user.DepartmentId != null)
+                if (user.DepartmentId == null)
                     throw new RestException(HttpStatusCode.BadRequest, "خطا، اطلاعات مجموعه وارد نشده است...");
 
-                var isExistMenu = _unitOfWork.menuRepositoryAsync.Any(n => n.DepartmentId == user.DepartmentId!);
+                var isExistMenu = _unitOfWork.menuRepositoryAsync.Any(n => n.DepartmentId == user.DepartmentId! && n.IsDeleted == false);
                 if (isExistMenu)
                     throw new RestException(HttpStatusCode.BadRequest, "خطا، مود آپدیت...");
 

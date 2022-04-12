@@ -54,7 +54,7 @@ namespace BS.Application.Features.Departments.Queries
                 department.IsUpdateMode = true;
 
                 var logo = await _unitOfWork.fileRepositoryAsync.GetFirstAsync(
-                    whereCondition: n => n.EntityName == EntityName.DepartmentLogo.ToString() && n.EntityId == new Guid(department.Id) && n.DepartmentId == new Guid(department.Id) && n.IsDeleted==false,
+                    whereCondition: n => n.EntityName == EntityName.DepartmentLogo.ToString() && n.EntityId == new Guid(department.Id) && n.DepartmentId == new Guid(department.Id) && n.IsDeleted == false,
                     orderBy: n => n.OrderByDescending(x => x.UpdateDate ?? x.InsertDate),
                     selectField: n => new { n.Id, n.FileName });
 
@@ -63,18 +63,19 @@ namespace BS.Application.Features.Departments.Queries
                     orderBy: n => n.OrderByDescending(x => x.UpdateDate ?? x.InsertDate),
                     selectField: n => new { n.Id, n.FileName });
 
+                if (logo != null)
+                    department.Logo = new FileDTO()
+                    {
+                        Url = _fileHelper.GetFilePath(logo.Id.ToString(), logo.FileName, FileDirectorey.UnitLogo),
+                        Name = logo.FileName
+                    };
 
-                department.Logo = new FileDTO()
-                {
-                    Url = _fileHelper.GetFilePath(logo.Id.ToString(), logo.FileName, FileDirectorey.UnitLogo),
-                    Name = logo.FileName
-                };
-
-                department.Image = new FileDTO()
-                {
-                    Url = _fileHelper.GetFilePath(image.Id.ToString(), image.FileName, FileDirectorey.UnitImage),
-                    Name = image.FileName
-                };
+                if (image != null)
+                    department.Image = new FileDTO()
+                    {
+                        Url = _fileHelper.GetFilePath(image.Id.ToString(), image.FileName, FileDirectorey.UnitImage),
+                        Name = image.FileName
+                    };
 
                 return department;
 

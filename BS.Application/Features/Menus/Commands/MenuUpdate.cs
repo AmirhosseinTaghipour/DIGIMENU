@@ -40,37 +40,37 @@ namespace BS.Application.Features.Menus.Commands
             }
             public async Task<ResultDTO<string>> Handle(MenuUpdateCommand request, CancellationToken cancellationToken)
             {
-                if (request.IsUpdateMode == true)
-                    throw new RestException(HttpStatusCode.BadRequest, "خطا، مود آپدیت...");
+                if (request.IsUpdateMode == false)
+                    throw new RestException(HttpStatusCode.BadRequest, "خطا، مود اینزرت...");
 
-                var user = await _unitOfWork.userRepositoryAsync.GetByIdAsync(_userAccessor.GetCurrentUserId());
+                if (string.IsNullOrEmpty(request.Id))
+                    throw new RestException(HttpStatusCode.BadRequest, "خطا، مود اینزرت...");
+
+                var user = await _userAccessor.GetUserData();
                 if (user == null)
                     throw new RestException(HttpStatusCode.NotFound, "خطا، کاربری یافت نشد");
 
-                if (user.DepartmentId != null)
+                if (user.DepartmentId == null)
                     throw new RestException(HttpStatusCode.BadRequest, "خطا، اطلاعات مجموعه وارد نشده است...");
 
-                var isExistMenu = _unitOfWork.menuRepositoryAsync.Any(n => n.DepartmentId == user.DepartmentId!);
-                if (isExistMenu)
-                    throw new RestException(HttpStatusCode.BadRequest, "خطا، مود آپدیت...");
+                var isExistMenu = _unitOfWork.menuRepositoryAsync.Any(n => n.DepartmentId == user.DepartmentId! && n.IsDeleted==false);
+                if (!isExistMenu)
+                    throw new RestException(HttpStatusCode.BadRequest, "خطا، مود اینزرت...");
 
 
 
-                var menu = _mapper.Map<Menu>(request);
-                menu.Id = Guid.NewGuid();
-                menu.DepartmentId = user.DepartmentId;
-                menu.InsertDate = DateTime.Now;
-                menu.InsertUser = _userAccessor.GetCurrentUserName().ToLower();
-                menu.IsDeleted = false;
-                await _unitOfWork.menuRepositoryAsync.AddAsync(menu);
+                var menu = await _unitOfWork.menuRepositoryAsync.GetByIdAsync( new Guid(request.Id));
+                menu.UpdateDate = DateTime.Now;
+                menu.UpdateUser = _userAccessor.GetCurrentUserName().ToLower();
+                _unitOfWork.menuRepositoryAsync.Update(menu);
 
+                    var success = await _unitOfWork.SaveAsync() > 0;
+                    if (success)
+                        return new ResultDTO<string>(HttpStatusCode.OK, "اطلاعات منو با موفقیت ثیت شد.");
+                
+                
 
-
-                var success = await _unitOfWork.SaveAsync() > 0;
-                if (success)
-                    return new ResultDTO<string>(HttpStatusCode.OK, "اطلاعات منو با موفقیت ثیت شد.");
-
-                throw new RestException(HttpStatusCode.BadRequest, "خطا در عملیات ثبت");
+                throw new RestException(HttpStatusCode.BadRequest, "خطا در عملیات ویرایش");
 
             }
         }

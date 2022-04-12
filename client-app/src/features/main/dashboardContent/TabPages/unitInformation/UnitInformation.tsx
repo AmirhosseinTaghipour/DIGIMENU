@@ -23,7 +23,7 @@ const layout = {
 const imgSize = 5000000;
 const UnitInformation: React.FC = () => {
     const rootStore = useContext(RootStoreContext);
-    const { 
+    const {
         submittingDepartment,
         insertDepartment,
         updateDepartment,
@@ -107,9 +107,9 @@ const UnitInformation: React.FC = () => {
             logo: { ...logoInfo }
         });
         if (departmentInfo.isUpdateMode)
-            await updateDepartment(departmentInfo);
+            await updateDepartment(departmentInfo).then(() => setInitialConfig());
         else
-            await insertDepartment(departmentInfo).then(()=>setInitialConfig());
+            await insertDepartment(departmentInfo).then(() => setInitialConfig());
     };
     const setInitialConfig = () => {
         loadDepartment().then(() => {
@@ -341,8 +341,10 @@ const UnitInformation: React.FC = () => {
                                     rules={[{
                                         required: true, message: 'فیلد لوگو نمی تواند خالی باشد',
                                         validator: async () => {
-                                            if ((!departmentInfo.isUpdateMode && !logoInfo.file)||
-                                                 departmentInfo.isUpdateMode && !logoInfo.url)
+                                            if (
+                                                (!departmentInfo.isUpdateMode && !logoInfo.file) ||
+                                                (departmentInfo.isUpdateMode && (!logoInfo.url && !logoInfo.file))
+                                            )
                                                 throw new Error("Something wrong!");
                                         }
                                     },

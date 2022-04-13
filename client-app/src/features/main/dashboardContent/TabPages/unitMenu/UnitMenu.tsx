@@ -1,10 +1,8 @@
 import React, { Fragment, useContext, useEffect } from "react"
 import { Input, Layout, Menu, Row, Form, Col, Button } from "antd";
 import { observer } from "mobx-react-lite"
-import { CloseCircleOutlined, CloseOutlined, FormOutlined, LoadingOutlined, SaveTwoTone } from "@ant-design/icons";
+import { CloseOutlined, FormOutlined, LoadingOutlined, SaveTwoTone } from "@ant-design/icons";
 import { RootStoreContext } from "../../../../../app/stores/rootStore";
-import { Footer } from "antd/lib/layout/layout";
-import { checkJustNumber } from "../../../../../app/common/util/util";
 import { IMenuFormValues } from "../../../../../app/models/menu";
 
 const { Content, Header } = Layout;

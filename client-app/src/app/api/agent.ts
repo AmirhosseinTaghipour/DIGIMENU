@@ -8,6 +8,7 @@ import { values } from "mobx";
 import { IAppMenu } from "../models/main";
 import { IDepartmentFormValues } from "../models/department";
 import { IMenuFormValues } from "../models/menu";
+import { ICategoryFormValues } from "../models/category";
 
 axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 
@@ -169,6 +170,17 @@ const Menu = {
         requests.get("/menu/MenuLoad"),
 }
 
+const Category = {
+    insertCategory: (values: ICategoryFormValues): Promise<IResultType> =>
+        requests.post("/category/CategoryInsert", values),
+
+    updateCategory: (values: ICategoryFormValues): Promise<IResultType> =>
+        requests.post("/category/CategoryUpdate", values),
+
+    // getMenuInfo: (): Promise<IMenuFormValues> =>
+    //     requests.get("/menu/MenuLoad"),
+}
+
 
 
 
@@ -176,5 +188,6 @@ export default {
     User,
     Main,
     Department,
-    Menu
+    Menu,
+    Category
 };

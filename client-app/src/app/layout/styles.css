@@ -412,7 +412,7 @@ input::-ms-input-placeholder {
 }
 
 .ReportsTable .ant-table-header th {
-    background-color: #4a4057 !important;
+    background-color: #47295a !important;
     text-align: center !important;
     color: #fbfbfb;
 }
@@ -458,7 +458,7 @@ input::-ms-input-placeholder {
 }
 
 .DropDownTable thead th {
-    background-color: #4a4057 !important;
+    background-color: #47295a !important;
     text-align: center !important;
     color: #fbfbfb;
 }

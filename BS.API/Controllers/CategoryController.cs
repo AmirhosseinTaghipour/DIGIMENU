@@ -39,7 +39,7 @@ namespace BS.API.Controllers
         [HttpGet("CategoryList")]
         public async Task<ActionResult<CategoryEnvelopeDTO>> CategoryList()
         {
-            return await Mediator.Send(new CategoryList.CategoryListQuery);
+            return await Mediator.Send(new CategoryList.CategoryListQuery());
         }
     }
 }

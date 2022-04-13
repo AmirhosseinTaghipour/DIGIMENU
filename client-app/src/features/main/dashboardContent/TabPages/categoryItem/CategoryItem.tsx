@@ -9,3 +9,5 @@ const CategoryItem: React.FC = () => {
 };
 
 export default observer(CategoryItem);
+
+

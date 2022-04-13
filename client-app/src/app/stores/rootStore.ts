@@ -5,6 +5,7 @@ import CommonStore from "./commonStore";
 import MainStore from "./mainStore";
 import DepartmentStore from "./departmentStore";
 import MenuStore from "./menuStore";
+import CategoryStore from "./categoryStore";
 
 
 
@@ -16,6 +17,7 @@ export class RootStore {
     mainStore : MainStore;
     departmentStore : DepartmentStore;
     menuStore : MenuStore;
+    categoryStore : CategoryStore;
     
 
 
@@ -25,6 +27,7 @@ export class RootStore {
         this.mainStore = new MainStore( this );
         this.departmentStore = new DepartmentStore( this );
         this.menuStore= new MenuStore(this);
+        this.categoryStore= new CategoryStore(this);
     }
 }
 

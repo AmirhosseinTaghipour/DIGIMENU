@@ -109,7 +109,7 @@
 
 .bsDivider {
     font-size: 0.9rem !important;
-    margin-top: -1rem !important;
+    margin-top: -0.5rem !important;
     color: rgba(0, 0, 0, .4) !important;
 }
 
@@ -326,4 +326,9 @@
 
 .bs-file-btn-box button:nth-child(2):hover {
     color: #c71b1b !important;
+}
+
+.bsFormBtn{
+    display: flex;
+    align-items: flex-end !important;
 }

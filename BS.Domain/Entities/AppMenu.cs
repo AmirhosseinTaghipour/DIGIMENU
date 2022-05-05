@@ -18,6 +18,6 @@ namespace BS.Domain.Entities
         [Required]
         public bool IsActived { get; set; }
         public bool IsDeleted { get; set; }
-        public ICollection<Role> Roles { get; set; }
+        public ICollection<AppMenuRole> AppMenuRoles { get; set; }
     }
 }

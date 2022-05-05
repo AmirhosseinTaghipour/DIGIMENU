@@ -23,6 +23,6 @@ namespace BS.Domain.Entities
         public bool IsActived { get; set; }
         public bool IsDeleted { get; set; }
         public ICollection<User> Users { get; set; }
-        public ICollection<AppMenu> AppMenus { get; set; }
+        public ICollection<AppMenuRole> AppMenuRoles { get; set; }
     }
 }

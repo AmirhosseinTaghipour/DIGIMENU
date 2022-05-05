@@ -99,7 +99,7 @@ const MenuCategoryTable: React.FC=() => {
         {
             title: "عنوان دسته",
             dataIndex: "title",
-            key: "dakhlivaredati",
+            key: "title",
             align: "center",
             width: 100,
         },   

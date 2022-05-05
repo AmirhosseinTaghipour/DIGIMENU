@@ -21,7 +21,6 @@ const FileViewer: React.FC<IProps> = ({ close, file }) => {
             onCancel={() => close()}
             keyboard={true}
             destroyOnClose
-            zIndex={1000}
         >
             <div style={{ width: "100%", height: "calc(100vh - 8rem)", display:"flex", alignItems:"center", justifyContent:"center" }}>
                 <Image key="imageViewer" src={file.url!} />

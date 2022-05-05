@@ -4,20 +4,37 @@ using BS.Infrastructure.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BS.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(Storage))]
-    partial class StorageModelSnapshot : ModelSnapshot
+    [Migration("20220428194915_add-ctegory-item")]
+    partial class addctegoryitem
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.9")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+            modelBuilder.Entity("AppMenuRole", b =>
+                {
+                    b.Property<Guid>("AppMenusId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("RolesId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("AppMenusId", "RolesId");
+
+                    b.HasIndex("RolesId");
+
+                    b.ToTable("AppMenuRole");
+                });
 
             modelBuilder.Entity("BS.Domain.Entities.AppMenu", b =>
                 {
@@ -60,27 +77,6 @@ namespace BS.Infrastructure.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("AppMenus");
-                });
-
-            modelBuilder.Entity("BS.Domain.Entities.AppMenuRole", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("AppMenusId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("RolesId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AppMenusId");
-
-                    b.HasIndex("RolesId");
-
-                    b.ToTable("AppMenuRoles");
                 });
 
             modelBuilder.Entity("BS.Domain.Entities.Category", b =>
@@ -618,23 +614,19 @@ namespace BS.Infrastructure.Persistence.Migrations
                     b.ToTable("UserLogs");
                 });
 
-            modelBuilder.Entity("BS.Domain.Entities.AppMenuRole", b =>
+            modelBuilder.Entity("AppMenuRole", b =>
                 {
-                    b.HasOne("BS.Domain.Entities.AppMenu", "AppMenu")
-                        .WithMany("AppMenuRoles")
+                    b.HasOne("BS.Domain.Entities.AppMenu", null)
+                        .WithMany()
                         .HasForeignKey("AppMenusId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BS.Domain.Entities.Role", "Role")
-                        .WithMany("AppMenuRoles")
+                    b.HasOne("BS.Domain.Entities.Role", null)
+                        .WithMany()
                         .HasForeignKey("RolesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("AppMenu");
-
-                    b.Navigation("Role");
                 });
 
             modelBuilder.Entity("BS.Domain.Entities.Category", b =>
@@ -726,11 +718,6 @@ namespace BS.Infrastructure.Persistence.Migrations
                     b.Navigation("user");
                 });
 
-            modelBuilder.Entity("BS.Domain.Entities.AppMenu", b =>
-                {
-                    b.Navigation("AppMenuRoles");
-                });
-
             modelBuilder.Entity("BS.Domain.Entities.Category", b =>
                 {
                     b.Navigation("CategoryItems");
@@ -754,8 +741,6 @@ namespace BS.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BS.Domain.Entities.Role", b =>
                 {
-                    b.Navigation("AppMenuRoles");
-
                     b.Navigation("Users");
                 });
 

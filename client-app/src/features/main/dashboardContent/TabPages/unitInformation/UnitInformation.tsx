@@ -275,7 +275,7 @@ const UnitInformation: React.FC = () => {
                                     name="image"
                                     rules={[
                                         {
-                                            message: "حجم تصویر باید بیش از جد مجاز است",
+                                            message: "حجم تصویر بیش از حد مجاز است",
                                             validator: async (rule: any, value: any) => {
                                                 if (imageInfo.file?.size! > imgSize)
                                                     throw new Error("Something wrong!");
@@ -349,7 +349,7 @@ const UnitInformation: React.FC = () => {
                                         }
                                     },
                                     {
-                                        message: "حجم تصویر باید بیش از جد مجاز است",
+                                        message: "حجم تصویر بیش از حد مجاز است",
                                         validator: async (rule: any, value: any) => {
                                             if (logoInfo.file?.size! > imgSize)
                                                 throw new Error("Something wrong!");

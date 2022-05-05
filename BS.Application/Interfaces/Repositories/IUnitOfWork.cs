@@ -20,7 +20,11 @@ namespace BS.Application.Interfaces.Repositories
         public IPaymentRepositoryAsync paymentRepositoryAsync { get; }
         public IMenuRepositoryAsync menuRepositoryAsync { get; }
         public ICategoryRepositoryAsync categoryRepositoryAsync { get; }
+        public ICategoryIconRepositoryAsync categoryIconRepositoryAsync { get; }
+        public IAppMenuRoleRepositoryAsync appMenuRoleRepositoryAsync { get; }
         
+
+
 
         Task<int> SaveAsync();
     }

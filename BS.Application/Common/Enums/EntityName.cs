@@ -10,6 +10,7 @@ namespace BS.Application.Common.Enums
     {
         Category,
         CategoryItem,
+        CategoryIcon,
         AppMenu,
         DepartmentLogo,
         Department,

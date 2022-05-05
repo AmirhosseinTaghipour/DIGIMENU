@@ -485,9 +485,14 @@ input::-ms-input-placeholder {
 }
 
 .ant-modal-wrap {
-    z-index: 99999;
+    z-index: 999;
 }
-
+.ant-modal-mask{
+    z-index: 999;
+}
+.ant-notification{
+    z-index: 999999;
+}
 .ant-select-selection-item {
     font-size: 0.73rem;
 }
@@ -898,7 +903,7 @@ div .page .A3 .portrait {
     width: inherit;
     text-align: left;
     background-color: whitesmoke;
-    z-index: 9999;
+    z-index: 999;
     margin-top: 2px;
 }
 

@@ -17,6 +17,7 @@ namespace BS.Domain.Entities
         public int Order { get; set; }
         public Guid? DepartmentId { get; set; }
         public Guid MenuId { get; set; }
+        public Guid? IconId { get; set; }
 
         public bool IsDeleted { get; set; }
 

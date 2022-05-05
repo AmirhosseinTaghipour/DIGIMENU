@@ -40,14 +40,19 @@ namespace BS.Application.Features.Main.Queries
                     throw new RestException(HttpStatusCode.BadRequest);
                 try
                 {
-                    var AppMenues = await _unitOfWork.appMenuRepositoryAsync.Query()
-                                          .Where(a => a.IsActived == true && a.IsDeleted == false)
-                                          .Include(a => a.Roles.Where(r => r.Id.Equals(roleId)))
-                                          .OrderBy(a => a.MenuOrder)
-                                          .Select(a => new AppMenuDTO { MenuId = a.Id.ToString(), MenuCode = a.MenuCode, MenuTitle = a.MenuTitle })
-                                          .AsNoTracking()
-                                          .ToListAsync();
-                    return AppMenues;
+
+                    var AppMenueList = await (from appMenuTable in _unitOfWork.appMenuRepositoryAsync.Query()
+                                              join appMenuRoleTable in _unitOfWork.appMenuRoleRepositoryAsync.Query() on appMenuTable.Id equals appMenuRoleTable.AppMenusId
+                                              where appMenuTable.IsActived == true && appMenuTable.IsDeleted == false && appMenuRoleTable.RolesId == roleId
+                                              orderby appMenuTable.MenuOrder ascending
+                                              select new AppMenuDTO {
+                                                  MenuId = appMenuTable.Id.ToString(),
+                                                  MenuCode = appMenuTable.MenuCode,
+                                                  MenuTitle = appMenuTable.MenuTitle 
+                                              })
+                                              .AsNoTracking()
+                                              .ToListAsync();
+                    return AppMenueList;
                 }
                 catch (Exception ex)
                 {

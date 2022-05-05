@@ -2,7 +2,7 @@ import { utils, DayRange, Day } from "react-modern-calendar-datepicker";
 import Cookies from "universal-cookie";
 import { notification } from "antd";
 import { IconType, NotificationPlacement } from "antd/lib/notification";
-import moment from 'jalali-moment'
+import moment, { duration } from 'jalali-moment'
 
 const cookies = new Cookies();
 

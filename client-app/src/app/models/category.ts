@@ -3,6 +3,6 @@ export interface ICategoryFormValues {
     Id: string | null;
     title: string | null;
     order: number | null;
-    icon: IFile;
+    iconId: string|null;
     isUpdateMode: boolean;
 }

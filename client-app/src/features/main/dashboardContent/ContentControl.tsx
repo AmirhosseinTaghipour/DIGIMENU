@@ -6,6 +6,7 @@ const CategoryItem = React.lazy(() => import('./TabPages/categoryItem/CategoryIt
 const UnitMenu = React.lazy(() => import('./TabPages/unitMenu/UnitMenu'))
 const Payment = React.lazy(() => import('./TabPages/payment/Payment'))
 const MenuCategory = React.lazy(() => import('./TabPages/menuCategory/MenuCategory'))
+const CategoryIconList = React.lazy(() => import('./TabPages/categoryIcon/CategoryIconList'))
 
 
 
@@ -27,6 +28,8 @@ const ContentControl: React.FC<IProps> = ({ menuCode }) => {
                 return <Suspense fallback={<LoadingComponent content="در حال بارگذاری ..." />}> <Payment /></Suspense>;
             case "create-menu":
                 return <Suspense fallback={<LoadingComponent content="در حال بارگذاری ..." />}> <UnitMenu /></Suspense>;
+            case "icon-management":
+                return <Suspense fallback={<LoadingComponent content="در حال بارگذاری ..." />}> <CategoryIconList /></Suspense>;
             default:
                 return null;
         }

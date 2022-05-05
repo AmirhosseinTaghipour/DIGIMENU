@@ -9,6 +9,7 @@ import { IAppMenu } from "../models/main";
 import { IDepartmentFormValues } from "../models/department";
 import { IMenuFormValues } from "../models/menu";
 import { ICategoryFormValues } from "../models/category";
+import { ICategoryIconFormValues, ICategoryIconListEnvelope, ICategoryIconListItemValues, ICategoryIconListSearchParam } from "../models/categoryIcon";
 
 axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 
@@ -76,7 +77,7 @@ axios.interceptors.response.use(
                         window.location.replace("/");
                     }
                 }
-                else if (!reftoken) {
+                else if (resError.response.status === 401 && !reftoken) {
                     RemoveCookie("bstoken");
                     RemoveCookie("bsreftoken");
                     window.location.replace("/");
@@ -181,6 +182,26 @@ const Category = {
     //     requests.get("/menu/MenuLoad"),
 }
 
+const CategoryIcon = {
+    insertCategoryIcon: (values: ICategoryIconFormValues): Promise<IResultType> =>
+        requests.postForm("/categoryIcon/CategoryIconInsert", values),
+
+    updateCategoryIcon: (values: ICategoryIconFormValues): Promise<IResultType> =>
+        requests.postForm("/categoryIcon/CategoryIconUpdate", values),
+
+    deleteCategoryIcon: (id: string): Promise<IResultType> =>
+        requests.post("/categoryIcon/CategoryIconDelete", { id }),
+
+    getCategoryIconList: (values: ICategoryIconListSearchParam): Promise<ICategoryIconListEnvelope> =>
+        requests.post("/categoryIcon/CategoryIconList",values),
+
+    getCategoryIcon: (id: string): Promise<ICategoryIconFormValues> =>
+        requests.post("/categoryIcon/CategoryIcon",{id}),
+
+    // getMenuInfo: (): Promise<IMenuFormValues> =>
+    //     requests.get("/menu/MenuLoad"),
+}
+
 
 
 
@@ -189,5 +210,6 @@ export default {
     Main,
     Department,
     Menu,
-    Category
+    Category,
+    CategoryIcon
 };

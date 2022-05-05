@@ -277,6 +277,16 @@
     margin-left: 5px !important;
 }
 
+.bsBtnAdd {
+    font-size: 1.1rem !important;
+    margin-left: 5px !important;
+}
+
+.bsBtnDelete {
+    font-size: 1.1rem !important;
+    margin-left: 5px !important;
+}
+
 /*Uploader*/
 .img-crop-modal .ant-modal-header, .img-crop-modal .ant-modal-footer {
     background-color: #230156 !important;
@@ -304,7 +314,7 @@
     color: #c9c9c9 !important;
 }
 
-.bs-file-btn-box{
+.bs-file-btn-box {
     display: flex !important;
     align-items: center !important;
     justify-content: space-between !important;
@@ -328,7 +338,26 @@
     color: #c71b1b !important;
 }
 
-.bsFormBtn{
+.bsFormBtn {
     display: flex;
     align-items: flex-end !important;
+}
+
+.bsImgIcon {
+    max-width: 60px !important;
+}
+
+.bsCustomTable thead tr th {
+    background-color: #cbcbcb !important;
+    color: #505050 !important;
+    border-bottom: 1px solid #979797 !important;
+}
+
+.bsCustomTable tr th, .bsCustomTable tr td {
+    text-align: center !important;
+    vertical-align: middle !important;
+}
+
+.bsCustomTable .isSelected {
+    background-color: #ffe4c5 !important;
 }

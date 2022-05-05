@@ -16,6 +16,11 @@ export interface IComboBoxType {
     value: string;
 }
 
+export interface ISelectHandlerType {
+    value: string;
+    handleMode: string;
+}
+
 export interface ILazyTreeType {
     id: string;
     pId: string | null;

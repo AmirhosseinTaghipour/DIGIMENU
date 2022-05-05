@@ -132,7 +132,7 @@ namespace BS.Infrastructure.Shared.Files
                             width = 100; height = 100;
                             break;
 
-                        case "categoryLogo":
+                        case "categoryIcon":
                             width = 100; height = 100;
                             break;
 

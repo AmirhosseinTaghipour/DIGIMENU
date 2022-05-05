@@ -1,13 +1,14 @@
 import React, { Fragment, useContext, useEffect, useState } from "react"
-import { Input, Layout, Menu, Row, Form, Col, Button, Upload, message, Divider } from "antd";
+import { Input, Layout, Menu, Row, Form, Col, Button, Image, message, Divider, Select } from "antd";
 import { observer } from "mobx-react-lite"
-import { CloseOutlined, DeleteOutlined, FormOutlined, LoadingOutlined, PaperClipOutlined, PlusOutlined, SaveOutlined, SaveTwoTone, SearchOutlined, UploadOutlined } from "@ant-design/icons";
+import { CheckOutlined, CloseOutlined, DeleteOutlined, FormOutlined, LoadingOutlined, PaperClipOutlined, PlusOutlined, SaveOutlined, SaveTwoTone, SearchOutlined, UploadOutlined } from "@ant-design/icons";
 import { RootStoreContext } from "../../../../../app/stores/rootStore";
 import { IMenuFormValues } from "../../../../../app/models/menu";
 import ImgCrop from "antd-img-crop";
 import { UploadChangeParam, UploadFile } from "antd/lib/upload/interface";
 import FileViewer from "../../../../common/FileViewer/FileViewer";
 import MenuCategoryTable from "./MenuCategoryTable";
+import { toDatabaseChar } from "../../../../../app/common/util/util";
 
 const { Content, Header } = Layout;
 const { TextArea } = Input;
@@ -16,8 +17,7 @@ const layout = {
     labelCol: { span: 24 },
     wrapperCol: { span: 24 },
 };
-
-const imgSize = 5000000;
+const { Option } = Select;
 const MenuCategory: React.FC = () => {
     const rootStore = useContext(RootStoreContext);
     const {
@@ -28,8 +28,6 @@ const MenuCategory: React.FC = () => {
         loadingCategory,
         categoryInfo,
         setCategoryInfo,
-        iconInfo,
-        setIconInfo
     } = rootStore.categoryStore;
 
     const {
@@ -43,19 +41,6 @@ const MenuCategory: React.FC = () => {
 
     const closeFileViewer = () => {
         setFileViewerVisible(null);
-    }
-
-    const setIcon = async (input: UploadChangeParam) => {
-        if (input.file.status != "removed") {
-            setIconInfo({ ...iconInfo, file: input.file.originFileObj as Blob });
-            setIconFile([input.file]);
-        }
-        else {
-            setIconInfo({ ...iconInfo, file: null });
-            setIconFile([]);
-        }
-        setIconInfo({ ...iconInfo, isChanged: true });
-        form.validateFields(['icon']);
     }
 
     //سابمیت فرم 
@@ -124,64 +109,49 @@ const MenuCategory: React.FC = () => {
                                 <Form.Item
                                     label="آیکن"
                                     name="icon"
-                                    rules={[
-                                        {
-                                            message: "حجم تصویر باید بیش از جد مجاز است",
-                                            validator: async (rule: any, value: any) => {
-                                                if (iconInfo.file?.size! > imgSize)
-                                                    throw new Error("Something wrong!");
-                                            },
-                                        },
-                                    ]}
+                                    initialValue={categoryInfo.title}
+                                    rules={[{
+                                        required: true, message: 'فیلد آیکن نمی تواند خالی باشد',
+                                    }]}
                                 >
-                                    <ImgCrop grid shape="rect" aspect={1 / 1} quality={0.9} rotate modalTitle="انتخاب آیکن">
-                                        <Upload
-                                            beforeUpload={(file) => {
-                                                const isAllowedFormat = ["image/png", "image/jpg", "image/jpeg"]
-                                                    .includes(file.type);
-                                                if (!isAllowedFormat) {
-                                                    message.error("تصویر باید دارای یکی از فرمت های png، jpg یا jpeg باشد.");
-                                                }
-                                                return isAllowedFormat;
-                                            }}
-                                            name="icon"
-                                            accept={".png, .jpg, .jpeg, "}
-                                            multiple={false}
-                                            maxCount={1}
-                                            fileList={iconFile}
-                                            customRequest={(e: any) => e.onSuccess("Ok")}
-                                            onChange={setIcon}
-                                        >
-                                            <Button icon={<UploadOutlined />}>انتخاب آیکن</Button>
-                                            {!!iconInfo.name &&
-                                                <div className="ant-upload-list-item ant-upload-list-item-default ant-upload-list-item-list-type-text">
-                                                    <div className="ant-upload-list-item-info bs-file-btn-box">
-                                                        <Button
-                                                            style={{ height: "auto", padding: 0 }}
-                                                            title={`${iconInfo.name}`}
-                                                            onClick={(e) => {
-                                                                setFileViewerVisible("icon");
-                                                                e.stopPropagation();
-                                                            }}
-                                                            type="link"
-                                                            icon={<PaperClipOutlined />}
-                                                        >
-                                                            {iconInfo.name}
-                                                        </Button>
-                                                        <Button
-                                                            style={{ height: "auto", padding: 0 }}
-                                                            onClick={(e) => {
-                                                                setIconInfo({ ...iconInfo, isChanged: true, name: null, url: null })
-                                                                e.stopPropagation();
-                                                            }}
-                                                            type="link"
-                                                            icon={<DeleteOutlined />}
-                                                        />
-                                                    </div>
-                                                </div>
-                                            }
-                                        </Upload>
-                                    </ImgCrop>
+                                    <Select
+                                        showSearch
+                                        style={{
+                                            width: "100%",
+                                        }}
+                                        loading={false}
+                                        onChange={() => {
+                                        }}
+                                        onClear={() => {
+                                        }}
+                                        filterOption={(input, option) =>
+                                            option!.children
+                                                .toLowerCase()
+                                                .indexOf(toDatabaseChar(input.toLowerCase())) >= 0
+                                        }
+                                        placeholder="انتخاب"
+                                        // allowClear={
+                                        //     TestWayComboList &&
+                                        //     TestWayComboList.length > 1
+                                        // }
+                                        bordered
+                                        menuItemSelectedIcon={
+                                            <CheckOutlined style={{ color: "green" }} />
+                                        }
+                                     value={2}
+                                    >
+
+
+                                        <Option key={1} value={1}>
+                                        <Image key="imageViewer" src={"https://localhost:5001/CategoryIcon/a8469554-c5a0-11ec-9d64-0242ac120002.png"} preview={false} />
+                                        </Option>
+                                        <Option key={2} value={2}>
+                                        <Image key="imageViewer" src={"https://localhost:5001/CategoryIcon/a8469554-c5a0-11ec-9d64-0242ac120002.png"} preview={false} />
+                                        </Option>
+
+
+
+                                    </Select>
                                 </Form.Item>
                             </Col>
 
@@ -212,17 +182,7 @@ const MenuCategory: React.FC = () => {
                 </Content>
             </Layout>
         </Row>
-        {
-            fileViewerVisible === "icon" ?
-                <FileViewer
-                    close={closeFileViewer}
-                    file={{ ...iconInfo }}
-                />
-                :
-                null
-        }
     </Fragment>
-
 };
 
 export default observer(MenuCategory);

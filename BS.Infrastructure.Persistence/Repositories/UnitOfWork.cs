@@ -22,6 +22,8 @@ namespace BS.Infrastructure.Persistence.Repositories
         public IPaymentRepositoryAsync paymentRepositoryAsync { get; }
         public IMenuRepositoryAsync menuRepositoryAsync { get; }
         public ICategoryRepositoryAsync categoryRepositoryAsync { get; }
+        public ICategoryIconRepositoryAsync categoryIconRepositoryAsync { get; }
+        public IAppMenuRoleRepositoryAsync appMenuRoleRepositoryAsync { get; }
 
         public UnitOfWork(Storage context)
         {
@@ -37,6 +39,9 @@ namespace BS.Infrastructure.Persistence.Repositories
             paymentRepositoryAsync = paymentRepositoryAsync ?? new PaymentRepositoryAsync(context);
             menuRepositoryAsync = menuRepositoryAsync ?? new MenuRepositoryAsync(context);
             categoryRepositoryAsync = categoryRepositoryAsync ?? new CategoryRepositoryAsync(context);
+            categoryIconRepositoryAsync = categoryIconRepositoryAsync ?? new CategoryIconRepositoryAsync(context);
+            appMenuRoleRepositoryAsync = appMenuRoleRepositoryAsync ?? new AppMenuRoleRepositoryAsync(context);
+            
         }
 
 

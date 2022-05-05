@@ -2,7 +2,6 @@ import { observable, action, runInAction, makeAutoObservable } from "mobx";
 import agent from "../api/agent";
 import { openNotification } from "../common/util/util";
 import { ICategoryFormValues } from "../models/category";
-import { IFile } from "../models/common";
 import { RootStore } from "./rootStore";
 
 export default class CategoryStore {
@@ -15,27 +14,13 @@ export default class CategoryStore {
     @observable sumbittingCategory = false;
     @observable loadingCategory = false;
     
-    @observable iconInfo: IFile = {
-        file: null,
-        name: null,
-        url: null,
-        isChanged: false,
-    };
 
-    @action setIconInfo = (values: IFile) => {
-        if (!!values) {
-            this.iconInfo.file = values.file;
-            this.iconInfo.name = values.name;
-            this.iconInfo.url = values.url;
-            this.iconInfo.isChanged = values.isChanged;
-        }
-    };
 
     @observable categoryInfo: ICategoryFormValues = {
         Id: null,
         title: null,
         order: null,
-        icon:this.iconInfo,
+        iconId:null,
         isUpdateMode: false
     };
 
@@ -44,7 +29,7 @@ export default class CategoryStore {
             this.categoryInfo.Id = values.Id;
             this.categoryInfo.title = values.title;
             this.categoryInfo.order = values.order;
-            this.categoryInfo.icon = values.icon;
+            this.categoryInfo.iconId = values.iconId;
             this.categoryInfo.isUpdateMode = values.isUpdateMode;
         }
     }

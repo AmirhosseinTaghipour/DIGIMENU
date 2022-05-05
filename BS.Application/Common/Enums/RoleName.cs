@@ -6,13 +6,9 @@ using System.Threading.Tasks;
 
 namespace BS.Application.Common.Enums
 {
-    public enum FileDirectorey
+    public enum RoleName
     {
-        OtherFile,
-        UnitImage,
-        UnitLogo,
-        categoryIcon,
-        ItemImage,
-        ItemImageThumbnail,
+        Admin,
+        UnitManager,
     }
 }

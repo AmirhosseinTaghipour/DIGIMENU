@@ -159,7 +159,7 @@ namespace BS.Application.Features.Departments.Commands
                 }
 
                 if (!depImgRes || !logoFileRes)
-                    throw new RestException(HttpStatusCode.BadRequest, "خطا در ذخیره تصاویر");
+                    throw new RestException(HttpStatusCode.BadRequest, "خطا در ذخیره آیکن");
 
 
                 var success = await _unitOfWork.SaveAsync() > 0;

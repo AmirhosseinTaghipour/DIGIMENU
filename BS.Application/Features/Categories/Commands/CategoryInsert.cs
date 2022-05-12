@@ -18,7 +18,7 @@ namespace BS.Application.Features.Categories.Commands
 {
     public class CategoryInsert
     {
-        public class CategoryInsertCommand : CategoryDTO, IRequest<ResultDTO<string>>
+        public class CategoryInsertCommand : CategoryFormDTO, IRequest<ResultDTO<string>>
         {
 
         }
@@ -39,6 +39,9 @@ namespace BS.Application.Features.Categories.Commands
             {
                 if (request.IsUpdateMode == true)
                     throw new RestException(HttpStatusCode.BadRequest, "خطا، مود آپدیت...");
+                if (string.IsNullOrEmpty(request.Title) || string.IsNullOrEmpty(request.IconId))
+                    throw new RestException(HttpStatusCode.BadRequest, "خطا، فیلد های ضروری نمیتواند خالی باشد.");
+
 
                 var user = await _userAccessor.GetUserData();
                 if (user == null)
@@ -52,14 +55,18 @@ namespace BS.Application.Features.Categories.Commands
                     throw new RestException(HttpStatusCode.BadRequest, "خطا، اطلاعات منو وارد نشده است...");
 
                 var menu = await _unitOfWork.menuRepositoryAsync.GetFirstAsync(n => n.DepartmentId == user.DepartmentId && n.IsDeleted == false);
-                var categoryCount = _unitOfWork.categoryRepositoryAsync.Query().Where(n => n.IsDeleted == false).Count();
+
+                var maxOrder = 0;
+                if (_unitOfWork.categoryRepositoryAsync.Query().Where(n => n.IsDeleted == false).Any())
+                    maxOrder = _unitOfWork.categoryRepositoryAsync.Query().Where(n => n.IsDeleted == false).Max(n => n.Order);
 
                 var category = new Category();
                 category.Id = Guid.NewGuid();
                 category.Title = request.Title;
                 category.MenuId = menu.Id;
-                category.Order = categoryCount+1;
+                category.Order = maxOrder + 1;
                 category.DepartmentId = user.DepartmentId;
+                category.IconId = new Guid(request.IconId);
                 category.InsertDate = DateTime.Now;
                 category.InsertUser = _userAccessor.GetCurrentUserName().ToLower();
                 category.IsDeleted = false;

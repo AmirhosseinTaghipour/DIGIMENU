@@ -44,6 +44,7 @@ namespace BS.Application.Features.Categories.Commands
                 foreach (var item in categoryList)
                 {
                     item.IsDeleted = true;
+                    item.Order = 0;
                     item.UpdateDate = DateTime.Now;
                     item.UpdateUser = _userAccessor.GetCurrentUserName().ToLower();
                     _unitOfWork.categoryRepositoryAsync.Update(item);
@@ -51,7 +52,7 @@ namespace BS.Application.Features.Categories.Commands
 
                 var success = await _unitOfWork.SaveAsync() > 0;
                 if (success)
-                    return new ResultDTO<string>(HttpStatusCode.OK, "اطلاعات دسته بندی با موفقیت ثیت شد.");
+                    return new ResultDTO<string>(HttpStatusCode.OK, "حذف دسته بندی با موفقیت انجام شد.");
 
                 throw new RestException(HttpStatusCode.BadRequest, "خطا در عملیات حذف");
 

@@ -15,22 +15,26 @@ using System.Threading.Tasks;
 using System.Linq.Dynamic.Core;
 using BS.Application.Common.DTOs;
 using BS.Application.Common.Enums;
+using BS.Domain.Entities;
 
-namespace BS.Application.Features.Categories.Queries
+namespace BS.Application.Features.Categories.Commands
 {
-    public class CategoryList
+    public class CategoryListOrder
     {
         public class CategoryEnvelope
         {
             public List<CategoryListItemDTO> CategoryList { get; set; }
             public int CategoryCount { get; set; }
         }
-        public class CategoryListQuery : ListSearchParam, IRequest<CategoryEnvelope>
+        public class CategoryListOrderQuery : IRequest<CategoryEnvelope>
         {
-            public string Title { get; set; }
+            public string Id { get; set; }
+            public int Movement { get; set; }
+            public int? Limit { get; set; }   // تعداد در هر صفحه
+            public int? Page { get; set; }    // کدام صفحه
         }
 
-        public class CategoryListHandLer : IRequestHandler<CategoryListQuery, CategoryEnvelope>
+        public class CategoryListOrderHandLer : IRequestHandler<CategoryListOrderQuery, CategoryEnvelope>
         {
             private readonly IUnitOfWork _unitOfWork;
             private readonly IUserAccessor _userAccessor;
@@ -39,7 +43,7 @@ namespace BS.Application.Features.Categories.Queries
             private readonly IAdjustChar _adjustChar;
 
 
-            public CategoryListHandLer(IUnitOfWork unitOfWork, IUserAccessor userAccessor, IMapper mapper, IFileHelper fileHelper, IAdjustChar adjustChar)
+            public CategoryListOrderHandLer(IUnitOfWork unitOfWork, IUserAccessor userAccessor, IMapper mapper, IFileHelper fileHelper, IAdjustChar adjustChar)
             {
                 _unitOfWork = unitOfWork;
                 _userAccessor = userAccessor;
@@ -47,8 +51,11 @@ namespace BS.Application.Features.Categories.Queries
                 _mapper = mapper;
                 _adjustChar = adjustChar;
             }
-            public async Task<CategoryEnvelope> Handle(CategoryListQuery request, CancellationToken cancellationToken)
+            public async Task<CategoryEnvelope> Handle(CategoryListOrderQuery request, CancellationToken cancellationToken)
             {
+                if (string.IsNullOrEmpty(request.Id))
+                    throw new RestException(HttpStatusCode.BadRequest, "خطا، آیدی نمیتواند خالی باشد");
+
                 var user = await _userAccessor.GetUserData();
                 if (user == null)
                     throw new RestException(HttpStatusCode.NotFound, "خطا، کاربری یافت نشد");
@@ -61,6 +68,35 @@ namespace BS.Application.Features.Categories.Queries
                     throw new RestException(HttpStatusCode.BadRequest, "خطا، اطلاعات منو وارد نشده است...");
 
                 var menu = await _unitOfWork.menuRepositoryAsync.GetFirstAsync(n => n.DepartmentId == user.DepartmentId && n.IsDeleted == false);
+
+                var category = await _unitOfWork.categoryRepositoryAsync.GetByIdAsync(new Guid(request.Id));
+                if (category == null)
+                    throw new RestException(HttpStatusCode.NotFound, "خطا، رکوردی یافت نشد");
+
+
+
+                var fromOrder = category.Order;
+                Category nexCategory = null;
+
+                if (request.Movement > 0)
+                    nexCategory = await _unitOfWork.categoryRepositoryAsync.Query().Where(n => n.MenuId == menu.Id && n.Order > fromOrder && n.IsDeleted == false).OrderBy(n => n.Order).FirstOrDefaultAsync();
+
+                else
+                    nexCategory = await _unitOfWork.categoryRepositoryAsync.Query().Where(n => n.MenuId == menu.Id && n.Order < fromOrder && n.IsDeleted == false).OrderByDescending(n => n.Order).FirstOrDefaultAsync();
+
+                if (nexCategory != null)
+                {
+                    category.Order = nexCategory.Order;
+                    nexCategory.Order = fromOrder;
+
+                    _unitOfWork.categoryRepositoryAsync.Update(category);
+                    _unitOfWork.categoryRepositoryAsync.Update(nexCategory);
+
+                    var success = await _unitOfWork.SaveAsync() > 0;
+                    if (!success)
+                        throw new RestException(HttpStatusCode.BadRequest, "خطا در عملیات");
+                }
+
 
 
                 var query = (from categoryTeble in _unitOfWork.categoryRepositoryAsync.Query()
@@ -76,25 +112,14 @@ namespace BS.Application.Features.Categories.Queries
                                  Order = categoryTeble.Order
                              });
 
-                #region Search
-
-                if (!string.IsNullOrEmpty(request.Title))
-                    query = query.Where(x => x.Title.Contains(_adjustChar.ChangeToArabicChar(request.Title)));
-
-                #endregion
 
                 #region Order by
-                if (string.IsNullOrEmpty(request.SortColumn))
-                    query = query.OrderBy(x => x.Order);
-
-                else
-                    query = query.OrderBy($"order asc");
-
+                query = query.OrderBy($"order asc");
                 #endregion
 
                 var result = new CategoryEnvelope();
 
-                int offset = (request.Page-1 ?? 0) * (request.Limit ?? 10);
+                int offset = (request.Page - 1 ?? 0) * (request.Limit ?? 10);
 
                 var list = await query
                     .Skip(offset)
@@ -102,7 +127,7 @@ namespace BS.Application.Features.Categories.Queries
                     .ToListAsync();
 
                 //var categoryList = new List<CategoryListItemDTO>(categoryList);
-               
+
                 result.CategoryList = new List<CategoryListItemDTO>(list);
                 result.CategoryCount = await query.CountAsync();
 

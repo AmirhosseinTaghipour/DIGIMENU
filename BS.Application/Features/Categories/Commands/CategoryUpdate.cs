@@ -18,7 +18,7 @@ namespace BS.Application.Features.Categories.Commands
 {
     public class CategoryUpdate
     {
-        public class CategoryUpdateCommand : CategoryDTO, IRequest<ResultDTO<string>>
+        public class CategoryUpdateCommand : CategoryFormDTO, IRequest<ResultDTO<string>>
         {
 
         }
@@ -43,6 +43,9 @@ namespace BS.Application.Features.Categories.Commands
                 if (request.Id==null)
                     throw new RestException(HttpStatusCode.BadRequest, "خطا، مود اینزرت...");
 
+                if (string.IsNullOrEmpty(request.Title) || string.IsNullOrEmpty(request.IconId))
+                    throw new RestException(HttpStatusCode.BadRequest, "خطا، فیلد های ضروری نمیتواند خالی باشد.");
+
                 var user = await _userAccessor.GetUserData();
                 if (user == null)
                     throw new RestException(HttpStatusCode.NotFound, "خطا، کاربری یافت نشد");
@@ -55,10 +58,10 @@ namespace BS.Application.Features.Categories.Commands
                     throw new RestException(HttpStatusCode.BadRequest, "خطا، اطلاعات منو وارد نشده است...");
 
                 var menu = await _unitOfWork.menuRepositoryAsync.GetFirstAsync(n => n.DepartmentId == user.DepartmentId && n.IsDeleted == false);
-                var categoryCount = _unitOfWork.categoryRepositoryAsync.Query().Where(n => n.IsDeleted == false).Count();
 
                 var category = await _unitOfWork.categoryRepositoryAsync.GetByIdAsync(new Guid(request.Id));
                 category.Title = request.Title;
+                category.IconId = new Guid(request.IconId);
                 category.UpdateDate = DateTime.Now;
                 category.UpdateUser = _userAccessor.GetCurrentUserName().ToLower();
                 _unitOfWork.categoryRepositoryAsync.Update(category);

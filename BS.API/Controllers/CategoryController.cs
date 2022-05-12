@@ -30,16 +30,22 @@ namespace BS.API.Controllers
             return await Mediator.Send(command);
         }
 
-        [HttpGet("CategoryLoad/{id}")]
-        public async Task<ActionResult<CategoryDTO>> CategoryLoad(string id)
+        [HttpPost("CategoryLoad")]
+        public async Task<ActionResult<CategoryFormDTO>> CategoryLoad(CategoryLoad.CategoryLoadQuery query)
         {
-            return await Mediator.Send(new CategoryLoad.CategoryLoadQuery(id));
+            return await Mediator.Send(query);
         }
 
-        [HttpGet("CategoryList")]
-        public async Task<ActionResult<CategoryEnvelopeDTO>> CategoryList()
+        [HttpPost("CategoryList")]
+        public async Task<ActionResult<Application.Features.Categories.Queries.CategoryList.CategoryEnvelope>> CategoryList(CategoryList.CategoryListQuery query)
         {
-            return await Mediator.Send(new CategoryList.CategoryListQuery());
+            return await Mediator.Send(query);
+        }
+
+        [HttpPost("CategoryListOrder")]
+        public async Task<ActionResult<Application.Features.Categories.Commands.CategoryListOrder.CategoryEnvelope>> CategoryListOrder(CategoryListOrder.CategoryListOrderQuery query)
+        {
+            return await Mediator.Send(query);
         }
     }
 }

@@ -27,7 +27,7 @@ namespace BS.Application.Mapping
             CreateMap<DepartmentUpdateCommand, Menu>().ReverseMap();
             CreateMap<MenuDTO, Menu>().ReverseMap();
 
-            CreateMap<CategoryDTO, Category>().ReverseMap();
+            CreateMap<CategoryFormDTO, Category>().ReverseMap();
         }
     }
 }

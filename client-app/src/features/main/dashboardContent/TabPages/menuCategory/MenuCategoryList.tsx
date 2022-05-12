@@ -1,4 +1,4 @@
-import React, { Fragment, useContext, useEffect, useState } from "react";
+import React, { Fragment, useContext, useEffect, useRef, useState } from "react";
 import {
     Table,
     Image,
@@ -16,54 +16,71 @@ import { ColumnsType } from "antd/es/table";
 import { RootStoreContext } from "../../../../../app/stores/rootStore";
 import { observer } from "mobx-react-lite";
 import {
+    ArrowDownOutlined,
+    ArrowUpOutlined,
     CloseOutlined,
     DeleteTwoTone,
+    DownCircleTwoTone,
     EditTwoTone,
     ExclamationCircleOutlined,
     FormOutlined,
     LoadingOutlined,
+    MenuOutlined,
     PlusCircleTwoTone,
-} from "@ant-design/icons";
+    ProfileTwoTone,
+    UpCircleTwoTone,
+} from "@ant-design/icons"
+// import { DndProvider, useDrag, useDrop } from 'react-dnd';
+// import { HTML5Backend } from 'react-dnd-html5-backend';
+// import update from 'immutability-helper';
+// import {
+//     SortableContainer,
+//     SortableElement,
+//     SortableHandle,
+// } from 'react-sortable-hoc';
+// import arrayMove from 'array-move';
+// import { arrayMove, SortableContainer, SortableElement } from 'react-sortable-hoc';
 import { Content, Header } from "antd/lib/layout/layout";
 import { IsNullOrEmpty, openNotification, selectTableRows } from "../../../../../app/common/util/util";
 import { ICategoryIconListItemValues } from "../../../../../app/models/categoryIcon";
-import CategoryIcon from "./CategoryIcon";
+import MenuCategory from "./MenuCategory";
+import { ICategoryListItemValues } from "../../../../../app/models/category";
 
 
-
-const CategoryIconList: React.FC = () => {
+const MenuCategoryList: React.FC = () => {
     const rootStore = useContext(RootStoreContext);
     const {
-        iconInfo,
-        setIconInfo,
-        loadCategoryIcon,
-        categoryIconInfo,
-        setCategoryIconInfo,
-        categoryIconList,
-        loadCategoryIconList,
-        categoryIconCount,
-        deleteCategoryIcon,
-        categoryIconListValues,
-        setCategoryIconListValues,
-        deletingCategoryIcon,
-        loadingCategoryIconList,
-        sumbittingCategoryIcon,
-    } = rootStore.categoryIconStore;
+        loadCategory,
+        categoryInfo,
+        setCategoryInfo,
+        categoryList,
+        loadCategoryList,
+        categoryCount,
+        deleteCategory,
+        categoryListValues,
+        setCategoryListValues,
+        setCategoryListOrder,
+        deletingCategory,
+        loadingCategoryList,
+        sumbittingCategory,
+    } = rootStore.categoryStore;
 
     const {
         closeForm,
     } = rootStore.mainStore;
 
-    const [selectedRow, setSelectedRow] = useState<string>("");
+    const [selectedRows, setSelectedRows] = useState<string[]>([]);
 
     const [childFormVisible, setChildFormVisible] = useState(false);
 
     const closeChildForm = () => setChildFormVisible(false)
 
+
+
     const deleteItems = () => {
         const list: string[] = [];
-        const selectedList = categoryIconList.filter(function (value: ICategoryIconListItemValues) {
-            return selectedRow.includes(value.id!);
+        const selectedList = categoryList.filter(function (value: ICategoryIconListItemValues) {
+            return selectedRows.includes(value.id!);
         }) as ICategoryIconListItemValues[];
         selectedList.forEach((item: ICategoryIconListItemValues) => {
             list.push(item?.title!.toString());
@@ -72,13 +89,13 @@ const CategoryIconList: React.FC = () => {
         Modal.confirm({
             title: "حذف اطلاعات",
             icon: <ExclamationCircleOutlined />,
-            content: `آیا از حذف آیتم ${selectedRow.length > 1 ? "های" : ""
+            content: `آیا از حذف آیتم ${selectedRows.length > 1 ? "های" : ""
                 } ${list.join(", ")} مطمئن هستید؟`,
             okText: "بله",
             cancelText: "خیر",
             onOk: () => {
-                deleteCategoryIcon(selectedRow);
-                setSelectedRow("");
+                deleteCategory(selectedRows);
+                setSelectedRows([]);
             },
             bodyStyle: { direction: "rtl" },
         });
@@ -92,39 +109,73 @@ const CategoryIconList: React.FC = () => {
 
     const initialFormParams = async (id: string | null) => {
         if (!IsNullOrEmpty(id)) {
-           await loadCategoryIcon(id!);
+            await loadCategory(id!);
         } else {
             clearFormValues();
         }
     };
 
     const clearFormValues = () => {
-        setIconInfo({
-            ...iconInfo,
-            isChanged: false,
-            file: null,
-            name: null,
-            url: null
-        })
-        setCategoryIconInfo({
-            ...categoryIconInfo,
+        setCategoryInfo({
+            ...categoryInfo,
             id: null,
             title: null,
-            icon: iconInfo,
+            iconId: null,
             isUpdateMode: false
         })
     };
 
     useEffect(() => {
-        loadCategoryIconList();
+        loadCategoryList();
     }, []);
 
-    const columns: ColumnsType<ICategoryIconListItemValues> = [
+    const columns: ColumnsType<ICategoryListItemValues> = [
+        {
+            title: "ترتیب",
+            key: "order",
+            dataIndex: "order",
+            width: 15,
+            align: "center",
+            defaultSortOrder: 'ascend',
+            sorter: (a, b) => a.order! - b.order!,
+        },
+        {
+            title: "ترتیب",
+            key: "setOrder",
+            dataIndex: "setOrder",
+            width: 15,
+            align: "center",
+            render(value, record) {
+                return {
+                    children: (
+                        <Fragment>
+                            <Tooltip title="بالا" color="green">
+                                <Button
+                                    type="link"
+                                    icon={<ArrowUpOutlined style={{ fontSize: '18px', color: '#099327' }} />}
+                                    onClick={() => setCategoryListOrder(record?.id!, -1)}
+                                    style={{ cursor: "pointer" }}
+                                />
+                            </Tooltip>
+
+                            <Tooltip title="پایین" color="red">
+                                <Button
+                                    type="link"
+                                    icon={<ArrowDownOutlined style={{ fontSize: '18px', color: '#c31008' }} />}
+                                    onClick={() => setCategoryListOrder(record?.id!, +1)}
+                                    style={{ cursor: "pointer" }}
+                                />
+                            </Tooltip>
+                        </Fragment>
+                    ),
+                };
+            }
+        },
         {
             title: "ویرایش",
             key: "edit",
             dataIndex: "edit",
-            width: 20,
+            width: 15,
             align: "center",
 
             render(value, record) {
@@ -143,14 +194,14 @@ const CategoryIconList: React.FC = () => {
             },
         },
         {
-            title: "عنوان",
+            title: "عنوان دسته",
             dataIndex: "title",
             key: "title",
             align: "center",
             width: 100,
         },
         {
-            title: "فایل",
+            title: "آیکن",
             key: "url",
             dataIndex: "url",
             width: 50,
@@ -169,7 +220,7 @@ const CategoryIconList: React.FC = () => {
         <Fragment>
             <Row className="bsFormHeader">
                 <div className="bsFormTitle"> <FormOutlined />
-                    مدیریت آیکن
+                    دسته بندی منو
                 </div>
 
                 <Button icon={<CloseOutlined />} onClick={closeForm} />
@@ -188,13 +239,13 @@ const CategoryIconList: React.FC = () => {
                             }}
                         >
                             <Menu.Item
-                                key="addNewCondition"
+                                key="addNew"
                                 disabled={false}
                                 onClick={() => {
                                     getDetails(null);
                                 }}
                                 icon={
-                                    (sumbittingCategoryIcon || loadingCategoryIconList) ?
+                                    (sumbittingCategory || loadingCategoryList) ?
                                         <LoadingOutlined spin />
                                         :
                                         <PlusCircleTwoTone
@@ -206,11 +257,12 @@ const CategoryIconList: React.FC = () => {
                             >
                                 افزودن
                             </Menu.Item>
+
                             <Menu.Item
-                                key="removeCondition"
+                                key="remove"
                                 disabled={false}
                                 onClick={() => {
-                                    if (selectedRow.length == 0) {
+                                    if (selectedRows.length == 0) {
                                         openNotification(
                                             "error",
                                             "خطا",
@@ -222,7 +274,7 @@ const CategoryIconList: React.FC = () => {
                                     }
                                 }}
                                 icon={
-                                    deletingCategoryIcon ?
+                                    deletingCategory ?
                                         <LoadingOutlined spin />
                                         :
                                         <DeleteTwoTone
@@ -233,15 +285,36 @@ const CategoryIconList: React.FC = () => {
                             >
                                 حذف
                             </Menu.Item>
+
+                            {/* <Menu.Item
+                                key="setOrder"
+                                disabled={false}
+                                onClick={() => {
+
+                                }}
+                                icon={
+                                    deletingCategory ?
+                                        <LoadingOutlined spin />
+                                        :
+                                        <ProfileTwoTone
+                                            twoToneColor="#008bb5"
+                                            className="bsBtnDelete"
+                                        />
+                                }
+                            >
+                                ذخیره ترتیب
+                            </Menu.Item> */}
+
                         </Menu>
                     </Header>
                     <Content >
+
                         <Table
                             key="categoryIconList"
-                            columns={columns}
-                            dataSource={categoryIconList}
+                            columns={columns.filter(col => col.key != "order")}
+                            dataSource={categoryList}
                             bordered
-                            loading={loadingCategoryIconList}
+                            loading={loadingCategoryList}
                             tableLayout="fixed"
                             pagination={false}
                             size="small"
@@ -251,36 +324,37 @@ const CategoryIconList: React.FC = () => {
                             onRow={(record) => {
                                 return {
                                     className:
-                                        selectedRow.indexOf(record.id!) > -1 ? "isSelected" : "",
-                                    onClick: () => {
-                                        setSelectedRow(record.id!)
-                                    },
-                                };
-                            }}
+                                        selectedRows.indexOf(record.key!) > -1 ? "isSelected" : "",
+                                    onClick: (event: any) => {
+                                        setSelectedRows(selectTableRows(event, record.key!, selectedRows));
+                                    }
+                                }
+                            }
+                            }
                         />
                     </Content>
 
-                    {!!categoryIconList && categoryIconList.length > 0 && (
+                    {!!categoryList && categoryList.length > 0 && (
                         <Pagination
                             pageSizeOptions={["10", "20", "30", "40", "50"]}
                             showSizeChanger={true}
-                            total={categoryIconCount}
-                            current={categoryIconListValues.page!}
+                            total={categoryCount}
+                            current={categoryListValues.page!}
                             showQuickJumper
                             size="default"
-                            pageSize={categoryIconListValues.limit == null ? 10 : categoryIconListValues.limit}
+                            pageSize={categoryListValues.limit == null ? 10 : categoryListValues.limit}
                             showTotal={(total) => (
                                 <span > مجموع: {total} مورد </span>
                             )}
-                            responsive={true}                         
+                            responsive={true}
                             className="bsPaging"
                             onChange={(page, pageSize) => {
-                                setCategoryIconListValues({ ...categoryIconListValues, page: page , limit: pageSize! });
-                                loadCategoryIconList();
+                                setCategoryListValues({ ...categoryListValues, page: page, limit: pageSize! });
+                                loadCategoryList();
                             }}
                         />
                     )}
-                    
+
                 </Layout>
             </Row>
 
@@ -289,17 +363,17 @@ const CategoryIconList: React.FC = () => {
             <Modal
                 className="bsModal"
                 footer
-                title={`${categoryIconInfo.isUpdateMode ? "ویرایش" : "افزودن"} آیکن`}
+                title={`${categoryInfo.isUpdateMode ? "ویرایش" : "افزودن"} دسته بندی منو`}
                 visible={childFormVisible}
                 onCancel={closeChildForm}
                 keyboard={true}
                 destroyOnClose
             >
-                <CategoryIcon close={closeChildForm} />
+                <MenuCategory close={closeChildForm} />
 
             </Modal>
         </Fragment>
     )
 };
 
-export default observer(CategoryIconList);
+export default observer(MenuCategoryList);

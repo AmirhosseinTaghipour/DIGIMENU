@@ -8,7 +8,7 @@ import { values } from "mobx";
 import { IAppMenu } from "../models/main";
 import { IDepartmentFormValues } from "../models/department";
 import { IMenuFormValues } from "../models/menu";
-import { ICategoryFormValues } from "../models/category";
+import { ICategoryFormValues, ICategoryListEnvelope, ICategoryListOreder, ICategoryListSearchParam } from "../models/category";
 import { ICategoryIconFormValues, ICategoryIconListEnvelope, ICategoryIconListItemValues, ICategoryIconListSearchParam } from "../models/categoryIcon";
 
 axios.defaults.baseURL = process.env.REACT_APP_API_URL;
@@ -178,8 +178,17 @@ const Category = {
     updateCategory: (values: ICategoryFormValues): Promise<IResultType> =>
         requests.post("/category/CategoryUpdate", values),
 
-    // getMenuInfo: (): Promise<IMenuFormValues> =>
-    //     requests.get("/menu/MenuLoad"),
+    deleteCategory: (ids: string[]): Promise<IResultType> =>
+        requests.post("/category/CategoryDelete", { ids }),
+
+    getCategoryList: (values: ICategoryListSearchParam): Promise<ICategoryListEnvelope> =>
+        requests.post("/category/CategoryList", values),
+
+    setCategoryListOrder: (values: ICategoryListOreder): Promise<ICategoryListEnvelope> =>
+        requests.post("/category/CategoryListOrder", values),
+
+    getCategory: (id: string): Promise<ICategoryFormValues> =>
+        requests.post("/category/CategoryLoad", { id }),
 }
 
 const CategoryIcon = {
@@ -193,13 +202,11 @@ const CategoryIcon = {
         requests.post("/categoryIcon/CategoryIconDelete", { id }),
 
     getCategoryIconList: (values: ICategoryIconListSearchParam): Promise<ICategoryIconListEnvelope> =>
-        requests.post("/categoryIcon/CategoryIconList",values),
+        requests.post("/categoryIcon/CategoryIconList", values),
 
     getCategoryIcon: (id: string): Promise<ICategoryIconFormValues> =>
-        requests.post("/categoryIcon/CategoryIcon",{id}),
+        requests.post("/categoryIcon/CategoryIcon", { id }),
 
-    // getMenuInfo: (): Promise<IMenuFormValues> =>
-    //     requests.get("/menu/MenuLoad"),
 }
 
 

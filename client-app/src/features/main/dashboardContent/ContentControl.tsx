@@ -5,7 +5,7 @@ const UnitInformation = React.lazy(() => import('./TabPages/unitInformation/Unit
 const CategoryItem = React.lazy(() => import('./TabPages/categoryItem/CategoryItem'))
 const UnitMenu = React.lazy(() => import('./TabPages/unitMenu/UnitMenu'))
 const Payment = React.lazy(() => import('./TabPages/payment/Payment'))
-const MenuCategory = React.lazy(() => import('./TabPages/menuCategory/MenuCategory'))
+const MenuCategoryList = React.lazy(() => import('./TabPages/menuCategory/MenuCategoryList'))
 const CategoryIconList = React.lazy(() => import('./TabPages/categoryIcon/CategoryIconList'))
 
 
@@ -23,7 +23,7 @@ const ContentControl: React.FC<IProps> = ({ menuCode }) => {
             case "create-item":
                 return <Suspense fallback={<LoadingComponent content="در حال بارگذاری ..." />}> <CategoryItem /></Suspense>;
             case "create-category":
-                return <Suspense fallback={<LoadingComponent content="در حال بارگذاری ..." />}> <MenuCategory /></Suspense>;
+                return <Suspense fallback={<LoadingComponent content="در حال بارگذاری ..." />}> <MenuCategoryList /></Suspense>;
             case "payment":
                 return <Suspense fallback={<LoadingComponent content="در حال بارگذاری ..." />}> <Payment /></Suspense>;
             case "create-menu":

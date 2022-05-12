@@ -361,3 +361,42 @@
 .bsCustomTable .isSelected {
     background-color: #ffe4c5 !important;
 }
+
+.bsPaging {
+    text-align: center;
+    margin: 20px auto 40px,
+}
+
+.bsPaging span {
+    font-size: .7rem;
+    font-weight: bold;
+    color: gray;
+}
+
+.ant-select-item-option-content {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+}
+
+.ant-select-selection-item {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+}
+
+.ant-select-selection-item .ant-image {
+    max-width: 25px !important;
+}
+
+.bsImgInDropDown {
+    max-width: 35px !important;
+    margin-inline: 20px;
+}
+
+.bsVerticalBtn {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+}

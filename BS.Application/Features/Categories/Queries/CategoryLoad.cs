@@ -17,16 +17,12 @@ namespace BS.Application.Features.Categories.Queries
 {
     public class CategoryLoad
     {
-        public class CategoryLoadQuery : IRequest<CategoryDTO>
+        public class CategoryLoadQuery : IRequest<CategoryFormDTO>
         {
-            public CategoryLoadQuery(string id)
-            {
-                Id = id;
-            }
             public string Id { get; set; }
         }
 
-        public class CategoryHandLer : IRequestHandler<CategoryLoadQuery, CategoryDTO>
+        public class CategoryHandLer : IRequestHandler<CategoryLoadQuery, CategoryFormDTO>
         {
             private readonly IUnitOfWork _unitOfWork;
             private readonly IUserAccessor _userAccessor;
@@ -40,7 +36,7 @@ namespace BS.Application.Features.Categories.Queries
                 _fileHelper = fileHelper;
                 _mapper = mapper;
             }
-            public async Task<CategoryDTO> Handle(CategoryLoadQuery request, CancellationToken cancellationToken)
+            public async Task<CategoryFormDTO> Handle(CategoryLoadQuery request, CancellationToken cancellationToken)
             {
 
 
@@ -48,7 +44,7 @@ namespace BS.Application.Features.Categories.Queries
                     throw new RestException(HttpStatusCode.BadRequest, "خطا، رکوردی انتخاب نشده است...");
 
 
-                var category = _mapper.Map<CategoryDTO>( await _unitOfWork.categoryRepositoryAsync.GetByIdAsync(new Guid(request.Id)));
+                var category = _mapper.Map<CategoryFormDTO>( await _unitOfWork.categoryRepositoryAsync.GetByIdAsync(new Guid(request.Id)));
                 category.IsUpdateMode= true;
 
                 return category;

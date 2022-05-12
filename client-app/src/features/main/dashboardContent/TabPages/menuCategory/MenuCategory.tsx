@@ -1,80 +1,91 @@
 import React, { Fragment, useContext, useEffect, useState } from "react"
-import { Input, Layout, Menu, Row, Form, Col, Button, Image, message, Divider, Select } from "antd";
+import { Input, Layout, Menu, Row, Form, Col, Select, Image } from "antd";
 import { observer } from "mobx-react-lite"
-import { CheckOutlined, CloseOutlined, DeleteOutlined, FormOutlined, LoadingOutlined, PaperClipOutlined, PlusOutlined, SaveOutlined, SaveTwoTone, SearchOutlined, UploadOutlined } from "@ant-design/icons";
+import { CheckOutlined, LoadingOutlined, SaveTwoTone, } from "@ant-design/icons";
 import { RootStoreContext } from "../../../../../app/stores/rootStore";
-import { IMenuFormValues } from "../../../../../app/models/menu";
-import ImgCrop from "antd-img-crop";
-import { UploadChangeParam, UploadFile } from "antd/lib/upload/interface";
-import FileViewer from "../../../../common/FileViewer/FileViewer";
-import MenuCategoryTable from "./MenuCategoryTable";
+import { ICategoryFormValues } from "../../../../../app/models/category";
 import { toDatabaseChar } from "../../../../../app/common/util/util";
+import { IComboBoxType } from "../../../../../app/models/common";
+import { ICategoryIconListItemValues } from "../../../../../app/models/categoryIcon";
 
+const { Option } = Select;
 const { Content, Header } = Layout;
-const { TextArea } = Input;
 
 const layout = {
     labelCol: { span: 24 },
     wrapperCol: { span: 24 },
 };
-const { Option } = Select;
-const MenuCategory: React.FC = () => {
+interface IProps {
+    close: () => void;
+}
+const MenuCategory: React.FC<IProps> = ({ close }) => {
     const rootStore = useContext(RootStoreContext);
     const {
-        insertCategory,
-        updateCategory,
-        sumbittingCategory,
-        loadCategory,
         loadingCategory,
-        categoryInfo,
+        sumbittingCategory,
         setCategoryInfo,
+        categoryInfo,
+        insertCategory,
+        updateCategory
     } = rootStore.categoryStore;
 
     const {
-        closeForm,
-    } = rootStore.mainStore;
+        loadCategoryIconList,
+        loadingCategoryIconList,
+        categoryIconList
+    } = rootStore.categoryIconStore;
 
     const [form] = Form.useForm();
 
-    const [fileViewerVisible, setFileViewerVisible] = useState<string | null>(null);
-    const [iconFile, setIconFile] = useState<UploadFile<any>[] | any[]>([]);
-
-    const closeFileViewer = () => {
-        setFileViewerVisible(null);
-    }
-
     //سابمیت فرم 
-    const onFinish = async (formValues: IMenuFormValues) => {
+    const onFinish = async (formValues: ICategoryFormValues) => {
         setCategoryInfo({
             ...categoryInfo,
             title: formValues.title,
+            iconId: formValues.iconId,
         });
         if (categoryInfo.isUpdateMode)
-            await updateCategory(categoryInfo);
+            await updateCategory(categoryInfo).then(() => close());
         else
-            await insertCategory(categoryInfo).then(() => setInitialConfig());
+            await insertCategory(categoryInfo).then(() => close());
     };
-    const setInitialConfig = () => {
-        loadCategory().then(() => {
-            form.resetFields();
-        })
-    }
+
     useEffect(() => {
-        setInitialConfig();
+        loadCategoryIconList();
     }, []);
 
     return <Fragment>
-        <Row className="bsFormHeader">
-            <div className="bsFormTitle"> <FormOutlined />
-                دسته بندی منو
-            </div>
-
-            <Button icon={<CloseOutlined />} onClick={closeForm} />
-
-        </Row>
-
         <Row className="bsFormBody">
             <Layout className="formBodyLayout">
+                <Header>
+                    <Menu
+                        mode="horizontal"
+                        style={{
+                            backgroundColor: "transparent",
+                            borderBottom: "none",
+                            textAlign: "center",
+                        }}
+                    >
+                        <Menu.Item
+                            key="save"
+                            disabled={false}
+                            onClick={() => {
+                                form.validateFields().then(() => {
+                                    form.submit()
+                                });
+                            }}
+                            icon={
+                                (loadingCategory || sumbittingCategory) ? <LoadingOutlined spin /> :
+                                    <SaveTwoTone
+                                        twoToneColor="#52c41a"
+                                        className="bsBtnSave"
+                                    />
+                            }
+                        >
+                            ثبت
+                        </Menu.Item>
+                    </Menu>
+                </Header>
                 <Content >
                     <Form
                         form={form}
@@ -90,13 +101,14 @@ const MenuCategory: React.FC = () => {
                         autoComplete="off"
                     >
                         <Row gutter={24}>
+
                             <Col xs={24} sm={24} md={12} lg={8} xl={8} xxl={8}>
                                 <Form.Item
-                                    label="عنوان دسته"
+                                    label="نام دسته"
                                     name="title"
                                     initialValue={categoryInfo.title}
                                     rules={[{
-                                        required: true, message: 'فیلد عنوان دسته نمی تواند خالی باشد',
+                                        required: true, message: 'فیلد نام دسته نمی تواند خالی باشد',
                                     }]}
                                 >
                                     <Input
@@ -108,21 +120,23 @@ const MenuCategory: React.FC = () => {
                             <Col xs={24} sm={24} md={12} lg={8} xl={8} xxl={8}>
                                 <Form.Item
                                     label="آیکن"
-                                    name="icon"
-                                    initialValue={categoryInfo.title}
+                                    name="iconId"
                                     rules={[{
                                         required: true, message: 'فیلد آیکن نمی تواند خالی باشد',
                                     }]}
+                                    initialValue={categoryInfo.iconId!}
                                 >
                                     <Select
                                         showSearch
                                         style={{
                                             width: "100%",
                                         }}
-                                        loading={false}
-                                        onChange={() => {
-                                        }}
-                                        onClear={() => {
+                                        loading={loadingCategoryIconList}
+                                        onChange={(value: string) => {
+                                            setCategoryInfo({
+                                                ...categoryInfo,
+                                                iconId: !!value ? value : null
+                                            });
                                         }}
                                         filterOption={(input, option) =>
                                             option!.children
@@ -130,59 +144,37 @@ const MenuCategory: React.FC = () => {
                                                 .indexOf(toDatabaseChar(input.toLowerCase())) >= 0
                                         }
                                         placeholder="انتخاب"
-                                        // allowClear={
-                                        //     TestWayComboList &&
-                                        //     TestWayComboList.length > 1
-                                        // }
+                                        allowClear={
+                                            categoryIconList &&
+                                            categoryIconList.length > 1
+                                        }
                                         bordered
                                         menuItemSelectedIcon={
                                             <CheckOutlined style={{ color: "green" }} />
                                         }
-                                     value={2}
+                                        // defaultValue={categoryInfo.iconId!}
+                                    //defaultValue={categoryInfo.iconId?? undefined}
                                     >
-
-
-                                        <Option key={1} value={1}>
-                                        <Image key="imageViewer" src={"https://localhost:5001/CategoryIcon/a8469554-c5a0-11ec-9d64-0242ac120002.png"} preview={false} />
-                                        </Option>
-                                        <Option key={2} value={2}>
-                                        <Image key="imageViewer" src={"https://localhost:5001/CategoryIcon/a8469554-c5a0-11ec-9d64-0242ac120002.png"} preview={false} />
-                                        </Option>
-
-
-
+                                        {categoryIconList &&
+                                            categoryIconList.length > 0 &&
+                                            categoryIconList.map((val: ICategoryIconListItemValues) => {
+                                                return (
+                                                    <Option key={val.key!} value={val.key!}>
+                                                        {toDatabaseChar(val.title)} <Image className="bsImgInDropDown" key={`img-${val.key}`} src={`${val.url}?${Date.now()}`} preview={false} />
+                                                    </Option>
+                                                );
+                                            })}
                                     </Select>
                                 </Form.Item>
                             </Col>
 
-                            <Col xs={24} sm={24} md={12} lg={8} xl={8} xxl={8}>
-                                <Form.Item label="&nbsp;" >
-                                    <Button
-                                        className="bsBtn"
-                                        loading={false}
-                                        type="primary"
-                                        htmlType="submit"
-                                        icon={
-                                            <PlusOutlined />
-                                        }
-                                    >
-                                        افزودن
-                                    </Button>
-                                </Form.Item>
-
-                            </Col>
-
-
                         </Row>
                     </Form>
-                    <Divider className="bsDivider">
-                        لیست دسته ها
-                    </Divider>
-                    <MenuCategoryTable />
                 </Content>
             </Layout>
         </Row>
     </Fragment>
+
 };
 
 export default observer(MenuCategory);

@@ -105,10 +105,10 @@ namespace BS.Application.Features.Categories.Commands
                              where categoryTeble.MenuId == menu.Id && categoryTeble.IsDeleted == false && fileTable.EntityName == EntityName.CategoryIcon.ToString()
                              select new CategoryListItemDTO
                              {
-                                 Id = categoryTeble.Id.ToString(),
-                                 Key = categoryTeble.Id.ToString(),
+                                 Id = categoryTeble.Id.ToString().ToLower(),
+                                 Key = categoryTeble.Id.ToString().ToLower(),
                                  Title = categoryTeble.Title,
-                                 Url = _fileHelper.GetFilePath(fileTable.Id.ToString(), fileTable.FileName, FileDirectorey.categoryIcon),
+                                 Url = _fileHelper.GetFilePath(fileTable.Id.ToString().ToLower(), fileTable.FileName, FileDirectorey.categoryIcon),
                                  Order = categoryTeble.Order
                              });
 

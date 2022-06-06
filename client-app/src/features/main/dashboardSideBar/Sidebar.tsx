@@ -27,7 +27,18 @@ const Sidebar: React.FC<IProps> = ({ onToggleClose }) => {
         loadingAppMenu,
         appMenuList,
         setActiveMenuCode,
+        activeMenuCode,
     } = rootStore.mainStore;
+
+    const [show, setShow] = useState<boolean>(true);
+
+    const setShowAsync = async (input: boolean) => {
+        setShow(input);
+    }
+
+    const forceRernder = async () => {
+        await setShowAsync(false).then(async () => { await setShowAsync(true) });
+    }
 
     const setMenuItem = () => {
         return (
@@ -40,7 +51,8 @@ const Sidebar: React.FC<IProps> = ({ onToggleClose }) => {
                     onToggleClose();
                     handleClick(event.key);
                 }}
-            //defaultOpenKeys={["5"]}
+                defaultSelectedKeys={[`${activeMenuCode}`]}
+
             >
                 {appMenuList.map((menu: IAppMenu) => {
                     return (<Menu.Item
@@ -63,6 +75,10 @@ const Sidebar: React.FC<IProps> = ({ onToggleClose }) => {
     useEffect(() => {
         initialLoad();
     }, []);
+
+    useEffect(() => {
+        forceRernder();
+    }, [activeMenuCode]);
 
     const handleClick = (menuCode: any) => {
         if (!!menuCode)
@@ -91,7 +107,10 @@ const Sidebar: React.FC<IProps> = ({ onToggleClose }) => {
                 ?
                 <LoadingComponent spinnerSize="small" />
                 :
-                setMenuItem()
+                !show ?
+                    null
+                    :
+                    setMenuItem()
             }
 
         </Fragment>

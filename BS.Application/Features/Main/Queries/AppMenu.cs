@@ -46,7 +46,7 @@ namespace BS.Application.Features.Main.Queries
                                               where appMenuTable.IsActived == true && appMenuTable.IsDeleted == false && appMenuRoleTable.RolesId == roleId
                                               orderby appMenuTable.MenuOrder ascending
                                               select new AppMenuDTO {
-                                                  MenuId = appMenuTable.Id.ToString(),
+                                                  MenuId = appMenuTable.Id.ToString().ToLower(),
                                                   MenuCode = appMenuTable.MenuCode,
                                                   MenuTitle = appMenuTable.MenuTitle 
                                               })

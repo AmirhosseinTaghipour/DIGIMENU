@@ -101,7 +101,7 @@ namespace BS.Application.Features.Departments.Commands
                     }
                     else
                     {
-                        depImgRes = _fileHelper.DeleteFile(image.Id.ToString(), System.IO.Path.GetExtension(image.FileName), FileDirectorey.UnitImage);
+                        depImgRes = _fileHelper.DeleteFile(image.Id.ToString().ToLower(), System.IO.Path.GetExtension(image.FileName), FileDirectorey.UnitImage);
 
                         if (request.Image.File == null)
                         {
@@ -112,7 +112,7 @@ namespace BS.Application.Features.Departments.Commands
                         }
                         else
                         {
-                            depImgRes = await _fileHelper.SaveFileAsync(request.Image.File, FileDirectorey.UnitImage, image.Id.ToString(), true);
+                            depImgRes = await _fileHelper.SaveFileAsync(request.Image.File, FileDirectorey.UnitImage, image.Id.ToString().ToLower(), true);
                         }
                     }
 
@@ -141,7 +141,7 @@ namespace BS.Application.Features.Departments.Commands
                     }
                     else
                     {
-                        logoFileRes = _fileHelper.DeleteFile(logo.Id.ToString(), System.IO.Path.GetExtension(logo.FileName), FileDirectorey.UnitLogo);
+                        logoFileRes = _fileHelper.DeleteFile(logo.Id.ToString().ToLower(), System.IO.Path.GetExtension(logo.FileName), FileDirectorey.UnitLogo);
 
                         if (request.Image.File == null)
                         {
@@ -152,7 +152,7 @@ namespace BS.Application.Features.Departments.Commands
                         }
                         else
                         {
-                            logoFileRes = await _fileHelper.SaveFileAsync(request.Logo.File, FileDirectorey.UnitLogo, logo.Id.ToString(), true);
+                            logoFileRes = await _fileHelper.SaveFileAsync(request.Logo.File, FileDirectorey.UnitLogo, logo.Id.ToString().ToLower(), true);
                         }
                     }
 

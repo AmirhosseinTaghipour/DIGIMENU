@@ -87,7 +87,7 @@ namespace BS.Application.Features.Users.Commands
                         To = user.Mobile,
                         Body = message.ToString().TrimEnd(),
                         Type = request.IsChangePasswordMode ? "forgot-password" : "register",
-                        UserId = user.Id.ToString(),
+                        UserId = user.Id.ToString().ToLower(),
                         UserName = user.Username,
                         KeyParam = code
                     };

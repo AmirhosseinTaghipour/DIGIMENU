@@ -11,7 +11,9 @@ import {
     Col,
     Modal,
     Pagination,
-    Input
+    Input,
+    Tabs,
+    Select
 } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { RootStoreContext } from "../../../../../app/stores/rootStore";
@@ -19,6 +21,7 @@ import { observer } from "mobx-react-lite";
 import {
     ArrowDownOutlined,
     ArrowUpOutlined,
+    CheckOutlined,
     CloseOutlined,
     DeleteTwoTone,
     DownCircleTwoTone,
@@ -32,24 +35,19 @@ import {
     SearchOutlined,
     UpCircleTwoTone,
 } from "@ant-design/icons"
-// import { DndProvider, useDrag, useDrop } from 'react-dnd';
-// import { HTML5Backend } from 'react-dnd-html5-backend';
-// import update from 'immutability-helper';
-// import {
-//     SortableContainer,
-//     SortableElement,
-//     SortableHandle,
-// } from 'react-sortable-hoc';
-// import arrayMove from 'array-move';
-// import { arrayMove, SortableContainer, SortableElement } from 'react-sortable-hoc';
 import { Content, Header } from "antd/lib/layout/layout";
 import { IsNullOrEmpty, openNotification, selectTableRows, toDatabaseChar } from "../../../../../app/common/util/util";
 import { ICategoryIconListItemValues } from "../../../../../app/models/categoryIcon";
-import MenuCategory from "./MenuCategory";
+import CategoryItem from "./CategoryItem";
 import { ICategoryListItemValues } from "../../../../../app/models/category";
+import CategoryItemImage from "./CategoryItemImage";
 
+const layout = {
+    labelCol: { span: 6 },
+    wrapperCol: { span: 18 },
+};
 
-const MenuCategoryList: React.FC = () => {
+const CategoryItemList: React.FC = () => {
     const rootStore = useContext(RootStoreContext);
     const {
         loadCategory,
@@ -70,6 +68,10 @@ const MenuCategoryList: React.FC = () => {
     const {
         closeForm,
     } = rootStore.mainStore;
+
+    const { TabPane } = Tabs;
+    const [form] = Form.useForm();
+    const { Option } = Select;
 
     const [selectedRows, setSelectedRows] = useState<string[]>([]);
 
@@ -177,7 +179,7 @@ const MenuCategoryList: React.FC = () => {
             title: "ویرایش",
             key: "edit",
             dataIndex: "edit",
-            width: 15,
+            width: 20,
             align: "center",
 
             render(value, record) {
@@ -196,52 +198,97 @@ const MenuCategoryList: React.FC = () => {
             },
         },
         {
-            title: "عنوان دسته",
+            title: "عنوان",
             dataIndex: "title",
             key: "title",
             align: "center",
             width: 100,
-            filterIcon: (filtered) => {
-                return (
-                    <SearchOutlined
-                        style={{
-                            color: !!categoryListValues?.title ? "red" : "#1e1e1e"
-                        }}
-                    />
-                );
-            },
+            // filterIcon: (filtered) => {
+            //     return (
+            //         <SearchOutlined
+            //             style={{
+            //                 color: !!categoryListValues?.title ? "red" : "#1e1e1e"
+            //             }}
+            //         />
+            //     );
+            // },
 
-            filterDropdown: ({ confirm }) => {
-                const doSearch = async (confirm: any) => {
-                    await loadCategoryList();
-                    confirm();
-                };
-                return (
-                    <Input.Search
-                        allowClear
-                        placeholder="عنوان دسته"
-                        autoFocus
-                        onSearch={() => confirm()}
-                        onReset={() => confirm()}
-                        onPressEnter={() => confirm()}
-                        type="search"
-                        defaultValue={categoryListValues?.title!}
-                        maxLength={50}
-                        style={{ width: 250 }}
-                        onBlur={(event: any) => {
-                            setCategoryListValues({
-                                ...categoryListValues,
-                                page: 1,
-                                title: toDatabaseChar(event.target.value)!,
-                            });
-                            doSearch(confirm);
-                        }}
-                    />
-                );
-            },
+            // filterDropdown: ({ confirm }) => {
+            //     const doSearch = async (confirm: any) => {
+            //         await loadCategoryList();
+            //         confirm();
+            //     };
+            //     return (
+            //         <Input.Search
+            //             allowClear
+            //             placeholder="عنوان دسته"
+            //             autoFocus
+            //             onSearch={() => confirm()}
+            //             onReset={() => confirm()}
+            //             onPressEnter={() => confirm()}
+            //             type="search"
+            //             defaultValue={categoryListValues?.title!}
+            //             maxLength={50}
+            //             style={{ width: 250 }}
+            //             onBlur={(event: any) => {
+            //                 setCategoryListValues({
+            //                     ...categoryListValues,
+            //                     page: 1,
+            //                     title: toDatabaseChar(event.target.value)!,
+            //                 });
+            //                 doSearch(confirm);
+            //             }}
+            //         />
+            //     );
+            // },
         },
         {
-            title: "آیکن",
+            title: "دسته",
+            dataIndex: "categoryTitle",
+            key: "categoryTitle",
+            align: "center",
+            width: 100,
+            // filterIcon: (filtered) => {
+            //     return (
+            //         <SearchOutlined
+            //             style={{
+            //                 color: !!categoryListValues?.title ? "red" : "#1e1e1e"
+            //             }}
+            //         />
+            //     );
+            // },
+
+            // filterDropdown: ({ confirm }) => {
+            //     const doSearch = async (confirm: any) => {
+            //         await loadCategoryList();
+            //         confirm();
+            //     };
+            //     return (
+            //         <Input.Search
+            //             allowClear
+            //             placeholder="عنوان دسته"
+            //             autoFocus
+            //             onSearch={() => confirm()}
+            //             onReset={() => confirm()}
+            //             onPressEnter={() => confirm()}
+            //             type="search"
+            //             defaultValue={categoryListValues?.title!}
+            //             maxLength={50}
+            //             style={{ width: 250 }}
+            //             onBlur={(event: any) => {
+            //                 setCategoryListValues({
+            //                     ...categoryListValues,
+            //                     page: 1,
+            //                     title: toDatabaseChar(event.target.value)!,
+            //                 });
+            //                 doSearch(confirm);
+            //             }}
+            //         />
+            //     );
+            // },
+        },
+        {
+            title: "تصویر پیشفرض",
             key: "url",
             dataIndex: "url",
             width: 50,
@@ -260,7 +307,7 @@ const MenuCategoryList: React.FC = () => {
         <Fragment>
             <Row className="bsFormHeader">
                 <div className="bsFormTitle"> <FormOutlined />
-                    دسته بندی منو
+                    آیتم های منو
                 </div>
 
                 <Button icon={<CloseOutlined />} onClick={closeForm} />
@@ -330,9 +377,73 @@ const MenuCategoryList: React.FC = () => {
                     </Header>
                     <Content >
 
+                        <Form
+                            form={form}
+                            onFinish={() => { }}
+                            name="basic"
+                            layout="horizontal"
+                            {...layout}
+                            onKeyDown={(event) => {
+                                if (event.key === "Enter") {
+                                    event.preventDefault();
+                                }
+                            }}
+                            autoComplete="off"
+                        >
+                            <Row gutter={24}>
+
+                                <Col xs={24} sm={24} md={12} lg={8} xl={8} xxl={8}>
+                                    <Form.Item
+                                        label="دسته بندی"
+                                        name="iconId"
+                                        initialValue={categoryInfo?.iconId!}
+                                    >
+                                        <Select
+                                            showSearch
+                                            style={{
+                                                width: "100%",
+                                            }}
+                                            loading={loadingCategoryList}
+                                            onChange={(value: string) => {
+                                                setCategoryInfo({
+                                                    ...categoryInfo,
+                                                    iconId: !!value ? value : null
+                                                });
+                                            }}
+                                            filterOption={(input, option) =>
+                                                option!.children
+                                                    .toLowerCase()
+                                                    .indexOf(toDatabaseChar(input.toLowerCase())) >= 0
+                                            }
+                                            placeholder="انتخاب"
+                                            allowClear={
+                                                categoryList &&
+                                                categoryList.length > 1
+                                            }
+                                            bordered
+                                            menuItemSelectedIcon={
+                                                <CheckOutlined style={{ color: "green" }} />
+                                            }
+                                        >
+                                            {categoryList &&
+                                                categoryList.length > 0 &&
+                                                categoryList.map((val: ICategoryListItemValues) => {
+                                                    return (
+                                                        <Option key={val.key!} value={val.key!}>
+                                                            {toDatabaseChar(val.title)} <Image className="bsImgInDropDown" key={`img-${val.key}`} src={`${val.url}?${Date.now()}`} preview={false} />
+                                                        </Option>
+                                                    );
+                                                })}
+                                        </Select>
+                                    </Form.Item>
+                                </Col>
+
+                            </Row>
+                        </Form>
+
                         <Table
-                            key="categoryIconList"
-                            columns={columns.filter(col => col.key != "order")}
+                            key="categoryItemList"
+                            columns={!!categoryInfo?.iconId ? columns.filter(col => col.key != "order") : columns.filter(col => col.key != "order" && col.key != "setOrder")}
                             dataSource={categoryList}
                             bordered
                             loading={loadingCategoryList}
@@ -384,17 +495,45 @@ const MenuCategoryList: React.FC = () => {
             <Modal
                 className="bsModal"
                 footer
-                title={`${categoryInfo.isUpdateMode ? "ویرایش" : "افزودن"} دسته بندی منو`}
+                title={`${categoryInfo.isUpdateMode ? "ویرایش" : "افزودن"} آیتم های منو`}
                 visible={childFormVisible}
                 onCancel={closeChildForm}
                 keyboard={true}
                 destroyOnClose
             >
-                <MenuCategory close={closeChildForm} />
+                <Tabs
+                    hideAdd
+                    // onChange={onChange}
+                    // activeKey={activeKey}
+                    defaultActiveKey="1"
+                    type="card"
+                    tabPosition="top"
+                    size="small"
+                    animated={true}
+                    style={{
+                        marginTop: ".2rem",
+                        marginRight: "1rem",
+                        marginLeft: "1rem",
+                        height: "calc(100vh - 6.6rem)",
+                    }}
+                // addIcon={<Icon name='add user' />}
+                >
+                    <TabPane tab="اطلاعات آیتم" key="1"   >
+                        <CategoryItem close={closeChildForm} />
+                    </TabPane>
+
+                    <TabPane tab="تصاویر مرتبط" key="2" disabled={false} >
+                        <CategoryItemImage />
+                    </TabPane>
+
+                </Tabs>
+
 
             </Modal>
+
         </Fragment>
     )
 };
 
-export default observer(MenuCategoryList);
+export default observer(CategoryItemList);
+

@@ -58,10 +58,10 @@ namespace BS.Application.Features.CategoryIcons.Queries
                              && fileTable.IsDeleted != true && categoryIconTable.IsDeleted != true
                              select new CategoryIconListItemDTO
                              {
-                                 Id = categoryIconTable.Id.ToString(),
-                                 Key = categoryIconTable.Id.ToString(),
+                                 Id = categoryIconTable.Id.ToString().ToLower(),
+                                 Key = categoryIconTable.Id.ToString().ToLower(),
                                  Title = categoryIconTable.Title,
-                                 Url = _fileHelper.GetFilePath(fileTable.Id.ToString(), fileTable.FileName, FileDirectorey.categoryIcon),
+                                 Url = _fileHelper.GetFilePath(fileTable.Id.ToString().ToLower(), fileTable.FileName, FileDirectorey.categoryIcon),
                              });
 
                 // Search

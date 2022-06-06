@@ -10,6 +10,7 @@ import { IDepartmentFormValues } from "../models/department";
 import { IMenuFormValues } from "../models/menu";
 import { ICategoryFormValues, ICategoryListEnvelope, ICategoryListOreder, ICategoryListSearchParam } from "../models/category";
 import { ICategoryIconFormValues, ICategoryIconListEnvelope, ICategoryIconListItemValues, ICategoryIconListSearchParam } from "../models/categoryIcon";
+import { ICategoryItemFormValues, ICategoryItemListEnvelope, ICategoryItemListOreder, ICategoryItemListSearchParam } from "../models/categoryItem";
 
 axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 
@@ -209,6 +210,26 @@ const CategoryIcon = {
 
 }
 
+const CategoryItem = {
+    insertCategoryItem: (values: ICategoryItemFormValues): Promise<IResultType> =>
+        requests.post("/categoryItem/CategoryItemInsert", values),
+
+    updateCategoryItem: (values: ICategoryItemFormValues): Promise<IResultType> =>
+        requests.post("/categoryItem/CategoryItemUpdate", values),
+
+    deleteCategoryItem: (ids: string[]): Promise<IResultType> =>
+        requests.post("/categoryItem/CategoryItemDelete", { ids }),
+
+    getCategoryItemList: (values: ICategoryItemListSearchParam): Promise<ICategoryItemListEnvelope> =>
+        requests.post("/categoryItem/CategoryItemList", values),
+
+    setCategoryItemListOrder: (values: ICategoryItemListOreder): Promise<ICategoryItemListEnvelope> =>
+        requests.post("/categoryItem/CategoryItemListOrder", values),
+
+    getCategoryItem: (id: string): Promise<ICategoryItemFormValues> =>
+        requests.post("/categoryItem/CategoryItemLoad", { id }),
+}
+
 
 
 
@@ -218,5 +239,6 @@ export default {
     Department,
     Menu,
     Category,
-    CategoryIcon
+    CategoryIcon,
+    CategoryItem
 };

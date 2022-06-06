@@ -2,7 +2,7 @@ import React, { Suspense } from "react";
 import LoadingComponent from "../../../app/layout/LoadingComponent";
 
 const UnitInformation = React.lazy(() => import('./TabPages/unitInformation/UnitInformation'))
-const CategoryItem = React.lazy(() => import('./TabPages/categoryItem/CategoryItem'))
+const CategoryItemList = React.lazy(() => import('./TabPages/categoryItem/CategoryItemList'))
 const UnitMenu = React.lazy(() => import('./TabPages/unitMenu/UnitMenu'))
 const Payment = React.lazy(() => import('./TabPages/payment/Payment'))
 const MenuCategoryList = React.lazy(() => import('./TabPages/menuCategory/MenuCategoryList'))
@@ -21,7 +21,7 @@ const ContentControl: React.FC<IProps> = ({ menuCode }) => {
             case "unit-info":
                 return <Suspense fallback={<LoadingComponent content="در حال بارگذاری ..." />}> <UnitInformation /></Suspense>;
             case "create-item":
-                return <Suspense fallback={<LoadingComponent content="در حال بارگذاری ..." />}> <CategoryItem /></Suspense>;
+                return <Suspense fallback={<LoadingComponent content="در حال بارگذاری ..." />}> <CategoryItemList /></Suspense>;
             case "create-category":
                 return <Suspense fallback={<LoadingComponent content="در حال بارگذاری ..." />}> <MenuCategoryList /></Suspense>;
             case "payment":

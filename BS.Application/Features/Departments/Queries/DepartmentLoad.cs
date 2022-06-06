@@ -66,14 +66,14 @@ namespace BS.Application.Features.Departments.Queries
                 if (logo != null)
                     department.Logo = new FileDTO()
                     {
-                        Url = _fileHelper.GetFilePath(logo.Id.ToString(), logo.FileName, FileDirectorey.UnitLogo),
+                        Url = _fileHelper.GetFilePath(logo.Id.ToString().ToLower(), logo.FileName, FileDirectorey.UnitLogo),
                         Name = logo.FileName
                     };
 
                 if (image != null)
                     department.Image = new FileDTO()
                     {
-                        Url = _fileHelper.GetFilePath(image.Id.ToString(), image.FileName, FileDirectorey.UnitImage),
+                        Url = _fileHelper.GetFilePath(image.Id.ToString().ToLower(), image.FileName, FileDirectorey.UnitImage),
                         Name = image.FileName
                     };
 

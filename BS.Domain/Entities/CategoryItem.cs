@@ -13,7 +13,22 @@ namespace BS.Domain.Entities
     {
         [Required]
         [MaxLength(100)]
-        public int Title { get; set; }
+        public string Title { get; set; }
+
+        [MaxLength(800)]
+        [Required]
+        public string Description { get; set; }
+
+        [Required]
+        public int Price { get; set; }
+
+        [Required]
+        public int DiscountValue { get; set; } 
+
+        [Required]
+        public int DiscountPercent { get; set; }
+
+        public bool  IsExist { get; set; }
         public Guid? DepartmentId { get; set; }
         public Guid CategoryId { get; set; }
 

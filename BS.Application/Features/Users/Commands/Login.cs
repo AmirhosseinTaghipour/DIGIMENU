@@ -94,7 +94,7 @@ namespace BS.Application.Features.Users.Commands
                             To = user.Mobile,
                             Body = message.ToString().TrimEnd(),
                             Type = "register",
-                            UserId = user.Id.ToString(),
+                            UserId = user.Id.ToString().ToLower(),
                             UserName = user.Username,
                             KeyParam = code
                         };
@@ -137,7 +137,7 @@ namespace BS.Application.Features.Users.Commands
                                          where vUser.Id == user.Id && vUser.IsDeleted == false && vUser.IsActived == true
                                          select new 
                                          {
-                                             UserId = vUser.Id.ToString(),
+                                             UserId = vUser.Id.ToString().ToLower(),
                                              UserName = vUser.Username,
                                              RoleId = vUser.RoleId.ToString(),
                                              RoleCode = vRole.Code,

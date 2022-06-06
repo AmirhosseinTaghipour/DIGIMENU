@@ -113,8 +113,9 @@ export default class CategoryIconStore {
                 if (typeof categoryIconCount == "number" ) {
                     this.categoryIconCount = categoryIconCount;
                 }
-                this.loadingCategoryIconList = false;
             });
+            this.loadingCategoryIconList = false;
+
         } catch (err: any) {
             runInAction(() => {
                 this.loadingCategoryIconList = false;

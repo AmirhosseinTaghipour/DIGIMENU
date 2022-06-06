@@ -23,6 +23,8 @@ namespace BS.Infrastructure.Persistence.Repositories
         public IMenuRepositoryAsync menuRepositoryAsync { get; }
         public ICategoryRepositoryAsync categoryRepositoryAsync { get; }
         public ICategoryIconRepositoryAsync categoryIconRepositoryAsync { get; }
+        public ICategoryItemRepositoryAsync categoryItemRepositoryAsync { get; }
+        
         public IAppMenuRoleRepositoryAsync appMenuRoleRepositoryAsync { get; }
 
         public UnitOfWork(Storage context)
@@ -40,6 +42,7 @@ namespace BS.Infrastructure.Persistence.Repositories
             menuRepositoryAsync = menuRepositoryAsync ?? new MenuRepositoryAsync(context);
             categoryRepositoryAsync = categoryRepositoryAsync ?? new CategoryRepositoryAsync(context);
             categoryIconRepositoryAsync = categoryIconRepositoryAsync ?? new CategoryIconRepositoryAsync(context);
+            categoryItemRepositoryAsync = categoryItemRepositoryAsync ?? new CategoryItemRepositoryAsync(context);    
             appMenuRoleRepositoryAsync = appMenuRoleRepositoryAsync ?? new AppMenuRoleRepositoryAsync(context);
             
         }

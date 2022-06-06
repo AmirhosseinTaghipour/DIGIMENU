@@ -56,7 +56,7 @@ namespace BS.Application.Features.CategoryIcons.Commands
                     iconFile.IsDeleted = true;
                     _unitOfWork.fileRepositoryAsync.Update(iconFile);
 
-                    iconFileRes = _fileHelper.DeleteFile(iconFile.Id.ToString(), System.IO.Path.GetExtension(iconFile.FileName), FileDirectorey.categoryIcon);
+                    iconFileRes = _fileHelper.DeleteFile(iconFile.Id.ToString().ToLower(), System.IO.Path.GetExtension(iconFile.FileName), FileDirectorey.categoryIcon);
                 }
 
 

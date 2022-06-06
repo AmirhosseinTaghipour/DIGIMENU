@@ -77,7 +77,7 @@ namespace BS.Application.Features.Users.Commands
                         To = user.Mobile,
                         Body = message.ToString().TrimEnd(),
                         Type = "forgot-password",
-                        UserId = user.Id.ToString(),
+                        UserId = user.Id.ToString().ToLower(),
                         UserName = user.Username,
                         KeyParam = code
                     };

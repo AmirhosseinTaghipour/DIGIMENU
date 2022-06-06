@@ -26,6 +26,7 @@ namespace BS.Domain.Entities
 
         [ForeignKey("DepartmentId")]
         public Department Department { get; set; }
+        public bool IsDefault { get; set; }
 
         public bool IsDeleted { get; set; }
     }

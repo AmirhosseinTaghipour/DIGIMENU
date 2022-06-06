@@ -21,6 +21,7 @@ namespace BS.Application.Interfaces.Repositories
         public IMenuRepositoryAsync menuRepositoryAsync { get; }
         public ICategoryRepositoryAsync categoryRepositoryAsync { get; }
         public ICategoryIconRepositoryAsync categoryIconRepositoryAsync { get; }
+        public ICategoryItemRepositoryAsync categoryItemRepositoryAsync { get; }        
         public IAppMenuRoleRepositoryAsync appMenuRoleRepositoryAsync { get; }
         
 

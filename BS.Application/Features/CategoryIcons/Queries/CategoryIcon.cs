@@ -63,13 +63,13 @@ namespace BS.Application.Features.CategoryIcons.Queries
                 var iconFile = new FileDTO();
                 if (icon != null)
                 {
-                    iconFile.Url = _fileHelper.GetFilePath(icon.Id.ToString(), icon.FileName, FileDirectorey.categoryIcon);
+                    iconFile.Url = _fileHelper.GetFilePath(icon.Id.ToString().ToLower(), icon.FileName, FileDirectorey.categoryIcon);
                     iconFile.Name = icon.FileName;
                 }
 
                 var res = new CategoryIconFormDTO()
                 {
-                    Id = categoryIcon.Id.ToString(),
+                    Id = categoryIcon.Id.ToString().ToLower(),
                     Title = categoryIcon.Title,
                     Icon = iconFile,
                     IsUpdateMode = true,

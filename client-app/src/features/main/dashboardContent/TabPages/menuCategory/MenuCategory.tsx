@@ -8,8 +8,6 @@ import { toDatabaseChar } from "../../../../../app/common/util/util";
 import { IComboBoxType } from "../../../../../app/models/common";
 import { ICategoryIconListItemValues } from "../../../../../app/models/categoryIcon";
 
-const { Option } = Select;
-const { Content, Header } = Layout;
 
 const layout = {
     labelCol: { span: 24 },
@@ -32,9 +30,13 @@ const MenuCategory: React.FC<IProps> = ({ close }) => {
     const {
         loadCategoryIconList,
         loadingCategoryIconList,
+        setCategoryIconListValues,
+        categoryIconListValues,
         categoryIconList
     } = rootStore.categoryIconStore;
 
+    const { Option } = Select;
+    const { Content, Header } = Layout;
     const [form] = Form.useForm();
 
     //سابمیت فرم 
@@ -50,8 +52,22 @@ const MenuCategory: React.FC<IProps> = ({ close }) => {
             await insertCategory(categoryInfo).then(() => close());
     };
 
+    const initialLoad = async () => {
+        setCategoryIconListValues({
+            ...categoryIconListValues,
+            page: 1,
+            limit: 500,
+            title: null,
+            sortColumn: null,
+            sortDirection: null,
+        });
+        await loadCategoryIconList().then(() => {
+            form.resetFields(['iconId']);
+        });
+
+    }
     useEffect(() => {
-        loadCategoryIconList();
+        initialLoad();
     }, []);
 
     return <Fragment>
@@ -124,9 +140,11 @@ const MenuCategory: React.FC<IProps> = ({ close }) => {
                                     rules={[{
                                         required: true, message: 'فیلد آیکن نمی تواند خالی باشد',
                                     }]}
-                                    initialValue={categoryInfo.iconId!}
+                                    initialValue={categoryInfo?.iconId!}
+
                                 >
                                     <Select
+
                                         showSearch
                                         style={{
                                             width: "100%",
@@ -152,8 +170,6 @@ const MenuCategory: React.FC<IProps> = ({ close }) => {
                                         menuItemSelectedIcon={
                                             <CheckOutlined style={{ color: "green" }} />
                                         }
-                                        // defaultValue={categoryInfo.iconId!}
-                                    //defaultValue={categoryInfo.iconId?? undefined}
                                     >
                                         {categoryIconList &&
                                             categoryIconList.length > 0 &&

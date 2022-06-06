@@ -90,7 +90,7 @@ namespace BS.Application.Features.CategoryIcons.Commands
                     }
                     else
                     {
-                        iconFileRes = _fileHelper.DeleteFile(iconFile.Id.ToString(), System.IO.Path.GetExtension(iconFile.FileName), FileDirectorey.categoryIcon);
+                        iconFileRes = _fileHelper.DeleteFile(iconFile.Id.ToString().ToLower(), System.IO.Path.GetExtension(iconFile.FileName), FileDirectorey.categoryIcon);
 
                         iconFile.UpdateDate = DateTime.Now;
                         iconFile.UpdateUser = _userAccessor.GetCurrentUserName().ToLower().Trim();
@@ -101,7 +101,7 @@ namespace BS.Application.Features.CategoryIcons.Commands
                         else
                         {
                             iconFile.FileName = request.Icon.File.FileName;
-                            iconFileRes = await _fileHelper.SaveFileAsync(request.Icon.File, FileDirectorey.categoryIcon, iconFile.Id.ToString(), true);
+                            iconFileRes = await _fileHelper.SaveFileAsync(request.Icon.File, FileDirectorey.categoryIcon, iconFile.Id.ToString().ToLower(), true);
                         }
                         _unitOfWork.fileRepositoryAsync.Update(iconFile);
 

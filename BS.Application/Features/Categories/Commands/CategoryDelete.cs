@@ -41,6 +41,9 @@ namespace BS.Application.Features.Categories.Commands
 
                 var categoryList = await _unitOfWork.categoryRepositoryAsync.GetAsync(n => request.Ids.Contains(n.Id.ToString()));
 
+                if (categoryList == null)
+                    throw new RestException(HttpStatusCode.NotFound, "خطا، رکوردی یافت نشد");
+
                 foreach (var item in categoryList)
                 {
                     item.IsDeleted = true;

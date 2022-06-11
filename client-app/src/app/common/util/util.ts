@@ -167,68 +167,12 @@ export const addDays = (date: Day, input: number, lang?: string) => {
     const m = moment.from(`${date.year}/${forceTwoDigit(date.month)}/${forceTwoDigit(date.day)}`, !lang ? 'fa' : lang.toLowerCase(), "YYYY/MM/DD");
     const result = m.add(input, 'days').locale(!lang ? 'fa' : lang.toLowerCase()).format('YYYY/MM/DD'); // 1367/11/05
 
-    //if ( input < 32 ) {
-    //    if ( input > 0 ) {
-    //        if ( date.month < 7 ) {
-    //            date.day += input;
-    //            if ( date.day > 31 ) {
-    //                date.day -= 31;
-    //                date.month += 1;
-    //                if ( date.month > 12 ) {
-    //                    date.year += 1;
-    //                }
-    //            }
-    //        } else {
-    //            date.day += input;
-    //            if ( date.day > 30 ) {
-    //                date.day -= 30;
-    //                date.month += 1;
-    //                if ( date.month > 12 ) {
-    //                    date.year += 1;
-    //                }
-    //            }
-    //        }
-    //    } else {
-    //        if ( date.month < 7 ) {
-    //            if ( date.day > Math.abs( input ) ) {
-    //                date.day -= Math.abs( input );
-    //            } else {
-    //                date.day =
-    //                    date.month === 1
-    //                        ? 30 - ( Math.abs( input ) - date.day )
-    //                        : 31 - ( Math.abs( input ) - date.day );
-    //                date.month -= 1;
-    //                if ( date.month === 0 ) {
-    //                    date.month = 12;
-    //                    date.year -= 1;
-    //                }
-    //            }
-    //        } else {
-    //            if ( date.day > Math.abs( input ) ) {
-    //                date.day -= Math.abs( input );
-    //            } else {
-    //                date.day =
-    //                    date.month === 7
-    //                        ? 31 - ( Math.abs( input ) - date.day )
-    //                        : 30 - ( Math.abs( input ) - date.day );
-    //                date.month -= 1;
-    //                if ( date.month === 0 ) {
-    //                    date.year -= 1;
-    //                }
-    //            }
-    //        }
-    //    }
-    //}
-    //return date;
+  
 
     return convertToDatePickerType(result);
 };
 
 export const addYears = (date: Day, input: number, lang?: string) => {
-
-    //date.year += input;
-    //return date;
-
     const m = moment.from(`${date.year}/${forceTwoDigit(date.month)}/${forceTwoDigit(date.day)}`, !lang ? 'fa' : lang.toLowerCase(), "YYYY/MM/DD");
     const result = m.add(input, 'years').locale(!lang ? 'fa' : lang.toLowerCase()).format('YYYY/MM/DD'); // 1367/11/05
     return convertToDatePickerType(result);
@@ -236,11 +180,6 @@ export const addYears = (date: Day, input: number, lang?: string) => {
 };
 
 export const addMonths = (date: Day, input: number, lang?: string) => {
-    //const sumMonth = date.month + input;
-    //date.year = date.year + Math.trunc( sumMonth / 12 );
-    //date.month = sumMonth % 12;
-    //return date;
-
     const m = moment.from(`${date.year}/${forceTwoDigit(date.month)}/${forceTwoDigit(date.day)}`, !lang ? 'fa' : lang.toLowerCase(), "YYYY/MM/DD");
     const result = m.add(input, 'months').locale(!lang ? 'fa' : lang.toLowerCase()).format('YYYY/MM/DD'); // 1367/11/05
     return convertToDatePickerType(result);

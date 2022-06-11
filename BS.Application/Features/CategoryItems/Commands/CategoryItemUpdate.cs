@@ -46,7 +46,7 @@ namespace BS.Application.Features.CategoryItems.Commands
                 if (request.Id == null)
                     throw new RestException(HttpStatusCode.BadRequest, "خطا، مود اینزرت...");
 
-                if (string.IsNullOrEmpty(request.Title) || string.IsNullOrEmpty(request.CategoryId) || string.IsNullOrEmpty(request.Description) || request.Price == 0)
+                if (string.IsNullOrEmpty(request.Title) || string.IsNullOrEmpty(request.CategoryId) || request.Price == 0)
                     throw new RestException(HttpStatusCode.BadRequest, "خطا، فیلد های ضروری نمیتواند خالی باشد.");
 
                 var user = await _userAccessor.GetUserData();
@@ -75,22 +75,27 @@ namespace BS.Application.Features.CategoryItems.Commands
                 categoryItem.CategoryId = category.Id;
                 categoryItem.Title = request.Title;
                 categoryItem.Description = request.Description;
-                categoryItem.Price = request.Price;
+                categoryItem.Price = request.Price ?? 0;
                 categoryItem.UpdateDate = DateTime.Now;
                 categoryItem.UpdateUser = _userAccessor.GetCurrentUserName().ToLower();
                 categoryItem.IsExist = request.IsExist;
-                if (request.DiscountType == 0) //discount is in value
-                {
-                    categoryItem.DiscountPercent = (int)Math.Round(((double)(request.Discount) / request.Price) * 100);
-                    categoryItem.DiscountValue = request.Discount;
-                }
-                else //discount is in percent
-                {
-                    categoryItem.DiscountPercent = request.Discount;
-                    categoryItem.DiscountValue = (int)Math.Round(((double)(100 - request.Discount) / 100) * request.Price);
-                }
-                _unitOfWork.categoryItemRepositoryAsync.Update(categoryItem);
+                categoryItem.Discount = request.Discount ?? 0;
+                categoryItem.DiscountType = request.DiscountType ?? 0;
+                categoryItem.UseDiscount = request.UseDiscount;
 
+                if (request.DiscountType != null && request.Price != null && request.Discount != null)
+                    if (request.DiscountType == 0) //discount is in value
+                    {
+                        categoryItem.DiscountPercent = (int)Math.Round(((double)(request.Discount.Value) / request.Price.Value) * 100);
+                        categoryItem.DiscountValue = request.Discount.Value;
+                    }
+                    else
+                    {
+                        categoryItem.DiscountPercent = request.Discount.Value;
+                        categoryItem.DiscountValue = (int)Math.Round(((double)(request.Discount.Value) / 100) * request.Price.Value);
+                    }
+
+                _unitOfWork.categoryItemRepositoryAsync.Update(categoryItem);
 
                 var success = await _unitOfWork.SaveAsync() > 0;
                 if (success)

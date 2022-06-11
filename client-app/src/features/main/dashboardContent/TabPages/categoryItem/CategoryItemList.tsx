@@ -13,7 +13,8 @@ import {
     Pagination,
     Input,
     Tabs,
-    Select
+    Select,
+    Tag
 } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { RootStoreContext } from "../../../../../app/stores/rootStore";
@@ -29,18 +30,15 @@ import {
     ExclamationCircleOutlined,
     FormOutlined,
     LoadingOutlined,
-    MenuOutlined,
     PlusCircleTwoTone,
-    ProfileTwoTone,
     SearchOutlined,
-    UpCircleTwoTone,
 } from "@ant-design/icons"
 import { Content, Header } from "antd/lib/layout/layout";
-import { IsNullOrEmpty, openNotification, selectTableRows, toDatabaseChar } from "../../../../../app/common/util/util";
-import { ICategoryIconListItemValues } from "../../../../../app/models/categoryIcon";
+import { IsNullOrEmpty, openNotification, selectTableRows, toDatabaseChar, toNumberFormat } from "../../../../../app/common/util/util";
+import { ICategoryItemListItemValues } from "../../../../../app/models/categoryItem";
 import CategoryItem from "./CategoryItem";
 import { ICategoryListItemValues } from "../../../../../app/models/category";
-import CategoryItemImage from "./CategoryItemImage";
+import FileList from "../file/FileList";
 
 const layout = {
     labelCol: { span: 6 },
@@ -50,19 +48,25 @@ const layout = {
 const CategoryItemList: React.FC = () => {
     const rootStore = useContext(RootStoreContext);
     const {
-        loadCategory,
-        categoryInfo,
-        setCategoryInfo,
-        categoryList,
-        loadCategoryList,
-        categoryCount,
-        deleteCategory,
-        categoryListValues,
-        setCategoryListValues,
-        setCategoryListOrder,
-        deletingCategory,
+        loadCategoryItem,
+        categoryItemInfo,
+        setCategoryItemInfo,
+        categoryItemList,
+        loadCategoryItemList,
+        categoryItemCount,
+        deleteCategoryItem,
+        categoryItemListValues,
+        setCategoryItemListValues,
+        setCategoryItemListOrder,
+        deletingCategoryItem,
+        loadingCategoryItemList,
+        sumbittingCategoryItem,
+    } = rootStore.categoryItemStore;
+
+    const {
         loadingCategoryList,
-        sumbittingCategory,
+        loadCategoryList,
+        categoryList
     } = rootStore.categoryStore;
 
     const {
@@ -83,10 +87,10 @@ const CategoryItemList: React.FC = () => {
 
     const deleteItems = () => {
         const list: string[] = [];
-        const selectedList = categoryList.filter(function (value: ICategoryIconListItemValues) {
+        const selectedList = categoryItemList.filter(function (value: ICategoryItemListItemValues) {
             return selectedRows.includes(value.id!);
-        }) as ICategoryIconListItemValues[];
-        selectedList.forEach((item: ICategoryIconListItemValues) => {
+        }) as ICategoryItemListItemValues[];
+        selectedList.forEach((item: ICategoryItemListItemValues) => {
             list.push(item?.title!.toString());
         });
 
@@ -98,7 +102,7 @@ const CategoryItemList: React.FC = () => {
             okText: "بله",
             cancelText: "خیر",
             onOk: () => {
-                deleteCategory(selectedRows);
+                deleteCategoryItem(selectedRows);
                 setSelectedRows([]);
             },
             bodyStyle: { direction: "rtl" },
@@ -113,32 +117,38 @@ const CategoryItemList: React.FC = () => {
 
     const initialFormParams = async (id: string | null) => {
         if (!IsNullOrEmpty(id)) {
-            await loadCategory(id!);
+            await loadCategoryItem(id!);
         } else {
             clearFormValues();
         }
     };
 
     const clearFormValues = () => {
-        setCategoryInfo({
-            ...categoryInfo,
+        setCategoryItemInfo({
+            ...categoryItemInfo,
             id: null,
             title: null,
-            iconId: null,
+            categoryId: null,
+            price: null,
+            discount: null,
+            discountType: null,
+            description: null,
+            isExist: true,
             isUpdateMode: false
         })
     };
 
     useEffect(() => {
         loadCategoryList();
+        loadCategoryItemList();
     }, []);
 
-    const columns: ColumnsType<ICategoryListItemValues> = [
+    const columns: ColumnsType<ICategoryItemListItemValues> = [
         {
             title: "ترتیب",
             key: "order",
             dataIndex: "order",
-            width: 15,
+            width: 10,
             align: "center",
             defaultSortOrder: 'ascend',
             sorter: (a, b) => a.order! - b.order!,
@@ -147,7 +157,7 @@ const CategoryItemList: React.FC = () => {
             title: "ترتیب",
             key: "setOrder",
             dataIndex: "setOrder",
-            width: 15,
+            width: 50,
             align: "center",
             render(value, record) {
                 return {
@@ -157,7 +167,7 @@ const CategoryItemList: React.FC = () => {
                                 <Button
                                     type="link"
                                     icon={<ArrowUpOutlined style={{ fontSize: '18px', color: '#099327' }} />}
-                                    onClick={() => setCategoryListOrder(record?.id!, -1)}
+                                    onClick={() => setCategoryItemListOrder(record?.id!, -1)}
                                     style={{ cursor: "pointer" }}
                                 />
                             </Tooltip>
@@ -166,7 +176,7 @@ const CategoryItemList: React.FC = () => {
                                 <Button
                                     type="link"
                                     icon={<ArrowDownOutlined style={{ fontSize: '18px', color: '#c31008' }} />}
-                                    onClick={() => setCategoryListOrder(record?.id!, +1)}
+                                    onClick={() => setCategoryItemListOrder(record?.id!, +1)}
                                     style={{ cursor: "pointer" }}
                                 />
                             </Tooltip>
@@ -179,7 +189,7 @@ const CategoryItemList: React.FC = () => {
             title: "ویرایش",
             key: "edit",
             dataIndex: "edit",
-            width: 20,
+            width: 50,
             align: "center",
 
             render(value, record) {
@@ -202,45 +212,45 @@ const CategoryItemList: React.FC = () => {
             dataIndex: "title",
             key: "title",
             align: "center",
-            width: 100,
-            // filterIcon: (filtered) => {
-            //     return (
-            //         <SearchOutlined
-            //             style={{
-            //                 color: !!categoryListValues?.title ? "red" : "#1e1e1e"
-            //             }}
-            //         />
-            //     );
-            // },
+            width: 120,
+            filterIcon: (filtered) => {
+                return (
+                    <SearchOutlined
+                        style={{
+                            color: !!categoryItemListValues?.title ? "red" : "#1e1e1e"
+                        }}
+                    />
+                );
+            },
 
-            // filterDropdown: ({ confirm }) => {
-            //     const doSearch = async (confirm: any) => {
-            //         await loadCategoryList();
-            //         confirm();
-            //     };
-            //     return (
-            //         <Input.Search
-            //             allowClear
-            //             placeholder="عنوان دسته"
-            //             autoFocus
-            //             onSearch={() => confirm()}
-            //             onReset={() => confirm()}
-            //             onPressEnter={() => confirm()}
-            //             type="search"
-            //             defaultValue={categoryListValues?.title!}
-            //             maxLength={50}
-            //             style={{ width: 250 }}
-            //             onBlur={(event: any) => {
-            //                 setCategoryListValues({
-            //                     ...categoryListValues,
-            //                     page: 1,
-            //                     title: toDatabaseChar(event.target.value)!,
-            //                 });
-            //                 doSearch(confirm);
-            //             }}
-            //         />
-            //     );
-            // },
+            filterDropdown: ({ confirm }) => {
+                const doSearch = async (confirm: any) => {
+                    await loadCategoryItemList();
+                    confirm();
+                };
+                return (
+                    <Input.Search
+                        allowClear
+                        placeholder="عنوان دسته"
+                        autoFocus
+                        onSearch={() => confirm()}
+                        onReset={() => confirm()}
+                        onPressEnter={() => confirm()}
+                        type="search"
+                        defaultValue={categoryItemListValues?.title!}
+                        maxLength={50}
+                        style={{ width: 250 }}
+                        onBlur={(event: any) => {
+                            setCategoryItemListValues({
+                                ...categoryItemListValues,
+                                page: 1,
+                                title: toDatabaseChar(event.target.value)!,
+                            });
+                            doSearch(confirm);
+                        }}
+                    />
+                );
+            },
         },
         {
             title: "دسته",
@@ -248,50 +258,93 @@ const CategoryItemList: React.FC = () => {
             key: "categoryTitle",
             align: "center",
             width: 100,
-            // filterIcon: (filtered) => {
-            //     return (
-            //         <SearchOutlined
-            //             style={{
-            //                 color: !!categoryListValues?.title ? "red" : "#1e1e1e"
-            //             }}
-            //         />
-            //     );
-            // },
+            filterIcon: (filtered) => {
+                return (
+                    <SearchOutlined
+                        style={{
+                            color: !!categoryItemListValues?.categoryTitle ? "red" : "#1e1e1e"
+                        }}
+                    />
+                );
+            },
 
-            // filterDropdown: ({ confirm }) => {
-            //     const doSearch = async (confirm: any) => {
-            //         await loadCategoryList();
-            //         confirm();
-            //     };
-            //     return (
-            //         <Input.Search
-            //             allowClear
-            //             placeholder="عنوان دسته"
-            //             autoFocus
-            //             onSearch={() => confirm()}
-            //             onReset={() => confirm()}
-            //             onPressEnter={() => confirm()}
-            //             type="search"
-            //             defaultValue={categoryListValues?.title!}
-            //             maxLength={50}
-            //             style={{ width: 250 }}
-            //             onBlur={(event: any) => {
-            //                 setCategoryListValues({
-            //                     ...categoryListValues,
-            //                     page: 1,
-            //                     title: toDatabaseChar(event.target.value)!,
-            //                 });
-            //                 doSearch(confirm);
-            //             }}
-            //         />
-            //     );
-            // },
+            filterDropdown: ({ confirm }) => {
+                const doSearch = async (confirm: any) => {
+                    await loadCategoryItemList();
+                    confirm();
+                };
+                return (
+                    <Input.Search
+                        allowClear
+                        placeholder="عنوان دسته"
+                        autoFocus
+                        onSearch={() => confirm()}
+                        onReset={() => confirm()}
+                        onPressEnter={() => confirm()}
+                        type="search"
+                        defaultValue={categoryItemListValues?.categoryTitle!}
+                        maxLength={50}
+                        style={{ width: 250 }}
+                        onBlur={(event: any) => {
+                            setCategoryItemListValues({
+                                ...categoryItemListValues,
+                                page: 1,
+                                categoryTitle: toDatabaseChar(event.target.value)!,
+                            });
+                            doSearch(confirm);
+                        }}
+                    />
+                );
+            },
+        },
+        {
+            title: "قیمت (تومان)",
+            dataIndex: "price",
+            key: "price",
+            align: "center",
+            width: 80,
+            render(value, record) {
+                return {
+                    children: (
+                        <Fragment>{
+                            (!!record?.discountValue && record.discountValue > 0) ?
+                                <p style={{ direction: "ltr" }}>{toNumberFormat(record?.price! - record?.discountValue!)}  <span style={{ color: "red" }}>({record.discountPercent} %)</span></p>
+                                :
+                                <p>{toNumberFormat(record?.price!)}</p>
+                        }</Fragment>
+
+                    ),
+                };
+            },
+        },
+        {
+            title: "وضعیت",
+            dataIndex: "isExist",
+            key: "isExist",
+            align: "center",
+            width: 80,
+            render(value, record) {
+                return {
+                    children: (
+                        <Fragment>
+                            {record.isExist == true ?
+                                <Tag color={"green"}>
+                                    موجود
+                                </Tag>
+                                :
+                                <Tag color={"red"}>
+                                    ناموجود
+                                </Tag>}
+                        </Fragment>
+                    )
+                };
+            }
         },
         {
             title: "تصویر پیشفرض",
             key: "url",
             dataIndex: "url",
-            width: 50,
+            width: 80,
             align: "center",
             render(value, record) {
                 return {
@@ -332,7 +385,7 @@ const CategoryItemList: React.FC = () => {
                                     getDetails(null);
                                 }}
                                 icon={
-                                    (sumbittingCategory || loadingCategoryList) ?
+                                    (sumbittingCategoryItem || loadingCategoryItemList) ?
                                         <LoadingOutlined spin />
                                         :
                                         <PlusCircleTwoTone
@@ -361,7 +414,7 @@ const CategoryItemList: React.FC = () => {
                                     }
                                 }}
                                 icon={
-                                    deletingCategory ?
+                                    deletingCategoryItem ?
                                         <LoadingOutlined spin />
                                         :
                                         <DeleteTwoTone
@@ -395,8 +448,7 @@ const CategoryItemList: React.FC = () => {
                                 <Col xs={24} sm={24} md={12} lg={8} xl={8} xxl={8}>
                                     <Form.Item
                                         label="دسته بندی"
-                                        name="iconId"
-                                        initialValue={categoryInfo?.iconId!}
+                                        name="categoryId"
                                     >
                                         <Select
                                             showSearch
@@ -405,10 +457,11 @@ const CategoryItemList: React.FC = () => {
                                             }}
                                             loading={loadingCategoryList}
                                             onChange={(value: string) => {
-                                                setCategoryInfo({
-                                                    ...categoryInfo,
-                                                    iconId: !!value ? value : null
+                                                setCategoryItemListValues({
+                                                    ...categoryItemListValues,
+                                                    categoryId: !!value ? value : null
                                                 });
+                                                loadCategoryItemList();
                                             }}
                                             filterOption={(input, option) =>
                                                 option!.children
@@ -443,10 +496,10 @@ const CategoryItemList: React.FC = () => {
 
                         <Table
                             key="categoryItemList"
-                            columns={!!categoryInfo?.iconId ? columns.filter(col => col.key != "order") : columns.filter(col => col.key != "order" && col.key != "setOrder")}
-                            dataSource={categoryList}
+                            columns={!!categoryItemListValues?.categoryId ? columns.filter(col => col.key != "order") : columns.filter(col => col.key != "order" && col.key != "setOrder")}
+                            dataSource={categoryItemList}
                             bordered
-                            loading={loadingCategoryList}
+                            loading={loadingCategoryItemList}
                             tableLayout="fixed"
                             pagination={false}
                             size="small"
@@ -466,36 +519,33 @@ const CategoryItemList: React.FC = () => {
                         />
                     </Content>
 
-                    {!!categoryList && categoryList.length > 0 && (
+                    {!!categoryItemList && categoryItemList.length > 0 && (
                         <Pagination
                             pageSizeOptions={["10", "20", "30", "40", "50"]}
                             showSizeChanger={true}
-                            total={categoryCount}
-                            current={categoryListValues.page!}
+                            total={categoryItemCount}
+                            current={categoryItemListValues.page!}
                             showQuickJumper
                             size="default"
-                            pageSize={categoryListValues.limit == null ? 10 : categoryListValues.limit}
+                            pageSize={categoryItemListValues.limit == null ? 10 : categoryItemListValues.limit}
                             showTotal={(total) => (
                                 <span > مجموع: {total} مورد </span>
                             )}
                             responsive={true}
                             className="bsPaging"
                             onChange={(page, pageSize) => {
-                                setCategoryListValues({ ...categoryListValues, page: page, limit: pageSize! });
-                                loadCategoryList();
+                                setCategoryItemListValues({ ...categoryItemListValues, page: page, limit: pageSize! });
+                                loadCategoryItemList();
                             }}
                         />
                     )}
-
                 </Layout>
             </Row>
-
-
 
             <Modal
                 className="bsModal"
                 footer
-                title={`${categoryInfo.isUpdateMode ? "ویرایش" : "افزودن"} آیتم های منو`}
+                title={`${categoryItemInfo.isUpdateMode ? "ویرایش" : "افزودن"} آیتم های منو`}
                 visible={childFormVisible}
                 onCancel={closeChildForm}
                 keyboard={true}
@@ -523,14 +573,11 @@ const CategoryItemList: React.FC = () => {
                     </TabPane>
 
                     <TabPane tab="تصاویر مرتبط" key="2" disabled={false} >
-                        <CategoryItemImage />
+                        <FileList/>
                     </TabPane>
 
                 </Tabs>
-
-
             </Modal>
-
         </Fragment>
     )
 };

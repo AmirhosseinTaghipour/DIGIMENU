@@ -11,6 +11,7 @@ import { IMenuFormValues } from "../models/menu";
 import { ICategoryFormValues, ICategoryListEnvelope, ICategoryListOreder, ICategoryListSearchParam } from "../models/category";
 import { ICategoryIconFormValues, ICategoryIconListEnvelope, ICategoryIconListItemValues, ICategoryIconListSearchParam } from "../models/categoryIcon";
 import { ICategoryItemFormValues, ICategoryItemListEnvelope, ICategoryItemListOreder, ICategoryItemListSearchParam } from "../models/categoryItem";
+import { IFileFormValues, IFileListEnvelope, IFileListSearchParam } from "../models/file";
 
 axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 
@@ -207,7 +208,6 @@ const CategoryIcon = {
 
     getCategoryIcon: (id: string): Promise<ICategoryIconFormValues> =>
         requests.post("/categoryIcon/CategoryIcon", { id }),
-
 }
 
 const CategoryItem = {
@@ -230,6 +230,22 @@ const CategoryItem = {
         requests.post("/categoryItem/CategoryItemLoad", { id }),
 }
 
+const File = {
+    insertFile: (values: IFileFormValues): Promise<IResultType> =>
+        requests.postForm("/file/FileInsert", values),
+
+    updateFile: (values: IFileFormValues): Promise<IResultType> =>
+        requests.postForm("/file/FileUpdate", values),
+
+    deleteFile: (id: string): Promise<IResultType> =>
+        requests.post("/file/FileDelete", { id }),
+
+    getFileList: (values: IFileListSearchParam): Promise<IFileListEnvelope> =>
+        requests.post("/file/FileList", values),
+
+    getFile: (id: string): Promise<IFileFormValues> =>
+        requests.post("/file/FileLoad", { id }),
+}
 
 
 
@@ -240,5 +256,6 @@ export default {
     Menu,
     Category,
     CategoryIcon,
-    CategoryItem
+    CategoryItem,
+    File
 };

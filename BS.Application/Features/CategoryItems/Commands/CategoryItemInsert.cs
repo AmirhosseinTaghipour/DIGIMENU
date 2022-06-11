@@ -43,7 +43,7 @@ namespace BS.Application.Features.CategoryItems.Commands
                 if (request.IsUpdateMode == true)
                     throw new RestException(HttpStatusCode.BadRequest, "خطا، مود آپدیت...");
 
-                if (string.IsNullOrEmpty(request.Title) || string.IsNullOrEmpty(request.CategoryId) || string.IsNullOrEmpty(request.Description) ||request.Price==0)
+                if (string.IsNullOrEmpty(request.Title) || string.IsNullOrEmpty(request.CategoryId) || request.Price == 0)
                     throw new RestException(HttpStatusCode.BadRequest, "خطا، فیلد های ضروری نمیتواند خالی باشد.");
 
 
@@ -67,6 +67,9 @@ namespace BS.Application.Features.CategoryItems.Commands
 
                 var category = await _unitOfWork.categoryRepositoryAsync.GetFirstAsync(n => n.Id == new Guid(request.CategoryId) && n.MenuId == menu.Id && n.DepartmentId == user.DepartmentId! && n.IsDeleted == false);
 
+                var maxOrder = 0;
+                if (_unitOfWork.categoryItemRepositoryAsync.Query().Where(n => n.CategoryId==category.Id && n.IsDeleted == false).Any())
+                    maxOrder = _unitOfWork.categoryItemRepositoryAsync.Query().Where(n => n.CategoryId == category.Id && n.IsDeleted == false).Max(n => n.Order);
 
                 var categoryItem = new CategoryItem();
                 var categoryItemId = Guid.NewGuid();
@@ -74,28 +77,35 @@ namespace BS.Application.Features.CategoryItems.Commands
                 categoryItem.CategoryId = category.Id;
                 categoryItem.Title = request.Title;
                 categoryItem.Description = request.Description;
-                categoryItem.Price = request.Price;
+                categoryItem.Price = request.Price ?? 0;
                 categoryItem.DepartmentId = user.DepartmentId;
                 categoryItem.InsertDate = DateTime.Now;
                 categoryItem.InsertUser = _userAccessor.GetCurrentUserName().ToLower();
+                categoryItem.Order = maxOrder + 1;
                 categoryItem.IsDeleted = false;
                 categoryItem.IsExist = request.IsExist;
-                if (request.DiscountType == 0) //discount is in value
-                {
-                    categoryItem.DiscountPercent = (int)Math.Round(((double)(request.Discount) / request.Price) * 100);
-                    categoryItem.DiscountValue = request.Discount;
-                }
-                else
-                {
-                    categoryItem.DiscountPercent = request.Discount;
-                    categoryItem.DiscountValue = (int)Math.Round(((double)(100 - request.Discount) / 100) * request.Price);
-                }
+                categoryItem.Discount = request.Discount ?? 0;
+                categoryItem.DiscountType = request.DiscountType ?? 0;
+                categoryItem.UseDiscount = request.UseDiscount;
 
-                await _unitOfWork.categoryItemRepositoryAsync.AddAsync(categoryItem);
+                if (request.DiscountType != null && request.Price != null && request.Discount != null)
+                    if (request.DiscountType == 0) //discount is in value
+                    {
+                        categoryItem.DiscountPercent = (int)Math.Round(((double)(request.Discount.Value) / request.Price.Value) * 100);
+                        categoryItem.DiscountValue = request.Discount.Value;
+                    }
+                    else
+                    {
+                        categoryItem.DiscountPercent = request.Discount.Value;
+                        categoryItem.DiscountValue = (int)Math.Round(((double)(request.Discount.Value) / 100) * request.Price.Value);
+                    }
 
-                var success = await _unitOfWork.SaveAsync() > 0;
-                if (success)
-                    return new ResultDTO<string>(HttpStatusCode.OK, "اطلاعات آیتم موفقیت ثیت شد.");
+
+                    await _unitOfWork.categoryItemRepositoryAsync.AddAsync(categoryItem);
+
+                    var success = await _unitOfWork.SaveAsync() > 0;
+                    if (success)
+                        return new ResultDTO<string>(HttpStatusCode.OK, "اطلاعات آیتم موفقیت ثیت شد.");        
 
                 throw new RestException(HttpStatusCode.BadRequest, "خطا در عملیات ثبت");
 

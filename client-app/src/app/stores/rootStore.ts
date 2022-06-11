@@ -8,6 +8,7 @@ import MenuStore from "./menuStore";
 import CategoryStore from "./categoryStore";
 import CategoryIconStore from "./categoryIconStore";
 import CategoryItemStore from "./categoryItemStore";
+import FileStore from "./fileStore";
 
 
 
@@ -22,6 +23,7 @@ export class RootStore {
     categoryStore : CategoryStore;
     categoryIconStore:CategoryIconStore;
     categoryItemStore:CategoryItemStore;
+    fileStore: FileStore;
     
 
 
@@ -34,6 +36,7 @@ export class RootStore {
         this.categoryStore= new CategoryStore(this);
         this.categoryIconStore= new CategoryIconStore(this);
         this.categoryItemStore= new CategoryItemStore(this);
+        this.fileStore= new FileStore(this);
     }
 }
 

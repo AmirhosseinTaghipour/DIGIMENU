@@ -4,14 +4,16 @@ using BS.Infrastructure.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BS.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(Storage))]
-    partial class StorageModelSnapshot : ModelSnapshot
+    [Migration("20220609150347_add-order-to-categor-item")]
+    partial class addordertocategoritem
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -165,16 +167,11 @@ namespace BS.Infrastructure.Persistence.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasMaxLength(800)
                         .HasColumnType("nvarchar(800)");
 
-                    b.Property<int>("Discount")
-                        .HasColumnType("int");
-
                     b.Property<int>("DiscountPercent")
-                        .HasColumnType("int");
-
-                    b.Property<int>("DiscountType")
                         .HasColumnType("int");
 
                     b.Property<int>("DiscountValue")
@@ -211,9 +208,6 @@ namespace BS.Infrastructure.Persistence.Migrations
                     b.Property<string>("UpdateUser")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
-
-                    b.Property<bool>("UseDiscount")
-                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 
@@ -321,10 +315,6 @@ namespace BS.Infrastructure.Persistence.Migrations
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
-
-                    b.Property<string>("Title")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("UpdateDate")
                         .HasColumnType("datetime2");

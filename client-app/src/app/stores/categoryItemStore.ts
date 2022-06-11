@@ -21,16 +21,18 @@ export default class CategoryItemStore {
     @observable categoryItemListValues: ICategoryItemListSearchParam = {
         title: null,
         categoryTitle: null,
+        categoryId: null,
         sortColumn: null,
         sortDirection: null,
         limit: 10,
         page: 1,
     };
 
-    @action setCategoryListValues = (values: ICategoryItemListSearchParam) => {
+    @action setCategoryItemListValues = (values: ICategoryItemListSearchParam) => {
         if (!!values) {
             this.categoryItemListValues.title = values.title;
             this.categoryItemListValues.categoryTitle = values.categoryTitle;
+            this.categoryItemListValues.categoryId = values.categoryId;
             this.categoryItemListValues.sortColumn = values.sortColumn;
             this.categoryItemListValues.sortDirection = values.sortDirection;
             this.categoryItemListValues.limit = values.limit;
@@ -48,8 +50,9 @@ export default class CategoryItemStore {
         discount: null,
         discountType: null,
         description: null,
-        isExist: null,
-        isUpdateMode: false
+        useDiscount: false,
+        isExist: true,
+        isUpdateMode: false,
     };
 
     @action setCategoryItemInfo = (values: ICategoryItemFormValues) => {
@@ -61,6 +64,7 @@ export default class CategoryItemStore {
             this.categoryItemInfo.discount = values.discount;
             this.categoryItemInfo.discountType = values.discountType;
             this.categoryItemInfo.description = values.description;
+            this.categoryItemInfo.useDiscount = values.useDiscount;
             this.categoryItemInfo.isExist = values.isExist;
             this.categoryItemInfo.isUpdateMode = values.isUpdateMode;
         }
@@ -199,15 +203,16 @@ export default class CategoryItemStore {
         }
     };
 
-    @action setCategoryItemListOrder = async (id: string, categoryId: string, movement: number) => {
+    @action setCategoryItemListOrder = async (id: string,  movement: number) => {
         try {
             let requestParam: ICategoryItemListOreder = {
                 id: id,
+                categoryId: this.categoryItemListValues.categoryId,
                 movement: movement,
                 limit: this.categoryItemListValues.limit,
                 page: this.categoryItemListValues.page,
-                categoryId: categoryId
             }
+            
             this.loadingCategoryItemList = true;
             const res = await agent.CategoryItem.setCategoryItemListOrder(requestParam);
             runInAction(() => {

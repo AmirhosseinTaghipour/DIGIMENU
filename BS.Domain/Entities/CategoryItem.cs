@@ -15,21 +15,26 @@ namespace BS.Domain.Entities
         [MaxLength(100)]
         public string Title { get; set; }
 
+        public int Order { get; set; }
+
         [MaxLength(800)]
-        [Required]
         public string Description { get; set; }
 
         [Required]
         public int Price { get; set; }
 
-        [Required]
-        public int DiscountValue { get; set; } 
+        public int Discount { get; set; } 
+        public int DiscountType { get; set; } 
 
-        [Required]
+        public int DiscountValue { get; set; }
+
         public int DiscountPercent { get; set; }
 
         public bool  IsExist { get; set; }
+        public bool  UseDiscount { get; set; }
         public Guid? DepartmentId { get; set; }
+
+        [Required]
         public Guid CategoryId { get; set; }
 
         public bool IsDeleted { get; set; }

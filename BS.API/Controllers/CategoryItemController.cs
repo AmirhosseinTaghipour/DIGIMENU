@@ -1,10 +1,13 @@
 ﻿using BS.Application.Common.DTOs;
 using BS.Application.Features.CategoryItems.Commands;
+using BS.Application.Features.CategoryItems.DTOs;
+using BS.Application.Features.CategoryItems.Queries;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using static BS.Application.Features.CategoryItems.Queries.CategoryItemList;
 
 namespace BS.API.Controllers
 {
@@ -34,22 +37,22 @@ namespace BS.API.Controllers
             return await Mediator.Send(command);
         }
 
-        //[HttpPost("CategoryItemLoad")]
-        //public async Task<ActionResult<CategoryFormDTO>> CategoryLoad(CategoryItemLoad.CategoryItemLoadQuery query)
-        //{
-        //    return await Mediator.Send(query);
-        //}
+        [HttpPost("CategoryItemLoad")]
+        public async Task<ActionResult<CategoryItemFormDTO>> CategoryLoad(CategoryItemLoad.CategoryItemLoadQuery query)
+        {
+            return await Mediator.Send(query);
+        }
 
-        //[HttpPost("CategoryItemList")]
-        //public async Task<ActionResult<Application.Features.Categories.Queries.CategoryList.CategoryEnvelope>> CategoryList(CategoryItemList.CategoryItemListQuery query)
-        //{
-        //    return await Mediator.Send(query);
-        //}
+        [HttpPost("CategoryItemList")]
+        public async Task<ActionResult<Application.Features.CategoryItems.Queries.CategoryItemList.CategoryItemEnvelope>> CategoryItemList(CategoryItemList.CategoryItemListQuery query)
+        {
+            return await Mediator.Send(query);
+        }
 
-        //[HttpPost("CategoryItemListOrder")]
-        //public async Task<ActionResult<Application.Features.Categories.Commands.CategoryListOrder.CategoryEnvelope>> CategoryListOrder(CategoryItemListOrder.CategoryItemListOrderQuery query)
-        //{
-        //    return await Mediator.Send(query);
-        //}
+        [HttpPost("CategoryItemListOrder")]
+        public async Task<ActionResult<Application.Features.CategoryItems.Commands.CategoryItemListOrder.CategoryItemEnvelope>> CategoryListOrder(CategoryItemListOrder.CategoryItemListOrderCommand command)
+        {
+            return await Mediator.Send(command);
+        }
     }
 }

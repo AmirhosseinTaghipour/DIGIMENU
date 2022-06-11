@@ -26,7 +26,7 @@ namespace BS.Application.Features.Categories.Commands
             public List<CategoryListItemDTO> CategoryList { get; set; }
             public int CategoryCount { get; set; }
         }
-        public class CategoryListOrderQuery : IRequest<CategoryEnvelope>
+        public class CategoryListOrderCommand : IRequest<CategoryEnvelope>
         {
             public string Id { get; set; }
             public int Movement { get; set; }
@@ -34,7 +34,7 @@ namespace BS.Application.Features.Categories.Commands
             public int? Page { get; set; }    // کدام صفحه
         }
 
-        public class CategoryListOrderHandLer : IRequestHandler<CategoryListOrderQuery, CategoryEnvelope>
+        public class CategoryListOrderHandLer : IRequestHandler<CategoryListOrderCommand, CategoryEnvelope>
         {
             private readonly IUnitOfWork _unitOfWork;
             private readonly IUserAccessor _userAccessor;
@@ -51,7 +51,7 @@ namespace BS.Application.Features.Categories.Commands
                 _mapper = mapper;
                 _adjustChar = adjustChar;
             }
-            public async Task<CategoryEnvelope> Handle(CategoryListOrderQuery request, CancellationToken cancellationToken)
+            public async Task<CategoryEnvelope> Handle(CategoryListOrderCommand request, CancellationToken cancellationToken)
             {
                 if (string.IsNullOrEmpty(request.Id))
                     throw new RestException(HttpStatusCode.BadRequest, "خطا، آیدی نمیتواند خالی باشد");

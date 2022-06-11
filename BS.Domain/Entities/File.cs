@@ -18,6 +18,9 @@ namespace BS.Domain.Entities
         [Required]
         public Guid EntityId { get; set; }
 
+        [MaxLength(100)]
+        public string Title { get; set; }
+
         [Required]
         [MaxLength(50)]
         public string EntityName { get; set; }

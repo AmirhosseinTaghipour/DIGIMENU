@@ -1,27 +1,33 @@
 export interface ICategoryItemFormValues {
     id: string | null;
     title: string | null;
-    categoryId: string|null;
+    categoryId: string | null;
     price: number | null;
     discount: number | null;
     discountType: number | null;
     description: string | null;
-    isExist: string | null;
+    isExist: boolean;
+    useDiscount: boolean;
     isUpdateMode: boolean;
 }
 
 export interface ICategoryItemListItemValues {
     key: string | null
-    order:number|null;
+    order: number | null;
+    categoryorder: number | null;
     id: string | null;
     title: string | null;
     categoryTitle: string | null;
-    price: string | null;
-    isExist: string | null;
+    categoryId: string | null;
+    price: number | null;
+    discountPercent: number | null;
+    discountValue: number | null;
+    isExist: boolean;
     url: string | null;
 }
 
 export interface ICategoryItemListSearchParam {
+    categoryId: string | null;
     title: string | null;
     categoryTitle: string | null;
     sortColumn: string | null;

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BS.Application.Features.Categories.DTOs;
+using BS.Application.Features.CategoryItems.DTOs;
 using BS.Application.Features.Departments.DTOs;
 using BS.Application.Features.Menus.DTOs;
 using BS.Domain.Entities;
@@ -28,6 +29,7 @@ namespace BS.Application.Mapping
             CreateMap<MenuDTO, Menu>().ReverseMap();
 
             CreateMap<CategoryFormDTO, Category>().ReverseMap();
+            CreateMap<CategoryItemFormDTO, CategoryItem>().ReverseMap();
         }
     }
 }

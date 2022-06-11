@@ -20,7 +20,7 @@ namespace BS.Application.Features.CategoryItems.Commands
     {
         public class CategoryItemDeleteCommand : IRequest<ResultDTO<string>>
         {
-            public string Id { get; set; }
+            public string[] Ids { get; set; }
 
         }
 
@@ -40,16 +40,18 @@ namespace BS.Application.Features.CategoryItems.Commands
             }
             public async Task<ResultDTO<string>> Handle(CategoryItemDeleteCommand request, CancellationToken cancellationToken)
             {
+                var categoryItemList = await _unitOfWork.categoryItemRepositoryAsync.GetAsync(n => request.Ids.Contains(n.Id.ToString()));
 
-                var categoryItem = await _unitOfWork.categoryItemRepositoryAsync.GetByIdAsync(new Guid(request.Id));
-                if (categoryItem == null)
+                if (categoryItemList == null)
                     throw new RestException(HttpStatusCode.NotFound, "خطا، رکوردی یافت نشد");
 
-                categoryItem.IsDeleted = true;
-                categoryItem.UpdateDate = DateTime.Now;
-                categoryItem.UpdateUser = _userAccessor.GetCurrentUserName().ToLower();
-                _unitOfWork.categoryItemRepositoryAsync.Update(categoryItem);
-
+                foreach (var categoryItem in categoryItemList)
+                {
+                    categoryItem.IsDeleted = true;
+                    categoryItem.UpdateDate = DateTime.Now;
+                    categoryItem.UpdateUser = _userAccessor.GetCurrentUserName().ToLower();
+                    _unitOfWork.categoryItemRepositoryAsync.Update(categoryItem);
+                }
 
                 var success = await _unitOfWork.SaveAsync() > 0;
                 if (success)

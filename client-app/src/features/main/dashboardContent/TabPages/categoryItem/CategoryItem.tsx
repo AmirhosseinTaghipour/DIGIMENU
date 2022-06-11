@@ -1,15 +1,14 @@
 import React, { Fragment, useContext, useEffect, useState } from "react"
-import { Input, Layout, Menu, Row, Form, Col, Select, Image, Switch } from "antd";
+import { Input, Layout, Menu, Row, Form, Col, Select, Image, Switch, InputNumber } from "antd";
 import { observer } from "mobx-react-lite"
 import { CheckOutlined, LoadingOutlined, SaveTwoTone, } from "@ant-design/icons";
 import { RootStoreContext } from "../../../../../app/stores/rootStore";
 import { ICategoryFormValues, ICategoryListItemValues } from "../../../../../app/models/category";
-import { toDatabaseChar } from "../../../../../app/common/util/util";
+import { checkJustNumber, toDatabaseChar } from "../../../../../app/common/util/util";
 import { IComboBoxType } from "../../../../../app/models/common";
 import { ICategoryIconListItemValues } from "../../../../../app/models/categoryIcon";
 import TextArea from "antd/lib/input/TextArea";
 import { ICategoryItemFormValues } from "../../../../../app/models/categoryItem";
-
 
 const layout = {
     labelCol: { span: 24 },
@@ -41,6 +40,9 @@ const CategoryItem: React.FC<IProps> = ({ close }) => {
     const { Content, Header } = Layout;
     const [form] = Form.useForm();
 
+    const [showDiscount, setShowDiscount] = useState<boolean>(false);
+
+
     //سابمیت فرم 
     const onFinish = async (formValues: ICategoryItemFormValues) => {
         setCategoryItemInfo({
@@ -51,7 +53,8 @@ const CategoryItem: React.FC<IProps> = ({ close }) => {
             price: formValues.price,
             discount: formValues.discount,
             discountType: formValues.discountType,
-            isExist: formValues.isExist
+            isExist: formValues.isExist,
+            useDiscount: formValues.useDiscount
         });
         if (categoryItemInfo.isUpdateMode)
             await updateCategoryItem(categoryItemInfo).then(() => close());
@@ -60,6 +63,7 @@ const CategoryItem: React.FC<IProps> = ({ close }) => {
     };
 
     const initialLoad = async () => {
+        setShowDiscount(categoryItemInfo.useDiscount);
         setCategoryListValues({
             ...categoryListValues,
             page: 1,
@@ -68,10 +72,7 @@ const CategoryItem: React.FC<IProps> = ({ close }) => {
             sortColumn: null,
             sortDirection: null,
         });
-        await loadCategoryList().then(() => {
-            //form.resetFields(['iconId']);
-        });
-
+        await loadCategoryList();
     }
     useEffect(() => {
         initialLoad();
@@ -151,7 +152,6 @@ const CategoryItem: React.FC<IProps> = ({ close }) => {
 
                                 >
                                     <Select
-
                                         showSearch
                                         style={{
                                             width: "100%",
@@ -193,32 +193,85 @@ const CategoryItem: React.FC<IProps> = ({ close }) => {
 
                             <Col xs={24} sm={24} md={12} lg={8} xl={8} xxl={8}>
                                 <Form.Item
-                                    label="قیمت"
+                                    label="قیمت (تومان)"
                                     name="price"
                                     initialValue={categoryItemInfo.price}
                                     rules={[{
                                         required: true, message: 'فیلد قیمت  نمی تواند خالی باشد',
-                                    },
-                                    ]}
+                                    }]}
                                 >
-                                    <Input
+                                    <InputNumber
+                                        formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                        style={{ width: '100%' }}
                                         maxLength={10}
+                                        onKeyDown={(e) => {
+                                            checkJustNumber(e);
+                                        }}
+                                        min={1}
                                     />
                                 </Form.Item>
                             </Col>
 
                             <Col xs={24} sm={24} md={12} lg={8} xl={8} xxl={8}>
                                 <Form.Item
+                                    label="وضعیت"
+                                    name="isExist"
+                                    initialValue={categoryItemInfo.isExist}
+                                >
+                                    <Switch
+                                        checkedChildren=" موجود "
+                                        unCheckedChildren=" ناموجود "
+                                        defaultChecked={categoryItemInfo?.isExist!}
+                                    />
+                                </Form.Item>
+                            </Col>
+
+                            <Col xs={24} sm={24} md={12} lg={8} xl={8} xxl={8}>
+                                <Form.Item
+                                    label="تخفیف"
+                                    name="useDiscount"
+                                    initialValue={categoryItemInfo.useDiscount}
+                                >
+                                    <Switch
+                                        onChange={(event) => setShowDiscount(event.valueOf())}
+                                        checkedChildren=" اعمال تخفیف "
+                                        unCheckedChildren=" حذف تخفیف "
+                                        defaultChecked={categoryItemInfo?.useDiscount!}
+                                    />
+                                </Form.Item>
+                            </Col>
+
+
+                            <Col xs={24} sm={24} md={12} lg={8} xl={8} xxl={8}>
+                                <Form.Item
                                     style={{ marginBottom: 0 }}
                                     label="تخفیف"
+                                    hidden={!showDiscount}
                                 >
                                     <Form.Item
                                         name="discount"
                                         initialValue={categoryItemInfo.discount}
                                         style={{ display: 'inline-block', width: 'calc(50% - 8px)' }}
+                                        rules={[
+                                            {
+                                                message: "تخفیف درصدی، بین 1 تا100",
+                                                validator: async (rule: any, value: any) => {
+                                                    if (form.getFieldValue('discountType') > 0 &&
+                                                        (form.getFieldValue('discount') == 0 || form.getFieldValue('discount') > 99)) {
+                                                        throw new Error("Something wrong!");
+                                                    }
+                                                },
+                                            }
+                                        ]}
                                     >
-                                        <Input
+                                        <InputNumber
+                                            formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                            style={{ width: '100%' }}
                                             maxLength={10}
+                                            min={1}
+                                            onKeyDown={(e) => {
+                                                checkJustNumber(e);
+                                            }}
                                         />
                                     </Form.Item>
 
@@ -227,23 +280,20 @@ const CategoryItem: React.FC<IProps> = ({ close }) => {
                                         initialValue={categoryItemInfo.discountType}
                                         style={{ display: 'inline-block', width: 'calc(50% - 8px)', margin: '0 8px' }}
                                     >
-                                        <Select placeholder="نوع">
-                                            <Option value="0">مقداری</Option>
-                                            <Option value="Jiangsu">درصدی</Option>
+                                        <Select placeholder="نوع"
+                                            onChange={() => {
+                                                form.setFieldsValue({
+                                                    discount: null,
+                                                });
+                                            }}>
+                                            <Option value={0}>مقداری</Option>
+                                            <Option value={1}>درصدی</Option>
                                         </Select>
                                     </Form.Item>
                                 </Form.Item>
                             </Col>
 
-                            <Col xs={24} sm={24} md={12} lg={8} xl={8} xxl={8}>
-                                <Form.Item
-                                    label="موجود است"
-                                    name="isExist"
-                                    initialValue={categoryItemInfo.isExist}
-                                >
-                                    <Switch />
-                                </Form.Item>
-                            </Col>
+
 
                             <Col xs={24} sm={24} md={24} lg={24} xl={24} xxl={24}>
                                 <Form.Item

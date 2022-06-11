@@ -43,9 +43,9 @@ namespace BS.API.Controllers
         }
 
         [HttpPost("CategoryListOrder")]
-        public async Task<ActionResult<Application.Features.Categories.Commands.CategoryListOrder.CategoryEnvelope>> CategoryListOrder(CategoryListOrder.CategoryListOrderQuery query)
+        public async Task<ActionResult<Application.Features.Categories.Commands.CategoryListOrder.CategoryEnvelope>> CategoryListOrder(CategoryListOrder.CategoryListOrderCommand command)
         {
-            return await Mediator.Send(query);
+            return await Mediator.Send(command);
         }
     }
 }

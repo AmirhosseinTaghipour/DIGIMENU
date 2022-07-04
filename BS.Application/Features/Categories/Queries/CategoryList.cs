@@ -20,12 +20,7 @@ namespace BS.Application.Features.Categories.Queries
 {
     public class CategoryList
     {
-        public class CategoryEnvelope
-        {
-            public List<CategoryListItemDTO> CategoryList { get; set; }
-            public int CategoryCount { get; set; }
-        }
-        public class CategoryListQuery : ListSearchParam, IRequest<CategoryEnvelope>
+        public class CategoryListQuery : ListSearchParamDTO, IRequest<CategoryEnvelope>
         {
             public string Title { get; set; }
         }
@@ -99,6 +94,7 @@ namespace BS.Application.Features.Categories.Queries
                 var list = await query
                     .Skip(offset)
                     .Take(request.Limit ?? 10)
+                    .AsNoTracking()
                     .ToListAsync();
 
                 //var categoryList = new List<CategoryListItemDTO>(categoryList);

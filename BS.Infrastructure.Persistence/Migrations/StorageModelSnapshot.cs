@@ -571,7 +571,7 @@ namespace BS.Infrastructure.Persistence.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<bool>("IsActived")
+                    b.Property<bool>("IsActivated")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsDeleted")

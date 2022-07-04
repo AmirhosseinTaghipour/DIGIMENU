@@ -76,7 +76,7 @@ namespace BS.Application.Features.Users.Commands
                 user.RoleId = roleId;
                 user.IsDeleted = false;
                 user.IsMobileConfirmed = false;
-                user.IsActived = false;
+                user.IsActivated = false;
                 user.ActivationCode = activationCode;
                 user.InsertDate = DateTime.Now;
                 user.CodeExpiredTime = DateTime.Now.AddMinutes(expireDuration);

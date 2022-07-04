@@ -20,12 +20,7 @@ namespace BS.Application.Features.CategoryItems.Queries
 {
     public class CategoryItemList
     {
-        public class CategoryItemEnvelope
-        {
-            public List<CategoryItemListItemDTO> CategoryItemList { get; set; }
-            public int CategoryItemCount { get; set; }
-        }
-        public class CategoryItemListQuery : ListSearchParam, IRequest<CategoryItemEnvelope>
+        public class CategoryItemListQuery : ListSearchParamDTO, IRequest<CategoryItemEnvelope>
         {
             public string CategoryId { get; set; }
             public string Title { get; set; }
@@ -68,6 +63,10 @@ namespace BS.Application.Features.CategoryItems.Queries
                 var query = (from categoryItemTeble in _unitOfWork.categoryItemRepositoryAsync.Query()
                              join categoryTable in _unitOfWork.categoryRepositoryAsync.Query() on categoryItemTeble.CategoryId equals categoryTable.Id
                              join menuTable in _unitOfWork.menuRepositoryAsync.Query() on categoryTable.MenuId equals menuTable.Id
+                             join fileTable in _unitOfWork.fileRepositoryAsync.Query() on
+                             new { Id = categoryItemTeble.Id, EntityName = "CategoryItem", IsDefault = true } equals new { Id = fileTable.EntityId, EntityName = fileTable.EntityName, IsDefault = fileTable.IsDefault }
+                             into files
+                             from fileTable in files.DefaultIfEmpty()
                              where menuTable.Id == menu.Id && menuTable.IsDeleted == false && categoryTable.IsDeleted == false && categoryItemTeble.IsDeleted == false
                              select new CategoryItemListItemDTO
                              {
@@ -82,7 +81,7 @@ namespace BS.Application.Features.CategoryItems.Queries
                                  discountValue = categoryItemTeble.UseDiscount ? categoryItemTeble.DiscountValue : 0,
                                  Order = categoryItemTeble.Order,
                                  CategoryOrder = categoryTable.Order,
-                                 Url = "",
+                                 Url = fileTable.Id != null ? _fileHelper.GetFilePath(fileTable.Id.ToString().ToLower(), fileTable.FileName, FileDirectorey.ItemImageThumbnail) : null
                              });
 
                 #region Search
@@ -112,6 +111,7 @@ namespace BS.Application.Features.CategoryItems.Queries
                 var list = await query
                     .Skip(offset)
                     .Take(request.Limit ?? 10)
+                    .AsNoTracking()
                     .ToListAsync();
 
 

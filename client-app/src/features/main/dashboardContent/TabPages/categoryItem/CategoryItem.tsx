@@ -216,7 +216,6 @@ const CategoryItem: React.FC<IProps> = ({ close }) => {
                                 <Form.Item
                                     label="وضعیت"
                                     name="isExist"
-                                    initialValue={categoryItemInfo.isExist}
                                 >
                                     <Switch
                                         checkedChildren=" موجود "
@@ -230,7 +229,6 @@ const CategoryItem: React.FC<IProps> = ({ close }) => {
                                 <Form.Item
                                     label="تخفیف"
                                     name="useDiscount"
-                                    initialValue={categoryItemInfo.useDiscount}
                                 >
                                     <Switch
                                         onChange={(event) => setShowDiscount(event.valueOf())}

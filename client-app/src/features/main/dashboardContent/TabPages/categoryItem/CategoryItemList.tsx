@@ -45,6 +45,8 @@ const layout = {
     wrapperCol: { span: 18 },
 };
 
+const entiityName="CategoryItem";
+
 const CategoryItemList: React.FC = () => {
     const rootStore = useContext(RootStoreContext);
     const {
@@ -79,9 +81,10 @@ const CategoryItemList: React.FC = () => {
 
     const [selectedRows, setSelectedRows] = useState<string[]>([]);
 
-    const [childFormVisible, setChildFormVisible] = useState(false);
+    const [formVisible, setFormVisible] = useState(false);
+    const [detaliFormVisible, setDetaliFormVisible] = useState(false);
 
-    const closeChildForm = () => setChildFormVisible(false)
+    const closeChildForm = () => setFormVisible(false)
 
 
 
@@ -111,15 +114,18 @@ const CategoryItemList: React.FC = () => {
 
     const getDetails = async (id: string | null) => {
         await initialFormParams(id).then(() => {
-            setChildFormVisible(true);
+            setFormVisible(true);
         });
     };
 
     const initialFormParams = async (id: string | null) => {
         if (!IsNullOrEmpty(id)) {
-            await loadCategoryItem(id!);
+            await loadCategoryItem(id!).then(() => {
+                setDetaliFormVisible(true);
+            });
         } else {
             clearFormValues();
+            setDetaliFormVisible(false);
         }
     };
 
@@ -212,7 +218,7 @@ const CategoryItemList: React.FC = () => {
             dataIndex: "title",
             key: "title",
             align: "center",
-            width: 120,
+            width: 100,
             filterIcon: (filtered) => {
                 return (
                     <SearchOutlined
@@ -322,7 +328,7 @@ const CategoryItemList: React.FC = () => {
             dataIndex: "isExist",
             key: "isExist",
             align: "center",
-            width: 80,
+            width: 60,
             render(value, record) {
                 return {
                     children: (
@@ -349,7 +355,7 @@ const CategoryItemList: React.FC = () => {
             render(value, record) {
                 return {
                     children: (
-                        <Image className="bsImgIcon" key={`img-${record.id}`} src={`${value}?${Date.now()}`} preview />
+                        <Image className="bsImgIcon" key={`img-${record.id}`} src={!!value?`${value}?${Date.now()}`:"../../assets/Images/default-category-item.png"} preview />
                     ),
                 };
             },
@@ -499,13 +505,13 @@ const CategoryItemList: React.FC = () => {
                             columns={!!categoryItemListValues?.categoryId ? columns.filter(col => col.key != "order") : columns.filter(col => col.key != "order" && col.key != "setOrder")}
                             dataSource={categoryItemList}
                             bordered
+                            scroll={{x:600}}
                             loading={loadingCategoryItemList}
                             tableLayout="fixed"
                             pagination={false}
                             size="small"
                             sticky={true}
                             className="bsCustomTable"
-                            onChange={() => { }}
                             onRow={(record) => {
                                 return {
                                     className:
@@ -546,15 +552,13 @@ const CategoryItemList: React.FC = () => {
                 className="bsModal"
                 footer
                 title={`${categoryItemInfo.isUpdateMode ? "ویرایش" : "افزودن"} آیتم های منو`}
-                visible={childFormVisible}
+                visible={formVisible}
                 onCancel={closeChildForm}
                 keyboard={true}
                 destroyOnClose
             >
                 <Tabs
                     hideAdd
-                    // onChange={onChange}
-                    // activeKey={activeKey}
                     defaultActiveKey="1"
                     type="card"
                     tabPosition="top"
@@ -566,14 +570,13 @@ const CategoryItemList: React.FC = () => {
                         marginLeft: "1rem",
                         height: "calc(100vh - 6.6rem)",
                     }}
-                // addIcon={<Icon name='add user' />}
                 >
                     <TabPane tab="اطلاعات آیتم" key="1"   >
                         <CategoryItem close={closeChildForm} />
                     </TabPane>
 
-                    <TabPane tab="تصاویر مرتبط" key="2" disabled={false} >
-                        <FileList/>
+                    <TabPane tab="تصاویر مرتبط" key="2" disabled={!detaliFormVisible} >
+                        <FileList entityName={entiityName} entityId={categoryItemInfo?.id!} />
                     </TabPane>
 
                 </Tabs>

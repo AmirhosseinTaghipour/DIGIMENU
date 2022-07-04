@@ -103,5 +103,39 @@ namespace BS.API.Controllers
         {
             return await Mediator.Send(command);
         }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost("UserInsert")]
+        public async Task<ActionResult<ResultDTO<string>>> UserInsert(UserInsert.UserInsertCommand command)
+        {
+            return await Mediator.Send(command);
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost("UserUpdate")]
+        public async Task<ActionResult<ResultDTO<string>>> UserUpdate(UserUpdate.UserUpdateCommand command)
+        {
+            return await Mediator.Send(command);
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost("UserDelete")]
+        public async Task<ActionResult<ResultDTO<string>>> UserDelete(UserDelete.UserDeleteCommand command)
+        {
+            return await Mediator.Send(command);
+        }
+
+        [HttpPost("UserList")]
+        public async Task<ActionResult<UserList.UserManagementEnvelope>> UserList(UserList.UserListQuery query)
+        {
+            return await Mediator.Send(query);
+        }
+
+
+        [HttpPost("UserLoad")]
+        public async Task<ActionResult<UserManagementFormDTO>> UserLoad(UserLoad.UserLoadQuery query)
+        {
+            return await Mediator.Send(query);
+        }
     }
 }

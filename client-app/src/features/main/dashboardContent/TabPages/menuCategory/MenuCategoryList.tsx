@@ -145,7 +145,7 @@ const MenuCategoryList: React.FC = () => {
             title: "ترتیب",
             key: "setOrder",
             dataIndex: "setOrder",
-            width: 15,
+            width: 25,
             align: "center",
             render(value, record) {
                 return {
@@ -177,7 +177,7 @@ const MenuCategoryList: React.FC = () => {
             title: "ویرایش",
             key: "edit",
             dataIndex: "edit",
-            width: 15,
+            width: 25,
             align: "center",
 
             render(value, record) {
@@ -334,6 +334,7 @@ const MenuCategoryList: React.FC = () => {
                             key="categoryIconList"
                             columns={columns.filter(col => col.key != "order")}
                             dataSource={categoryList}
+                            scroll={{x:500}}
                             bordered
                             loading={loadingCategoryList}
                             tableLayout="fixed"

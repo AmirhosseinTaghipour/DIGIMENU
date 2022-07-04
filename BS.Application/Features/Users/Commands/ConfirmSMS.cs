@@ -90,7 +90,7 @@ namespace BS.Application.Features.Users.Commands
                     });
                 }
 
-                user.IsActived = true;
+                user.IsActivated = true;
                 user.IsMobileConfirmed = true;
                 user.UpdateDate = DateTime.Now;
                 user.UpdateUser = request.UserName.ToLower().Trim();
@@ -110,7 +110,7 @@ namespace BS.Application.Features.Users.Commands
 
                 var currentUser = await (from vUser in _unitOfWork.userRepositoryAsync.Query()
                                          join vRole in _unitOfWork.roleRepositoryAsync.Query() on vUser.RoleId equals vRole.Id
-                                         where vUser.Id == user.Id && vUser.IsDeleted == false && vUser.IsActived == true
+                                         where vUser.Id == user.Id && vUser.IsDeleted == false && vUser.IsActivated == true
                                          select new
                                          {
                                              UserId = vUser.Id.ToString().ToLower(),

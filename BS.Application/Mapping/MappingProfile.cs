@@ -3,6 +3,7 @@ using BS.Application.Features.Categories.DTOs;
 using BS.Application.Features.CategoryItems.DTOs;
 using BS.Application.Features.Departments.DTOs;
 using BS.Application.Features.Menus.DTOs;
+using BS.Application.Features.Users.DTOs;
 using BS.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -30,6 +31,10 @@ namespace BS.Application.Mapping
 
             CreateMap<CategoryFormDTO, Category>().ReverseMap();
             CreateMap<CategoryItemFormDTO, CategoryItem>().ReverseMap();
+
+            CreateMap<UserManagementFormDTO, User>().ReverseMap();
+
+            
         }
     }
 }

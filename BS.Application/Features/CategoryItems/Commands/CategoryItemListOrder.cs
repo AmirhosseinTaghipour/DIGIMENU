@@ -21,11 +21,6 @@ namespace BS.Application.Features.CategoryItems.Commands
 {
     public class CategoryItemListOrder
     {
-        public class CategoryItemEnvelope
-        {
-            public List<CategoryItemListItemDTO> CategoryItemList { get; set; }
-            public int CategoryItemCount { get; set; }
-        }
         public class CategoryItemListOrderCommand : IRequest<CategoryItemEnvelope>
         {
             public string Id { get; set; }

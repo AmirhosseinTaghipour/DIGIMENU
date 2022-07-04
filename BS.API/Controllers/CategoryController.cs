@@ -37,13 +37,13 @@ namespace BS.API.Controllers
         }
 
         [HttpPost("CategoryList")]
-        public async Task<ActionResult<Application.Features.Categories.Queries.CategoryList.CategoryEnvelope>> CategoryList(CategoryList.CategoryListQuery query)
+        public async Task<ActionResult<CategoryEnvelope>> CategoryList(CategoryList.CategoryListQuery query)
         {
             return await Mediator.Send(query);
         }
 
         [HttpPost("CategoryListOrder")]
-        public async Task<ActionResult<Application.Features.Categories.Commands.CategoryListOrder.CategoryEnvelope>> CategoryListOrder(CategoryListOrder.CategoryListOrderCommand command)
+        public async Task<ActionResult<CategoryEnvelope>> CategoryListOrder(CategoryListOrder.CategoryListOrderCommand command)
         {
             return await Mediator.Send(command);
         }

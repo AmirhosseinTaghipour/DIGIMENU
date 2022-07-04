@@ -24,6 +24,7 @@ const FileForm: React.FC<IProps> = ({ close }) => {
     const rootStore = useContext(RootStoreContext);
     const {
         loadingFile,
+        loadFile,
         sumbittingFile,
         setFileFormInfo,
         fileFormInfo,
@@ -37,12 +38,13 @@ const FileForm: React.FC<IProps> = ({ close }) => {
 
     const [fileViewerVisible, setFileViewerVisible] = useState<string | null>(null);
     const [file, setFile] = useState<UploadFile<any>[] | any[]>([]);
+    const [isDefault, setIsDefault] = useState<boolean>(false);
 
     const closeFileViewer = () => {
         setFileViewerVisible(null);
     }
 
-    const setIcon = async (input: UploadChangeParam) => {
+    const fileOnChange = async (input: UploadChangeParam) => {
         if (input.file.status != "removed") {
             setFileInfo({ ...fileInfo, file: input.file.originFileObj as Blob });
             setFile([input.file]);
@@ -52,7 +54,7 @@ const FileForm: React.FC<IProps> = ({ close }) => {
             setFile([]);
         }
         setFileInfo({ ...fileInfo, isChanged: true });
-        form.validateFields(['icon']);
+        form.validateFields(['file']);
     }
 
     //سابمیت فرم 
@@ -61,7 +63,7 @@ const FileForm: React.FC<IProps> = ({ close }) => {
             ...fileFormInfo,
             title: formValues.title,
             file: {...fileInfo},
-            isDefault: formValues.isDefault,
+            isDefault: isDefault,
         });
         if (fileFormInfo.isUpdateMode)
             await updateFile(fileFormInfo).then(() => close());
@@ -69,7 +71,13 @@ const FileForm: React.FC<IProps> = ({ close }) => {
             await insertFile(fileFormInfo).then(() => close());
     };
 
+    const initialLoad = () => {
+        setIsDefault(fileFormInfo.isDefault);
+        form.resetFields(['isDefault']);
+    }
+
     useEffect(() => {
+        initialLoad();
     }, []);
 
     return <Fragment>
@@ -126,7 +134,7 @@ const FileForm: React.FC<IProps> = ({ close }) => {
                                     name="title"
                                     initialValue={fileFormInfo.title}
                                     rules={[{
-                                        required: true, message: 'فیلد نام آیکن نمی تواند خالی باشد',
+                                        required: true, message: 'فیلد نام تصویر نمی تواند خالی باشد',
                                     }]}
                                 >
                                     <Input
@@ -139,7 +147,7 @@ const FileForm: React.FC<IProps> = ({ close }) => {
                             <Col xs={24} sm={24} md={12} lg={8} xl={8} xxl={8}>
                                 <Form.Item
                                     label="فایل تصویر"
-                                    name="icon"
+                                    name="file"
                                     rules={[{
                                         required: true, message: 'فیلد تصویر نمی تواند خالی باشد',
                                         validator: async () => {
@@ -174,9 +182,9 @@ const FileForm: React.FC<IProps> = ({ close }) => {
                                             maxCount={1}
                                             fileList={file}
                                             customRequest={(e: any) => e.onSuccess("Ok")}
-                                            onChange={setIcon}
+                                            onChange={fileOnChange}
                                         >
-                                            <Button icon={<UploadOutlined />}>انتخاب لوگو</Button>
+                                            <Button icon={<UploadOutlined />}>انتخاب تصویر</Button>
                                             {!!fileInfo.name &&
                                                 <div className="ant-upload-list-item ant-upload-list-item-default ant-upload-list-item-list-type-text">
                                                     <div className="ant-upload-list-item-info bs-file-btn-box">
@@ -213,10 +221,10 @@ const FileForm: React.FC<IProps> = ({ close }) => {
                                 <Form.Item
                                     label="انتخاب به عنوان تصویر پیشفرض"
                                     name="isDefault"
-                                    initialValue={fileFormInfo.isDefault}
                                 >
                                     <Checkbox
-                                        name="isDefault"
+                                    defaultChecked={isDefault}
+                                    onChange={(event)=>setIsDefault(event.target.checked)}
                                     />
                                 </Form.Item>
                             </Col>

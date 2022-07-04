@@ -1,7 +1,7 @@
 import { Menu, Row, Avatar } from "antd";
 import React, { Fragment, useContext, useEffect, useState } from "react";
 import { RootStoreContext } from "../../../app/stores/rootStore";
-import Icon, { FolderFilled, FileFilled, HomeOutlined, MenuOutlined, ShopOutlined, SwitcherOutlined, DollarOutlined, ProfileOutlined, SmileOutlined } from "@ant-design/icons";
+import Icon, { FolderFilled, FileFilled, HomeOutlined, MenuOutlined, ShopOutlined, SwitcherOutlined, DollarOutlined, ProfileOutlined, SmileOutlined, TeamOutlined, ApartmentOutlined, FileImageOutlined } from "@ant-design/icons";
 import { observer } from "mobx-react-lite";
 import LoadingComponent from "../../../app/layout/LoadingComponent";
 import { IDictionary } from "../../../app/models/common";
@@ -17,7 +17,9 @@ menuIconDictionay["create-menu"] = <MenuOutlined />;
 menuIconDictionay["create-category"] = <SwitcherOutlined />;
 menuIconDictionay["create-item"] = <ProfileOutlined />;
 menuIconDictionay["payment"] = <DollarOutlined />;
-menuIconDictionay["icon-management"] = <SmileOutlined />;
+menuIconDictionay["icon-management"] = <FileImageOutlined />;
+menuIconDictionay["user-management"] = <TeamOutlined />;
+menuIconDictionay["unit-management"] = <ApartmentOutlined />;
 
 
 const Sidebar: React.FC<IProps> = ({ onToggleClose }) => {

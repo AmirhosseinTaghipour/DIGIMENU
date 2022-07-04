@@ -9,6 +9,9 @@ import CategoryStore from "./categoryStore";
 import CategoryIconStore from "./categoryIconStore";
 import CategoryItemStore from "./categoryItemStore";
 import FileStore from "./fileStore";
+import RoleStore from "./roleStore";
+import SMSLogStore from "./smsLog";
+import UserLogStore from "./userLog";
 
 
 
@@ -24,6 +27,9 @@ export class RootStore {
     categoryIconStore:CategoryIconStore;
     categoryItemStore:CategoryItemStore;
     fileStore: FileStore;
+    roleStore:RoleStore;
+    smsLogStore:SMSLogStore;
+    userLogStroe:UserLogStore;
     
 
 
@@ -37,6 +43,9 @@ export class RootStore {
         this.categoryIconStore= new CategoryIconStore(this);
         this.categoryItemStore= new CategoryItemStore(this);
         this.fileStore= new FileStore(this);
+        this.roleStore= new RoleStore(this);
+        this.smsLogStore= new SMSLogStore(this);
+        this.userLogStroe= new UserLogStore(this);
     }
 }
 

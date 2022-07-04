@@ -49,7 +49,7 @@ namespace BS.Application.Features.Users.Queries
                                          join vDepartment in _unitOfWork.departmentRepositoryAsync.Query() on vUser.DepartmentId equals vDepartment.Id into departmentes
                                          from vDepartment in departmentes.DefaultIfEmpty()
 
-                                         where vUser.Id == userId && vUser.IsDeleted == false && vUser.IsActived == true
+                                         where vUser.Id == userId && vUser.IsDeleted == false && vUser.IsActivated == true
                                          select new CurrentUserDTO
                                          {
                                              UserId = vUser.Id.ToString().ToLower(),

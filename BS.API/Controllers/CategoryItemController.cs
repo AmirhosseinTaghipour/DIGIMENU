@@ -31,11 +31,11 @@ namespace BS.API.Controllers
             return await Mediator.Send(command);
         }
 
-        [HttpPost("ItemImageListManipulate")]
-        public async Task<ActionResult<ResultDTO<string>>> ItemImageListManipulate([FromForm] ItemImageListManipulate.ItemImageListManipulateCommand command)
-        {
-            return await Mediator.Send(command);
-        }
+        //[HttpPost("ItemImageListManipulate")]
+        //public async Task<ActionResult<ResultDTO<string>>> ItemImageListManipulate([FromForm] ItemImageListManipulate.ItemImageListManipulateCommand command)
+        //{
+        //    return await Mediator.Send(command);
+        //}
 
         [HttpPost("CategoryItemLoad")]
         public async Task<ActionResult<CategoryItemFormDTO>> CategoryLoad(CategoryItemLoad.CategoryItemLoadQuery query)
@@ -44,13 +44,13 @@ namespace BS.API.Controllers
         }
 
         [HttpPost("CategoryItemList")]
-        public async Task<ActionResult<Application.Features.CategoryItems.Queries.CategoryItemList.CategoryItemEnvelope>> CategoryItemList(CategoryItemList.CategoryItemListQuery query)
+        public async Task<ActionResult<CategoryItemEnvelope>> CategoryItemList(CategoryItemList.CategoryItemListQuery query)
         {
             return await Mediator.Send(query);
         }
 
         [HttpPost("CategoryItemListOrder")]
-        public async Task<ActionResult<Application.Features.CategoryItems.Commands.CategoryItemListOrder.CategoryItemEnvelope>> CategoryListOrder(CategoryItemListOrder.CategoryItemListOrderCommand command)
+        public async Task<ActionResult<CategoryItemEnvelope>> CategoryListOrder(CategoryItemListOrder.CategoryItemListOrderCommand command)
         {
             return await Mediator.Send(command);
         }

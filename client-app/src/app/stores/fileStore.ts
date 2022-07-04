@@ -29,7 +29,7 @@ export default class FileStore {
         page: 1
     };
 
-    @action setFileListValues = (values: IFileListSearchParam) => {
+    @action setFileListValues = async(values: IFileListSearchParam) => {
         if (!!values) {
             this.fileListValues.entityId = values.entityId;
             this.fileListValues.entityName = values.entityName;
@@ -70,9 +70,9 @@ export default class FileStore {
     @action setFileFormInfo = (values: IFileFormValues) => {
         if (!!values) {
             this.fileFormInfo.id = values.id;
+            this.fileFormInfo.entityName = this.fileListValues.entityName;
+            this.fileFormInfo.entityId = this.fileListValues.entityId;
             this.fileFormInfo.title = values.title;
-            this.fileFormInfo.entityName = values.entityName;
-            this.fileFormInfo.entityId = values.entityId;
             this.fileFormInfo.file = values.file;
             this.fileFormInfo.isDefault = values.isDefault;
             this.fileFormInfo.isUpdateMode = values.isUpdateMode;

@@ -3,6 +3,7 @@ using BS.Application.Features.Departments.Commands;
 using BS.Application.Features.Departments.DTOs;
 using BS.Application.Features.Departments.Queries;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,10 +37,11 @@ namespace BS.API.Controllers
             return await Mediator.Send(new GetDepartmentById.GetDepartmentByIdQuery(id));
         }
 
-        [HttpPost("GetAllDepartment")]
-        public async Task<ActionResult<ResultDTO<string>>> GetAllDepartment(GetAllDepartment.GetAllDepartmentQuery command)
+        [Authorize(Roles = "Admin")]
+        [HttpGet("GetAllDepartment")]
+        public async Task<ActionResult<List<ComboBoxDTO>>> GetAllDepartment()
         {
-            return await Mediator.Send(command);
+            return await Mediator.Send(new GetAllDepartment.GetAllDepartmentQuery());
         }
     }
 }

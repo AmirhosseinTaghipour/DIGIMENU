@@ -67,7 +67,7 @@ namespace BS.Application.Features.Users.Commands
                 var clientIp = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
                 var previewsMinutes = DateTime.Now.AddMinutes(-30);
 
-                if (!user.IsActived)
+                if (!user.IsActivated)
                 {
                     var smsCount = await _unitOfWork.smsLogRepositoryAsync.LastSendedSMSCount(user.Id, previewsMinutes);
                     var allowedSMSCount = int.Parse(_configuration["ProjectConfig:allowedSMSCountPer30Min"].ToString());
@@ -134,7 +134,7 @@ namespace BS.Application.Features.Users.Commands
 
                 var currentUser = await (from vUser in _unitOfWork.userRepositoryAsync.Query()
                                          join vRole in _unitOfWork.roleRepositoryAsync.Query() on vUser.RoleId equals vRole.Id
-                                         where vUser.Id == user.Id && vUser.IsDeleted == false && vUser.IsActived == true
+                                         where vUser.Id == user.Id && vUser.IsDeleted == false && vUser.IsActivated == true
                                          select new 
                                          {
                                              UserId = vUser.Id.ToString().ToLower(),

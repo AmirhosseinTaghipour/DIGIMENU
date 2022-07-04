@@ -40,7 +40,7 @@ namespace BS.Application.Features.Users.Commands
                 if (user.ActivationCode != request.ActivationCode)
                     return new ResultDTO<string>(HttpStatusCode.Unauthorized, "کد وارد شده، صحیح نیست", request.UserId);
 
-                user.IsActived = true;
+                user.IsActivated = true;
                 user.IsMobileConfirmed = true;
                 _unitOfWork.userRepositoryAsync.Update(user);
                 var success = await _unitOfWork.SaveAsync() > 0;

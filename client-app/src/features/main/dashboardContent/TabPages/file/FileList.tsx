@@ -28,9 +28,12 @@ import { IsNullOrEmpty, openNotification, selectTableRows } from "../../../../..
 import { IFileListItemValues } from "../../../../../app/models/file";
 import FileForm from "./FileForm";
 
+interface IProps {
+    entityId: string;
+    entityName: string;
+}
 
-
-const FileList: React.FC = () => {
+const FileList: React.FC<IProps> = ({ entityId, entityName }) => {
     const rootStore = useContext(RootStoreContext);
     const {
         fileInfo,
@@ -105,22 +108,26 @@ const FileList: React.FC = () => {
             file: null,
             name: null,
             url: null
-        })
+        });
         setFileFormInfo({
             ...fileFormInfo,
             id: null,
             title: null,
-            entityName: null,
-            entityId: null,
             file: fileInfo,
             isDefault: false,
             isUpdateMode: false
-        })
+        });
     };
-
+    const initialLoad = async () => {
+        await setFileListValues({
+            ...fileListValues,
+            entityId: entityId,
+            entityName: entityName,
+        }).then(()=> loadFileList());
+    }
     useEffect(() => {
-        loadFileList();
-    }, []);
+        initialLoad();
+    }, [entityName, entityId]);
 
     const columns: ColumnsType<IFileListItemValues> = [
         {
@@ -257,7 +264,6 @@ const FileList: React.FC = () => {
                             size="small"
                             sticky={true}
                             className="bsCustomTable"
-                            onChange={() => { }}
                             onRow={(record) => {
                                 return {
                                     className:

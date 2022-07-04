@@ -23,7 +23,7 @@ const FileViewer: React.FC<IProps> = ({ close, file }) => {
             destroyOnClose
         >
             <div style={{ width: "100%", height: "calc(100vh - 8rem)", display:"flex", alignItems:"center", justifyContent:"center" }}>
-                <Image key="imageViewer" src={file.url!} />
+                <Image key="imageViewer" src={`${file.url!}?${Date.now()}`}/>
             </div>
         </Modal>
     );

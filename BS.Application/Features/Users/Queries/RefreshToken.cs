@@ -55,7 +55,7 @@ namespace BS.Application.Features.Users.Queries
 
                     var currentUser = await (from vUser in _unitOfWork.userRepositoryAsync.Query()
                                              join vRole in _unitOfWork.roleRepositoryAsync.Query() on vUser.RoleId equals vRole.Id
-                                             where vUser.Id == new Guid(userId) && vUser.IsDeleted == false && vUser.IsActived == true
+                                             where vUser.Id == new Guid(userId) && vUser.IsDeleted == false && vUser.IsActivated == true
                                              select new
                                              {
                                                  Id = vUser.Id,

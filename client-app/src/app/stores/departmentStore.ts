@@ -150,4 +150,35 @@ export default class DepartmentStore {
         }
     };
 
+    /* department combobox list */
+    @observable loadingDepartmentComboBoxList = false;
+    @observable departmentComboBoxRegistery = new Map();
+
+    @action loadDepartmentComboBoxList = async () => {
+        try {
+            this.loadingDepartmentComboBoxList = true;
+            const res = await agent.Department.getDepartmentList()
+            runInAction(() => {
+                this.departmentComboBoxRegistery.clear();
+                res.forEach((department) => {
+                    this.departmentComboBoxRegistery.set(department.key, department);
+                })
+                this.loadingDepartmentComboBoxList = false;
+            })
+        } catch (err: any) {
+            runInAction(() => {
+                this.loadingDepartmentComboBoxList = false;
+                openNotification(
+                    "error",
+                    "خطا",
+                    `${err?.response?.data?.Message!}`,
+                    "topRight");
+                throw err;
+            });
+        }
+    }
+
+    @computed get departmentComboBoxList() {
+        return Array.from(this.departmentComboBoxRegistery.values());
+    }
 }

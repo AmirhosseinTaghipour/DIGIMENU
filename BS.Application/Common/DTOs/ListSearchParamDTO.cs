@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BS.Application.Common.DTOs
 {
-   public class ListSearchParam
+   public class ListSearchParamDTO
     {
         public string SortColumn { get; set; }
         public string SortDirection { get; set; }

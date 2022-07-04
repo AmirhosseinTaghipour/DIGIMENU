@@ -7,6 +7,8 @@ const UnitMenu = React.lazy(() => import('./TabPages/unitMenu/UnitMenu'))
 const Payment = React.lazy(() => import('./TabPages/payment/Payment'))
 const MenuCategoryList = React.lazy(() => import('./TabPages/menuCategory/MenuCategoryList'))
 const CategoryIconList = React.lazy(() => import('./TabPages/categoryIcon/CategoryIconList'))
+const UnitManagementList = React.lazy(() => import('./TabPages/unitManagement/UnitManagementList'))
+const UserManagementList = React.lazy(() => import('./TabPages/userManegement/UserManagementList'))
 
 
 
@@ -30,6 +32,10 @@ const ContentControl: React.FC<IProps> = ({ menuCode }) => {
                 return <Suspense fallback={<LoadingComponent content="در حال بارگذاری ..." />}> <UnitMenu /></Suspense>;
             case "icon-management":
                 return <Suspense fallback={<LoadingComponent content="در حال بارگذاری ..." />}> <CategoryIconList /></Suspense>;
+            case "unit-management":
+                return <Suspense fallback={<LoadingComponent content="در حال بارگذاری ..." />}> <UnitManagementList /></Suspense>;
+                case "user-management":
+                return <Suspense fallback={<LoadingComponent content="در حال بارگذاری ..." />}> <UserManagementList /></Suspense>;
             default:
                 return null;
         }

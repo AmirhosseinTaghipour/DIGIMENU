@@ -27,7 +27,7 @@ namespace BS.Application.Features.CategoryIcons.Queries
             public List<CategoryIconListItemDTO> categoryIconList { get; set; }
             public int categoryIconCount { get; set; }
         }
-        public class CategoryIconListQuery : ListSearchParam, IRequest<CategoryIconEnvelope>
+        public class CategoryIconListQuery : ListSearchParamDTO, IRequest<CategoryIconEnvelope>
         {
             //List Parameter
             public string Title { get; set; }        
@@ -91,6 +91,7 @@ namespace BS.Application.Features.CategoryIcons.Queries
                 var list = await query
                     .Skip(offset)
                     .Take(request.Limit ?? 10)
+                    .AsNoTracking()
                     .ToListAsync();
 
                 result.categoryIconList = new List<CategoryIconListItemDTO>(list);

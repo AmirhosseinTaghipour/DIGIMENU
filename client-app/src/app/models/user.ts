@@ -73,3 +73,42 @@ export interface ICheckNationalCode {
     nationalCode: string | null;
     birthDate: string | null;
 }
+
+export interface IUserManagementFormValues{
+    id:string |null;
+    name: string|null;
+    userName: string|null;
+    password: string|null;
+    departmentId: string|null;
+    roleId: string|null;
+    isActivated: boolean;
+    mobile: string|null;
+    isUpdateMode: boolean;
+}
+export interface IUserManagementListItemValues{
+    id:string;
+    key:string
+    name: string;
+    userName: string;
+    departmentName: string;
+    roleName: string;
+    isActivated: boolean;
+    mobile: string;
+}
+
+export interface IUserManagementListSearchParam {
+    name: string | null;
+    userName: string | null;
+    departmentName: string | null;
+    roleName: string | null;
+    mobile: string | null;
+    sortColumn: string | null;
+    sortDirection: string | null;
+    limit: number | null;
+    page: number | null;
+}
+
+export interface IUserManagementEnvelope {
+    userList: IUserManagementListItemValues[];
+    userCount: number;
+}

@@ -21,6 +21,10 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Features\Main\Commands\" />
+    <Folder Include="Features\Roles\Commands\" />
+    <Folder Include="Features\Roles\DTOs\" />
+    <Folder Include="Features\SMSLogs\Commands\" />
+    <Folder Include="Features\UserLogs\Commands\" />
   </ItemGroup>
 
 </Project>

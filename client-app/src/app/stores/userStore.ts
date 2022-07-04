@@ -1,5 +1,5 @@
 ﻿import { observable, computed, action, runInAction, makeAutoObservable } from "mobx";
-import { ICaptchaImage, IChangePasswordFormValues, IConfirmCodeFormValues, IForgotPasswordFormValues, ILoginFormValues, IRegisterFormValues, IResendCodeFormValues, IUser, IUserFormValues } from "../models/user";
+import { ICaptchaImage, IChangePasswordFormValues, IConfirmCodeFormValues, IForgotPasswordFormValues, ILoginFormValues, IRegisterFormValues, IResendCodeFormValues, IUser, IUserFormValues, IUserManagementFormValues, IUserManagementListItemValues, IUserManagementListSearchParam } from "../models/user";
 import agent from "../api/agent";
 import { RootStore } from "./rootStore";
 import { IComboBoxType } from "../models/common";
@@ -229,5 +229,203 @@ export default class UserStore {
 
     @computed get isLoggedIn() {
         return !!this.user;
+    }
+    /* this section is about user management */
+
+    @observable sumbittingUser = false;
+    @observable deletingUser = false;
+    @observable loadingUser = false;
+    @observable loadingUserList = false;
+    @observable userListRegistery = new Map();
+    @observable userCount = 0;
+    @observable userListValues: IUserManagementListSearchParam = {
+        name: null,
+        userName: null,
+        departmentName: null,
+        roleName: null,
+        mobile: null,
+        sortColumn: null,
+        sortDirection: null,
+        limit: 10,
+        page: 1,
+    };
+
+    @action setUserListValues = (values: IUserManagementListSearchParam) => {
+        if (!!values) {
+            this.userListValues.userName = values.userName;
+            this.userListValues.name = values.name;
+            this.userListValues.departmentName = values.departmentName;
+            this.userListValues.name = values.name;
+            this.userListValues.mobile = values.mobile;
+            this.userListValues.sortColumn = values.sortColumn;
+            this.userListValues.sortDirection = values.sortDirection;
+            this.userListValues.limit = values.limit;
+            this.userListValues.page = values.page;
+        }
+    };
+
+    @observable userInfo: IUserManagementFormValues = {
+        id: null,
+        name: null,
+        userName: null,
+        password: null,
+        departmentId: null,
+        roleId: null,
+        isActivated: false,
+        mobile: null,
+        isUpdateMode: false
+    };
+
+    @action setUserInfo = (values: IUserManagementFormValues) => {
+        debugger;
+        if (!!values) {
+            this.userInfo.id = values.id;
+            this.userInfo.name = values.name;
+            this.userInfo.userName = values.userName;
+            this.userInfo.password = values.password;
+            this.userInfo.departmentId = values.departmentId;
+            this.userInfo.roleId = values.roleId;
+            this.userInfo.isActivated = values.isActivated;
+            this.userInfo.mobile = values.mobile;
+            this.userInfo.isUpdateMode = values.isUpdateMode;
+        }
+    }
+
+    @action loadUser = async (id:string) => {
+        try {
+            this.loadingUser = true;
+            const res = await agent.User.getUser(id);
+            runInAction(() => {
+                this.setUserInfo({...res});
+                this.loadingUser = false;
+            });
+        } catch (err: any) {
+            runInAction(() => {
+                this.loadingUser = false;
+                openNotification(
+                    "error",
+                    "خطا",
+                    `${err?.response?.data?.Message!}`,
+                    "topRight");
+                throw err;
+            });
+        }
+    };
+
+    @action loadUserList = async () => {
+        try {
+            this.loadingUserList = true;
+            
+            const res = await agent.User.getUserList(this.userListValues);
+            runInAction(() => {
+                const { userList, userCount } = res;
+                this.userListRegistery.clear();
+
+                if (userList && userList.length > 0 ) {
+                    userList.forEach( ( item : IUserManagementListItemValues ) => {
+                        this.userListRegistery.set( item.key, item );
+                    } )
+                }
+
+                if (typeof userCount == "number" ) {
+                    this.userCount = userCount;
+                }
+            });
+            this.loadingUserList = false;
+
+        } catch (err: any) {
+            runInAction(() => {
+                this.loadingUserList = false;
+                openNotification(
+                    "error",
+                    "خطا",
+                    `${err?.response?.data?.Message!}`,
+                    "topRight");
+                throw err;
+            });
+        }
+    };
+
+    @action insertUser = async (values: IUserManagementFormValues) => {
+        try {
+            this.sumbittingUser = true;
+            const res = await agent.User.insertUser(values);
+            runInAction(() => {
+                this.userInfo.isUpdateMode = false;
+                this.loadUserList();
+                openNotification(
+                    "success",
+                    "ثبت اطلاعات",
+                    `${res?.message!}`,
+                    "topRight");
+                this.sumbittingUser = false;
+            });
+        } catch (err: any) {
+            runInAction(() => {
+                this.sumbittingUser = false;
+                openNotification(
+                    "error",
+                    "خطا",
+                    `${err?.response?.data?.Message!}`,
+                    "topRight");
+                throw err;
+            });
+        }
+    };
+
+    @action updateUser = async (values: IUserManagementFormValues) => {
+        try {
+            this.sumbittingUser = true;
+            const res = await agent.User.updateUser(values);
+            runInAction(() => {
+                this.loadUserList();
+                openNotification(
+                    "success",
+                    "ثبت اطلاعات",
+                    `${res?.message!}`,
+                    "topRight");
+                this.sumbittingUser = false;
+            });
+        } catch (err: any) {
+            runInAction(() => {
+                this.sumbittingUser = false;
+                openNotification(
+                    "error",
+                    "خطا",
+                    `${err?.response?.data?.Message!}`,
+                    "topRight");
+                throw err;
+            });
+        }
+    };
+
+    @action deleteUser = async (ids: string[]) => {
+        try {
+            this.deletingUser = true;
+            const res = await agent.User.deleteUser(ids);
+            runInAction(() => {
+                this.loadUserList();
+                openNotification("success",
+                    "حذف اطلاعات",
+                    `${res?.message!}`,
+                    "topRight");
+                this.deletingUser = false;
+            });
+        }
+        catch (err: any) {
+            runInAction(() => {
+                this.deletingUser = false;
+                openNotification(
+                    "error",
+                    "خطا",
+                    `${err?.response?.data?.Message!}`,
+                    "topRight");
+                throw err;
+            });
+        }
+    }
+
+    @computed get userList() {
+        return Array.from(this.userListRegistery.values());
     }
 }

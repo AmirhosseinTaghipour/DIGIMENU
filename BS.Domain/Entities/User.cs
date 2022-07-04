@@ -31,7 +31,7 @@ namespace BS.Domain.Entities
         [MaxLength(128)]
         [Required]
         public string PasswordSalt { get; set; }
-        public bool IsActived { get; set; }
+        public bool IsActivated { get; set; }
         public bool IsDeleted { get; set; }
 
         [MaxLength(128)]

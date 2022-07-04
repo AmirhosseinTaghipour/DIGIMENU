@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 import { openNotification, jsonToFormData } from "../common/util/util";
-import { ICaptchaImage, IChangePasswordFormValues, IConfirmCodeFormValues, IForgotPasswordFormValues, ILoginFormValues, IRegisterFormValues, IResendCodeFormValues, IUser, IUserFormValues } from "../models/user";
+import { ICaptchaImage, IChangePasswordFormValues, IConfirmCodeFormValues, IForgotPasswordFormValues, ILoginFormValues, IRegisterFormValues, IResendCodeFormValues, IUser, IUserFormValues, IUserManagementEnvelope, IUserManagementFormValues, IUserManagementListItemValues, IUserManagementListSearchParam } from "../models/user";
 import { IComboBoxType, IRefTokenValues, IResultType } from "../models/common";
 
 import { AddCookie, GetCookie, RemoveCookie } from "../common/util/util";
@@ -12,6 +12,8 @@ import { ICategoryFormValues, ICategoryListEnvelope, ICategoryListOreder, ICateg
 import { ICategoryIconFormValues, ICategoryIconListEnvelope, ICategoryIconListItemValues, ICategoryIconListSearchParam } from "../models/categoryIcon";
 import { ICategoryItemFormValues, ICategoryItemListEnvelope, ICategoryItemListOreder, ICategoryItemListSearchParam } from "../models/categoryItem";
 import { IFileFormValues, IFileListEnvelope, IFileListSearchParam } from "../models/file";
+import { ISMSLogFormValues, ISMSLogListEnvelope, ISMSLogListSearchParam } from "../models/smsLog";
+import { IUserLogFormValues, IUserLogListEnvelope, IUserLogListSearchParam } from "../models/userLog";
 
 axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 
@@ -145,6 +147,23 @@ const User = {
 
     GetCaptchaImage: (): Promise<ICaptchaImage> =>
         requests.get("/user/CaptchaImage"),
+
+    insertUser: (values: IUserManagementFormValues): Promise<IResultType> =>
+        requests.post("/user/UserInsert", values),
+
+    updateUser: (values: IUserManagementFormValues): Promise<IResultType> =>
+        requests.post("/user/UserUpdate", values),
+
+    deleteUser: (ids: string[]): Promise<IResultType> =>
+        requests.post("/user/UserDelete", { ids }),
+
+    getUserList: (values: IUserManagementListSearchParam): Promise<IUserManagementEnvelope> =>
+        requests.post("/user/UserList", values),
+
+    getUser: (id: string): Promise<IUserManagementFormValues> =>
+        requests.post("/user/userLoad", { id }),
+
+
 };
 
 const Main = {
@@ -160,6 +179,14 @@ const Department = {
 
     getDepartmentInfo: (): Promise<IDepartmentFormValues> =>
         requests.get("/department/DepartmentLoad"),
+
+    getDepartmentList: (): Promise<IComboBoxType[]> =>
+        requests.get("/department/GetAllDepartment"),
+}
+
+const Role = {
+    getRoleList: (): Promise<IComboBoxType[]> =>
+        requests.get("/role/GetAllRole"),
 }
 
 const Menu = {
@@ -191,6 +218,22 @@ const Category = {
 
     getCategory: (id: string): Promise<ICategoryFormValues> =>
         requests.post("/category/CategoryLoad", { id }),
+}
+
+const SMSLog = {
+    getSMSLogList: (values: ISMSLogListSearchParam): Promise<ISMSLogListEnvelope> =>
+        requests.post("/smsLog/SMSLogList", values),
+
+    getSMSLog: (id: string): Promise<ISMSLogFormValues> =>
+        requests.post("/smsLog/SMSLogLoad", { id }),
+}
+
+const UserLog = {
+    getUserLogList: (values: IUserLogListSearchParam): Promise<IUserLogListEnvelope> =>
+        requests.post("/userLog/UserLogList", values),
+
+    getUserLog: (id: string): Promise<IUserLogFormValues> =>
+        requests.post("/userLog/UserLogLoad", { id }),
 }
 
 const CategoryIcon = {
@@ -253,9 +296,12 @@ export default {
     User,
     Main,
     Department,
+    Role,
     Menu,
     Category,
     CategoryIcon,
     CategoryItem,
-    File
+    File,
+    SMSLog,
+    UserLog
 };

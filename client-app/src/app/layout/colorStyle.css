@@ -203,7 +203,7 @@
 
 .bsContent {
     margin: 10px;
-    overflow: hidden auto;
+    overflow: hidden !important;
     background-color: #ffffff;
     border-radius: 5px;
     border-top: 2px solid #fcbf62;
@@ -242,9 +242,27 @@
     padding-left: 5px;
 }
 
-/* .bsFormBody{
-   
-} */
+.bsFormBody {
+    height: calc(100% - 50px) !important;
+}
+
+.bsFormBody .ant-layout {
+    height: 100% !important;
+}
+
+.bsFormBody .ant-form {
+    padding-top: 15px !important;
+}
+
+.bsFormBody .ant-layout .ant-layout-content {
+    height: calc(100% - 50px) !important;
+    overflow: hidden auto !important;
+    padding: 0 20px !important;
+}
+
+.bsFormBody .ant-layout .ant-layout-content .bsCustomTable {
+    height: 100% !important;
+}
 
 .bsLayout>.ant-layout {
     background-color: #e2e3e5 !important;
@@ -314,6 +332,10 @@
     color: #c9c9c9 !important;
 }
 
+.bsModal .ant-tabs-content{
+  display: unset !important;  
+}
+
 .bs-file-btn-box {
     display: flex !important;
     align-items: center !important;
@@ -364,7 +386,7 @@
 
 .bsPaging {
     text-align: center;
-    margin: 20px auto 40px,
+    margin: 10px auto 10px;
 }
 
 .bsPaging span {
@@ -400,3 +422,4 @@
     align-items: center !important;
     justify-content: center !important;
 }
+

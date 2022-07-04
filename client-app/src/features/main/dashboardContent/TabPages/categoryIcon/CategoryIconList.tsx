@@ -124,7 +124,7 @@ const CategoryIconList: React.FC = () => {
             title: "ویرایش",
             key: "edit",
             dataIndex: "edit",
-            width: 20,
+            width: 50,
             align: "center",
 
             render(value, record) {
@@ -153,7 +153,7 @@ const CategoryIconList: React.FC = () => {
             title: "فایل",
             key: "url",
             dataIndex: "url",
-            width: 50,
+            width: 80,
             align: "center",
             render(value, record) {
                 return {
@@ -241,13 +241,13 @@ const CategoryIconList: React.FC = () => {
                             columns={columns}
                             dataSource={categoryIconList}
                             bordered
+                            scroll={{x:300}}
                             loading={loadingCategoryIconList}
                             tableLayout="fixed"
                             pagination={false}
                             size="small"
                             sticky={true}
                             className="bsCustomTable"
-                            onChange={() => { }}
                             onRow={(record) => {
                                 return {
                                     className:

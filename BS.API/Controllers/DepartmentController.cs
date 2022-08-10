@@ -43,5 +43,19 @@ namespace BS.API.Controllers
         {
             return await Mediator.Send(new GetAllDepartment.GetAllDepartmentQuery());
         }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost("DepartmentLoad")]
+        public async Task<ActionResult<DepartmentManagementFormDTO>> DepartmentLoad(DepartmentManagementLoad.DepartmetLoadQuery query)
+        {
+            return await Mediator.Send(query);
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost("DepartmentList")]
+        public async Task<ActionResult<DepartmentManagementEnvelopeDTO>> DepartmentList(DepartmentManagementList.DepartmentListQuery query)
+        {
+            return await Mediator.Send(query);
+        }
     }
 }

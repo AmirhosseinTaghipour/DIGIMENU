@@ -18,23 +18,17 @@ using BS.Application.Features.Users.DTOs;
 
 namespace BS.Application.Features.Users.Queries
 {
-    public class UserList
-    {
-        public class UserManagementEnvelope
+    public class DepartmentUserList
+    {        
+        public class DepartmentUserQuery : ListSearchParamDTO, IRequest<DepartmentUserEnvelopeDTO>
         {
-            public List<UserManagementListItemDTO> UserList { get; set; }
-            public int UserCount { get; set; }
-        }
-        public class UserListQuery : ListSearchParamDTO, IRequest<UserManagementEnvelope>
-        {
+            public string DepartmentId { get; set; }
             public string Name { get; set; }
             public string UserName { get; set; }
-            public string DepartmentName { get; set; }
-            public string RoleName { get; set; }
             public string Mobile { get; set; }
         }
 
-        public class UserListHandLer : IRequestHandler<UserListQuery, UserManagementEnvelope>
+        public class DepartmentUserHandLer : IRequestHandler<DepartmentUserQuery, DepartmentUserEnvelopeDTO>
         {
             private readonly IUnitOfWork _unitOfWork;
             private readonly IUserAccessor _userAccessor;
@@ -43,7 +37,7 @@ namespace BS.Application.Features.Users.Queries
             private readonly IAdjustChar _adjustChar;
 
 
-            public UserListHandLer(IUnitOfWork unitOfWork, IUserAccessor userAccessor, IMapper mapper, IFileHelper fileHelper, IAdjustChar adjustChar)
+            public DepartmentUserHandLer(IUnitOfWork unitOfWork, IUserAccessor userAccessor, IMapper mapper, IFileHelper fileHelper, IAdjustChar adjustChar)
             {
                 _unitOfWork = unitOfWork;
                 _userAccessor = userAccessor;
@@ -51,29 +45,30 @@ namespace BS.Application.Features.Users.Queries
                 _mapper = mapper;
                 _adjustChar = adjustChar;
             }
-            public async Task<UserManagementEnvelope> Handle(UserListQuery request, CancellationToken cancellationToken)
+            public async Task<DepartmentUserEnvelopeDTO> Handle(DepartmentUserQuery request, CancellationToken cancellationToken)
             {
                 var user = await _userAccessor.GetUserData();
                 if (user == null)
                     throw new RestException(HttpStatusCode.NotFound, "خطا، کاربری یافت نشد");
 
+                if (string.IsNullOrEmpty(request.DepartmentId))
+                    throw new RestException(HttpStatusCode.NotFound, "خطا،مجموعه ای یافت نشد");
+
 
 
                 var query = (from userTeble in _unitOfWork.userRepositoryAsync.Query()
-                             join roleTable in _unitOfWork.roleRepositoryAsync.Query() on userTeble.RoleId equals roleTable.Id
                              join departmentTable in _unitOfWork.departmentRepositoryAsync.Query() on userTeble.DepartmentId equals departmentTable.Id
-                             into departments from departmentTable in departments.DefaultIfEmpty()
-                             where userTeble.IsDeleted == false
-                             select new UserManagementListItemDTO
+                             into departments
+                             from departmentTable in departments.DefaultIfEmpty()
+                             where userTeble.IsDeleted == false && userTeble.DepartmentId==new Guid(request.DepartmentId)
+                             select new DepartmentUserListItemDTO
                              {
                                  Id = userTeble.Id.ToString().ToLower(),
                                  Key = userTeble.Id.ToString().ToLower(),
                                  UserName = userTeble.Username,
-                                 Name= userTeble.Name,
-                                 Mobile=userTeble.Mobile,
-                                 DepartmentName=departmentTable.Title,
-                                 RoleName=roleTable.Title,
-                                 IsActivated=userTeble.IsActivated
+                                 Name = userTeble.Name,
+                                 Mobile = userTeble.Mobile,
+                                 IsActivated = userTeble.IsActivated
                              });
 
                 #region Search
@@ -84,14 +79,6 @@ namespace BS.Application.Features.Users.Queries
                 if (!string.IsNullOrEmpty(request.Mobile))
                     query = query.Where(x => x.Mobile.Contains(_adjustChar.ChangeToArabicChar(request.Mobile)));
 
-
-                if (!string.IsNullOrEmpty(request.DepartmentName))
-                    query = query.Where(x => x.DepartmentName.Contains(_adjustChar.ChangeToArabicChar(request.DepartmentName)));
-
-
-                if (!string.IsNullOrEmpty(request.RoleName))
-                    query = query.Where(x => x.RoleName.Contains(_adjustChar.ChangeToArabicChar(request.RoleName)));
-
                 if (!string.IsNullOrEmpty(request.UserName))
                     query = query.Where(x => x.UserName.Contains(_adjustChar.ChangeToArabicChar(request.UserName)));
 
@@ -100,14 +87,14 @@ namespace BS.Application.Features.Users.Queries
 
                 #region Order by
                 if (string.IsNullOrEmpty(request.SortColumn))
-                    query = query.OrderBy(x=> x.RoleName);
+                    query = query.OrderBy(x => x.Name);
 
                 else
                     query = query.OrderBy($"{request.SortColumn} {request.SortDirection}");
 
                 #endregion
 
-                var result = new UserManagementEnvelope();
+                var result = new DepartmentUserEnvelopeDTO();
 
                 int offset = (request.Page - 1 ?? 0) * (request.Limit ?? 10);
 
@@ -117,8 +104,8 @@ namespace BS.Application.Features.Users.Queries
                     .AsNoTracking()
                     .ToListAsync();
 
-                result.UserList = new List<UserManagementListItemDTO>(list);
-                result.UserCount = await query.CountAsync();
+                result.DepartmentUserList = new List<DepartmentUserListItemDTO>(list);
+                result.DepartmentUserCount = await query.CountAsync();
 
                 return result;
 

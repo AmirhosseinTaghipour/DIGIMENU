@@ -125,6 +125,7 @@ namespace BS.API.Controllers
             return await Mediator.Send(command);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost("UserList")]
         public async Task<ActionResult<UserList.UserManagementEnvelope>> UserList(UserList.UserListQuery query)
         {
@@ -132,8 +133,15 @@ namespace BS.API.Controllers
         }
 
 
+        [Authorize(Roles = "Admin")]
         [HttpPost("UserLoad")]
         public async Task<ActionResult<UserManagementFormDTO>> UserLoad(UserLoad.UserLoadQuery query)
+        {
+            return await Mediator.Send(query);
+        }
+
+        [HttpPost("DepartmentUserList")]
+        public async Task<ActionResult<DepartmentUserEnvelopeDTO>> DepartmentUserList(DepartmentUserList.DepartmentUserQuery query)
         {
             return await Mediator.Send(query);
         }

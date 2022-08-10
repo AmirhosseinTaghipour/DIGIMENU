@@ -182,6 +182,12 @@ const Department = {
 
     getDepartmentList: (): Promise<IComboBoxType[]> =>
         requests.get("/department/GetAllDepartment"),
+
+    getDepartmentManagementInfo: (id: string): Promise<IComboBoxType[]> =>
+        requests.post("/department/DepartmentLoad",{id}),
+
+    getDepartmentManagementList: (values: string[]): Promise<IComboBoxType[]> =>
+        requests.post("/department/DepartmentList",values),
 }
 
 const Role = {

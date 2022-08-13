@@ -2,7 +2,7 @@ import { observable, computed, action, runInAction, makeAutoObservable, values }
 import agent from "../api/agent";
 import { openNotification } from "../common/util/util";
 import { IFile } from "../models/common";
-import { IDepartmentFormValues } from "../models/department";
+import { IDepartmentFormValues, IDepartmentManagementFormValues, IDepartmentManagementListItemValues, IDepartmentManagementListSearchParam } from "../models/department";
 import { RootStore } from "./rootStore";
 
 export default class DepartmentStore {
@@ -181,4 +181,148 @@ export default class DepartmentStore {
     @computed get departmentComboBoxList() {
         return Array.from(this.departmentComboBoxRegistery.values());
     }
+
+
+     /* this section is about Unit management */
+
+     @observable sumbittingUnit = false;
+     @observable deletingUnit = false;
+     @observable loadingUnit = false;
+     @observable loadingUnitList = false;
+     @observable unitListRegistery = new Map();
+     @observable unitCount = 0;
+     @observable unitListValues: IDepartmentManagementListSearchParam = {
+         sortColumn: null,
+         sortDirection: null,
+         limit: 10,
+         page: 1,
+         title: null,
+         postalCode: null,
+         phone: null
+     };
+ 
+     @action setUnitListValues = (values: IDepartmentManagementListSearchParam) => {
+         if (!!values) {
+             this.unitListValues.phone = values.phone;
+             this.unitListValues.postalCode = values.postalCode;
+             this.unitListValues.title = values.title;
+             this.unitListValues.sortColumn = values.sortColumn;
+             this.unitListValues.sortDirection = values.sortDirection;
+             this.unitListValues.limit = values.limit;
+             this.unitListValues.page = values.page;
+         }
+     };
+ 
+     @observable unitInfo: IDepartmentManagementFormValues = {
+         id: null,
+         title: null,
+         description: null,
+         address: null,
+         postalCode: null,
+         phone: null,
+         isActivated: false,
+         isUpdateMode: false,
+       
+     };
+ 
+     @action setUnitInfo = (values: IDepartmentManagementFormValues) => {
+         debugger;
+         if (!!values) {
+             this.unitInfo.id = values.id;
+             this.unitInfo.title = values.title;
+             this.unitInfo.description = values.description;
+             this.unitInfo.address = values.address;
+             this.unitInfo.postalCode = values.postalCode;
+             this.unitInfo.phone = values.phone;
+             this.unitInfo.isActivated = values.isActivated;
+             this.unitInfo.isUpdateMode = values.isUpdateMode;
+         }
+     }
+ 
+     @action loadUnit = async (id:string) => {
+         try {
+             this.loadingUnit = true;
+             const res = await agent.Department.getDepartmentManagementInfo(id);
+             runInAction(() => {
+                 this.setUnitInfo({...res});
+                 this.loadingUnit = false;
+             });
+         } catch (err: any) {
+             runInAction(() => {
+                 this.loadingUnit = false;
+                 openNotification(
+                     "error",
+                     "خطا",
+                     `${err?.response?.data?.Message!}`,
+                     "topRight");
+                 throw err;
+             });
+         }
+     };
+ 
+     @action loadUnitList = async () => {
+         try {
+             this.loadingUnitList = true;
+             
+             const res = await agent.Department.getDepartmentManagementList(this.unitListValues);
+             runInAction(() => {
+                 const { departmentList, departmentCount } = res;
+                 this.unitListRegistery.clear();
+ 
+                 if (departmentList && departmentList.length > 0 ) {
+                    departmentList.forEach( ( item : IDepartmentManagementListItemValues ) => {
+                         this.unitListRegistery.set( item.key, item );
+                     } )
+                 }
+ 
+                 if (typeof departmentCount == "number" ) {
+                     this.unitCount = departmentCount;
+                 }
+             });
+             this.loadingUnitList = false;
+ 
+         } catch (err: any) {
+             runInAction(() => {
+                 this.loadingUnitList = false;
+                 openNotification(
+                     "error",
+                     "خطا",
+                     `${err?.response?.data?.Message!}`,
+                     "topRight");
+                 throw err;
+             });
+         }
+     };
+ 
+ 
+     @action updateUser = async (values: IDepartmentManagementFormValues) => {
+         try {
+             this.sumbittingUnit = true;
+             const res = await agent.Department.updateDepartmentManagement(values);
+             runInAction(() => {
+                 this.loadUnitList();
+                 openNotification(
+                     "success",
+                     "ثبت اطلاعات",
+                     `${res?.message!}`,
+                     "topRight");
+                 this.sumbittingUnit = false;
+             });
+         } catch (err: any) {
+             runInAction(() => {
+                 this.sumbittingUnit = false;
+                 openNotification(
+                     "error",
+                     "خطا",
+                     `${err?.response?.data?.Message!}`,
+                     "topRight");
+                 throw err;
+             });
+         }
+     };
+ 
+
+     @computed get unitList() {
+         return Array.from(this.unitListRegistery.values());
+     }
 }

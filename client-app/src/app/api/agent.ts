@@ -6,7 +6,7 @@ import { IComboBoxType, IRefTokenValues, IResultType } from "../models/common";
 import { AddCookie, GetCookie, RemoveCookie } from "../common/util/util";
 import { values } from "mobx";
 import { IAppMenu } from "../models/main";
-import { IDepartmentFormValues } from "../models/department";
+import { IDepartmentFormValues, IDepartmentManagementEnvelope, IDepartmentManagementFormValues, IDepartmentManagementListSearchParam } from "../models/department";
 import { IMenuFormValues } from "../models/menu";
 import { ICategoryFormValues, ICategoryListEnvelope, ICategoryListOreder, ICategoryListSearchParam } from "../models/category";
 import { ICategoryIconFormValues, ICategoryIconListEnvelope, ICategoryIconListItemValues, ICategoryIconListSearchParam } from "../models/categoryIcon";
@@ -183,11 +183,14 @@ const Department = {
     getDepartmentList: (): Promise<IComboBoxType[]> =>
         requests.get("/department/GetAllDepartment"),
 
-    getDepartmentManagementInfo: (id: string): Promise<IComboBoxType[]> =>
-        requests.post("/department/DepartmentLoad",{id}),
+    getDepartmentManagementInfo: (id: string): Promise<IDepartmentManagementFormValues> =>
+        requests.post("/department/DepartmentLoad", { id }),
 
-    getDepartmentManagementList: (values: string[]): Promise<IComboBoxType[]> =>
-        requests.post("/department/DepartmentList",values),
+    getDepartmentManagementList: (values: IDepartmentManagementListSearchParam): Promise<IDepartmentManagementEnvelope> =>
+        requests.post("/department/DepartmentList", values),
+
+    updateDepartmentManagement: (values: IDepartmentManagementFormValues): Promise<IResultType> =>
+        requests.post("/department/DepartmentManagementUpdate", values),
 }
 
 const Role = {

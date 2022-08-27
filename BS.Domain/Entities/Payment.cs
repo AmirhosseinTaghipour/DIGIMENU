@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,7 +17,10 @@ namespace BS.Domain.Entities
         [Required]
         public Guid EntityId { get; set; }
         [Required]
-        public int Amount { get; set; }
+        public int PID { get; set; }
+        [Required]
+        [MaxLength(12)]
+        public string Amount { get; set; }
         [MaxLength(10)]
         public string PDate { get; set; }
         [MaxLength(8)]
@@ -25,6 +29,8 @@ namespace BS.Domain.Entities
         public int RefNo { get; set; }
         [Required]
         public int PaymentStatus { get; set; }
+
+        public bool IsDeleted { get; set; }
 
     }
 }

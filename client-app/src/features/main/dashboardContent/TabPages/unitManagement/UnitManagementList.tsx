@@ -37,6 +37,7 @@ import { Content, Header } from "antd/lib/layout/layout";
 import { IsNullOrEmpty, openNotification, selectTableRows, toDatabaseChar, toNumberFormat } from "../../../../../app/common/util/util";
 import { IDepartmentManagementListItemValues } from "../../../../../app/models/department";
 import UnitManagement from "./UnitManagement";
+import UserManagementList from "../userManegement/UserManagementList";
 
 const layout = {
   labelCol: { span: 6 },
@@ -475,8 +476,7 @@ const UnitManagementList: React.FC = () => {
           </TabPane>
 
           <TabPane tab="کاربران مجموعه" key="4" disabled={!detaliFormVisible} >
-          <div>کاربران مجموعه</div>
-            {/* <SMSLogList userId={userInfo?.id!} /> */}
+          <UserManagementList departmentId={unitInfo.id}/>
           </TabPane>
 
         </Tabs>

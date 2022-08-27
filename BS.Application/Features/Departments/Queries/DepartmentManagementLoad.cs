@@ -51,7 +51,9 @@ namespace BS.Application.Features.Departments.Queries
                                     Title = depTeble.Title,
                                     Phone = depTeble.Phone,
                                     PostalCode = depTeble.PostalCode,
-                                    IsActivated = depTeble.IsActived
+                                    IsActivated = depTeble.IsActived,
+                                    Description=depTeble.Description,
+                                    Address=depTeble.Address,
                                 }).FirstOrDefaultAsync();
                 if (department == null)
                     throw new RestException(HttpStatusCode.BadRequest, "خطا، رکوردی یافت نشد...");

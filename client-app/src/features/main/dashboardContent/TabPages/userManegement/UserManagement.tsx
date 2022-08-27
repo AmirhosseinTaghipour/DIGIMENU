@@ -152,6 +152,7 @@ const UserManagement: React.FC<IProps> = ({ close }) => {
                                 >
                                     <Input
                                         maxLength={200}
+                                        disabled={userInfo.isUpdateMode}
                                     />
                                 </Form.Item>
                             </Col>

@@ -226,7 +226,6 @@ export default class DepartmentStore {
      };
  
      @action setUnitInfo = (values: IDepartmentManagementFormValues) => {
-         debugger;
          if (!!values) {
              this.unitInfo.id = values.id;
              this.unitInfo.title = values.title;

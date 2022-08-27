@@ -45,7 +45,17 @@ const layout = {
     wrapperCol: { span: 18 },
 };
 
-const UserManagementList: React.FC = () => {
+interface IProps {
+    departmentId?: string | null,
+    isMain?:boolean
+}
+
+const defaultProps : any = {
+    departmentId:null,
+    isMain:false
+};
+
+const UserManagementList: React.FC<IProps> = ({ departmentId,isMain }) => {
     const rootStore = useContext(RootStoreContext);
     const {
         loadUser,
@@ -136,7 +146,10 @@ const UserManagementList: React.FC = () => {
     };
 
     useEffect(() => {
-        loadUserList();
+
+        setUserListValues({ ...userListValues, departmentId: departmentId! }).then(
+            () => loadUserList()
+        );
     }, []);
 
     const columns: ColumnsType<IUserManagementListItemValues> = [
@@ -414,14 +427,14 @@ const UserManagementList: React.FC = () => {
 
     return (
         <Fragment>
-            <Row className="bsFormHeader">
+           {isMain && <Row className="bsFormHeader">
                 <div className="bsFormTitle"> <FormOutlined />
                     مدیریت کاربران
                 </div>
 
                 <Button icon={<CloseOutlined />} onClick={closeForm} />
 
-            </Row>
+            </Row>}
 
             <Row className="bsFormBody">
                 <Layout className="formBodyLayout">
@@ -526,8 +539,9 @@ const UserManagementList: React.FC = () => {
                             responsive={true}
                             className="bsPaging"
                             onChange={(page, pageSize) => {
-                                setUserListValues({ ...userListValues, page: page, limit: pageSize! });
-                                loadUserList();
+                                setUserListValues({ ...userListValues, page: page, limit: pageSize! }).then(
+                                    () => loadUserList()
+                                );
                             }}
                         />
                     )}
@@ -574,6 +588,6 @@ const UserManagementList: React.FC = () => {
         </Fragment>
     )
 };
-
+UserManagementList.defaultProps=defaultProps;
 export default observer(UserManagementList);
 

@@ -14,6 +14,7 @@ import { ICategoryItemFormValues, ICategoryItemListEnvelope, ICategoryItemListOr
 import { IFileFormValues, IFileListEnvelope, IFileListSearchParam } from "../models/file";
 import { ISMSLogFormValues, ISMSLogListEnvelope, ISMSLogListSearchParam } from "../models/smsLog";
 import { IUserLogFormValues, IUserLogListEnvelope, IUserLogListSearchParam } from "../models/userLog";
+import { IPaymentEnvelope, IPaymentFormValues, IPaymentListSearchParam } from "../models/payment";
 
 axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 
@@ -184,10 +185,10 @@ const Department = {
         requests.get("/department/GetAllDepartment"),
 
     getDepartmentManagementInfo: (id: string): Promise<IDepartmentManagementFormValues> =>
-        requests.post("/department/DepartmentLoad", { id }),
+        requests.post("/department/DepartmentManagementLoad", { id }),
 
     getDepartmentManagementList: (values: IDepartmentManagementListSearchParam): Promise<IDepartmentManagementEnvelope> =>
-        requests.post("/department/DepartmentList", values),
+        requests.post("/department/DepartmentManagementList", values),
 
     updateDepartmentManagement: (values: IDepartmentManagementFormValues): Promise<IResultType> =>
         requests.post("/department/DepartmentManagementUpdate", values),
@@ -299,6 +300,17 @@ const File = {
         requests.post("/file/FileLoad", { id }),
 }
 
+const Payment={
+insertPayment: (values: IPaymentFormValues): Promise<IResultType> =>
+    requests.postForm("/payment/PaymentInsert", values),
+
+updatePayment: (values: IPaymentFormValues): Promise<IResultType> =>
+    requests.postForm("/payment/PaymentUpdate", values),
+
+getPaymentList: (values: IPaymentListSearchParam): Promise<IPaymentEnvelope> =>
+    requests.post("/payment/PaymenteList", values),
+}
+
 
 
 export default {
@@ -312,5 +324,6 @@ export default {
     CategoryItem,
     File,
     SMSLog,
-    UserLog
+    UserLog,
+    Payment
 };

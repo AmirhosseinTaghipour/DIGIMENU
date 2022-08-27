@@ -27,7 +27,7 @@ const ContentControl: React.FC<IProps> = ({ menuCode }) => {
             case "create-category":
                 return <Suspense fallback={<LoadingComponent content="در حال بارگذاری ..." />}> <MenuCategoryList /></Suspense>;
             case "payment":
-                return <Suspense fallback={<LoadingComponent content="در حال بارگذاری ..." />}> <Payment /></Suspense>;
+                return <Suspense fallback={<LoadingComponent content="در حال بارگذاری ..." />}> <Payment/></Suspense>;
             case "create-menu":
                 return <Suspense fallback={<LoadingComponent content="در حال بارگذاری ..." />}> <UnitMenu /></Suspense>;
             case "icon-management":
@@ -35,7 +35,7 @@ const ContentControl: React.FC<IProps> = ({ menuCode }) => {
             case "unit-management":
                 return <Suspense fallback={<LoadingComponent content="در حال بارگذاری ..." />}> <UnitManagementList /></Suspense>;
                 case "user-management":
-                return <Suspense fallback={<LoadingComponent content="در حال بارگذاری ..." />}> <UserManagementList /></Suspense>;
+                return <Suspense fallback={<LoadingComponent content="در حال بارگذاری ..." />}> <UserManagementList isMain /></Suspense>;
             default:
                 return null;
         }

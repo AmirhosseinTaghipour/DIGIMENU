@@ -30,6 +30,7 @@ namespace BS.Application.Features.Users.Queries
             public string Name { get; set; }
             public string UserName { get; set; }
             public string DepartmentName { get; set; }
+            public string DepartmentId { get; set; }
             public string RoleName { get; set; }
             public string Mobile { get; set; }
         }
@@ -57,24 +58,50 @@ namespace BS.Application.Features.Users.Queries
                 if (user == null)
                     throw new RestException(HttpStatusCode.NotFound, "خطا، کاربری یافت نشد");
 
-
-
                 var query = (from userTeble in _unitOfWork.userRepositoryAsync.Query()
                              join roleTable in _unitOfWork.roleRepositoryAsync.Query() on userTeble.RoleId equals roleTable.Id
                              join departmentTable in _unitOfWork.departmentRepositoryAsync.Query() on userTeble.DepartmentId equals departmentTable.Id
-                             into departments from departmentTable in departments.DefaultIfEmpty()
+                             into departments
+                             from departmentTable in departments.DefaultIfEmpty()
                              where userTeble.IsDeleted == false
                              select new UserManagementListItemDTO
                              {
                                  Id = userTeble.Id.ToString().ToLower(),
                                  Key = userTeble.Id.ToString().ToLower(),
                                  UserName = userTeble.Username,
-                                 Name= userTeble.Name,
-                                 Mobile=userTeble.Mobile,
-                                 DepartmentName=departmentTable.Title,
-                                 RoleName=roleTable.Title,
-                                 IsActivated=userTeble.IsActivated
+                                 Name = userTeble.Name,
+                                 Mobile = userTeble.Mobile,
+                                 DepartmentName = departmentTable.Title,
+                                 RoleName = roleTable.Title,
+                                 IsActivated = userTeble.IsActivated
                              });
+
+                if (!string.IsNullOrEmpty(request.DepartmentId))
+                {
+                    Guid departmentId;
+                    if (!Guid.TryParse(request.DepartmentId, out departmentId))
+                        throw new RestException(HttpStatusCode.BadRequest, "خطا، مقدار پارامتر ورودی صحیح نیست...");
+
+                    query = (from userTeble in _unitOfWork.userRepositoryAsync.Query()
+                             join roleTable in _unitOfWork.roleRepositoryAsync.Query() on userTeble.RoleId equals roleTable.Id
+                             join departmentTable in _unitOfWork.departmentRepositoryAsync.Query() on userTeble.DepartmentId equals departmentTable.Id
+                             into departments
+                             from departmentTable in departments.DefaultIfEmpty()
+                             where userTeble.IsDeleted == false && departmentTable.Id == departmentId
+                             select new UserManagementListItemDTO
+                             {
+                                 Id = userTeble.Id.ToString().ToLower(),
+                                 Key = userTeble.Id.ToString().ToLower(),
+                                 UserName = userTeble.Username,
+                                 Name = userTeble.Name,
+                                 Mobile = userTeble.Mobile,
+                                 DepartmentName = departmentTable.Title,
+                                 RoleName = roleTable.Title,
+                                 IsActivated = userTeble.IsActivated
+                             });
+                }
+
+
 
                 #region Search
 
@@ -100,7 +127,7 @@ namespace BS.Application.Features.Users.Queries
 
                 #region Order by
                 if (string.IsNullOrEmpty(request.SortColumn))
-                    query = query.OrderBy(x=> x.RoleName);
+                    query = query.OrderBy(x => x.RoleName);
 
                 else
                     query = query.OrderBy($"{request.SortColumn} {request.SortDirection}");

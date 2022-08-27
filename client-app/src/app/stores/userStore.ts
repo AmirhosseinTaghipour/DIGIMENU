@@ -248,9 +248,10 @@ export default class UserStore {
         sortDirection: null,
         limit: 10,
         page: 1,
+        departmentId: null
     };
 
-    @action setUserListValues = (values: IUserManagementListSearchParam) => {
+    @action setUserListValues = async(values: IUserManagementListSearchParam) => {
         if (!!values) {
             this.userListValues.userName = values.userName;
             this.userListValues.name = values.name;
@@ -261,6 +262,7 @@ export default class UserStore {
             this.userListValues.sortDirection = values.sortDirection;
             this.userListValues.limit = values.limit;
             this.userListValues.page = values.page;
+            this.userListValues.departmentId = values.departmentId;
         }
     };
 

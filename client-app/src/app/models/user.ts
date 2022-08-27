@@ -100,6 +100,7 @@ export interface IUserManagementListSearchParam {
     name: string | null;
     userName: string | null;
     departmentName: string | null;
+    departmentId: string | null;
     roleName: string | null;
     mobile: string | null;
     sortColumn: string | null;

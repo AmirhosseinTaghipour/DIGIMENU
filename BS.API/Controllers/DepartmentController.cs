@@ -45,17 +45,24 @@ namespace BS.API.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpPost("DepartmentLoad")]
-        public async Task<ActionResult<DepartmentManagementFormDTO>> DepartmentLoad(DepartmentManagementLoad.DepartmetLoadQuery query)
+        [HttpPost("DepartmentManagementLoad")]
+        public async Task<ActionResult<DepartmentManagementFormDTO>> DepartmentManagementLoad(DepartmentManagementLoad.DepartmetLoadQuery query)
         {
             return await Mediator.Send(query);
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpPost("DepartmentList")]
-        public async Task<ActionResult<DepartmentManagementEnvelopeDTO>> DepartmentList(DepartmentManagementList.DepartmentListQuery query)
+        [HttpPost("DepartmentManagementList")]
+        public async Task<ActionResult<DepartmentManagementEnvelopeDTO>> DepartmentManagementList(DepartmentManagementList.DepartmentListQuery query)
         {
             return await Mediator.Send(query);
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost("DepartmentManagementUpdate")]
+        public async Task<ActionResult<ResultDTO<string>>> DepartmenManagementtUpdate(DepartmentManagementUpdate.DepartmentManagementUpdateCommand command)
+        {
+            return await Mediator.Send(command);
         }
     }
 }

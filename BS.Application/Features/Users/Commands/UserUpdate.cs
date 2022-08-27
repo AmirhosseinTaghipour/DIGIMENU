@@ -60,7 +60,7 @@ namespace BS.Application.Features.Users.Commands
 
                 Guid roleId = new Guid(request.RoleId);
                 int expireDuration = int.Parse(_configuration["ProjectConfig:ExpireDuration"].ToString());
-                if (string.IsNullOrEmpty(request.Password))
+                if (!string.IsNullOrEmpty(request.Password))
                 {
                     string passwordSalt = _passwordHelper.GenerateSalt();
                     string password = _passwordHelper.GetEncryptedPassword(user.Password.Trim(), passwordSalt);

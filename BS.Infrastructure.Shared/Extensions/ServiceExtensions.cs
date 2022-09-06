@@ -19,6 +19,7 @@ namespace BS.Infrastructure.Shared
             #region  Injection Services
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<ISMSService, SMSService>();
+            services.AddScoped<IPaymentService, PaymentService>();
             services.AddScoped<IAdjustChar, AdjustChar>();
             services.AddScoped<IPersianDate, PersianDate>();
             services.AddScoped<IFileHelper, FileHelper>();

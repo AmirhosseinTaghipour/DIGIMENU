@@ -19,6 +19,7 @@ import faIR from "antd/es/locale/fa_IR";
 import UnAuthorized from "../../features/unauthorized/UnAuthorizedPage";
 import { Manager } from "browser-detect-devtools";
 import RegisterForm from "../../features/user/RegisterForm";
+import Paymentcallback from "../../features/main/dashboardContent/TabPages/payment/PaymentCallback";
 
 
 // React.lazy
@@ -116,6 +117,7 @@ const App: React.FC<RouteComponentProps> = ({ location, match }) => {
                                 <Route path="/register" component={RegisterForm} />
                                 <Route path="/forgotpassword" component={ForgotPassword} />
                                 <Route path="/unau/:page/:id" component={UnAuthorized} />
+                                <Route path="/paymentcallback/:id" component={Paymentcallback} />
                                 {/*<Route path="/su/:type/:shortCode" component={ShortUrl} />*/}
                                 <Route component={NotFound} />
                             </Switch>

@@ -12,6 +12,9 @@ namespace BS.Application.Features.Payments.DTOs
         public string Id { get; set; }
         public int PId { get; set; }
         public string Title { get; set; }
+        public int Status { get; set; }
+        public string StatusTitle { get; set; }
+        public string Department { get; set; }
         public string Amount { get; set; }
         public string PDate { get; set; }
         public string PTime { get; set; }

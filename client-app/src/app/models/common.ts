@@ -32,6 +32,7 @@ export interface ILazyTreeType {
 export interface IResultType {
     code: number | null;
     message: string | null;
+    data:string| null;
 }
 
 export interface IRefTokenValues {

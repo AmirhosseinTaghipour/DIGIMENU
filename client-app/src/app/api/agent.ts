@@ -14,7 +14,7 @@ import { ICategoryItemFormValues, ICategoryItemListEnvelope, ICategoryItemListOr
 import { IFileFormValues, IFileListEnvelope, IFileListSearchParam } from "../models/file";
 import { ISMSLogFormValues, ISMSLogListEnvelope, ISMSLogListSearchParam } from "../models/smsLog";
 import { IUserLogFormValues, IUserLogListEnvelope, IUserLogListSearchParam } from "../models/userLog";
-import { IPaymentEnvelope, IPaymentFormValues, IPaymentListSearchParam } from "../models/payment";
+import { IPaymentEnvelope, IPaymentFormValues, IPaymentListSearchParam, IPaymentResult } from "../models/payment";
 
 axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 
@@ -300,15 +300,24 @@ const File = {
         requests.post("/file/FileLoad", { id }),
 }
 
-const Payment={
-insertPayment: (values: IPaymentFormValues): Promise<IResultType> =>
-    requests.postForm("/payment/PaymentInsert", values),
+const Payment = {
+    insertPayment: (values: IPaymentFormValues): Promise<IResultType> =>
+        requests.post("/payment/PaymentInsert", values),
 
-updatePayment: (values: IPaymentFormValues): Promise<IResultType> =>
-    requests.postForm("/payment/PaymentUpdate", values),
+    updatePayment: (values: IPaymentFormValues): Promise<IResultType> =>
+        requests.post("/payment/PaymentUpdate", values),
 
-getPaymentList: (values: IPaymentListSearchParam): Promise<IPaymentEnvelope> =>
-    requests.post("/payment/PaymenteList", values),
+    getPaymentList: (values: IPaymentListSearchParam): Promise<IPaymentEnvelope> =>
+        requests.post("/payment/PaymenteList", values),
+
+    getUnitPaymentList: (values: IPaymentListSearchParam): Promise<IPaymentEnvelope> =>
+        requests.post("/payment/UnitPaymentList", values),
+
+    payment: (paymentId: string): Promise<IResultType> =>
+        requests.post("/payment/Payment", { paymentId}),
+
+    checkPayment: (paymentId: string): Promise<IPaymentResult> =>
+        requests.post("/payment/CheckPayment", { paymentId}),
 }
 
 

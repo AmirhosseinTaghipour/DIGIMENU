@@ -12,12 +12,12 @@ namespace BS.Domain.Entities
     public class Payment : AuditableBaseEntity
     {
         [Required]
-        [MaxLength(50)]
-        public string EntityName { get; set; }
-        [Required]
-        public Guid EntityId { get; set; }
+        public Guid DepartmentId { get; set; }
         [Required]
         public int PID { get; set; }
+        [Required]
+        public int PaymentType { get; set; }
+
         [Required]
         [MaxLength(12)]
         public string Amount { get; set; }
@@ -25,8 +25,9 @@ namespace BS.Domain.Entities
         public string PDate { get; set; }
         [MaxLength(8)]
         public string PTime { get; set; }
-        public int RefId { get; set; }
-        public int RefNo { get; set; }
+        public string TransactionId { get; set; }
+        public string RefID { get; set; }
+        public string CardNumber { get; set; }
         [Required]
         public int PaymentStatus { get; set; }
 

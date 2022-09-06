@@ -18,9 +18,9 @@ using BS.Application.Features.Payments.DTOs;
 
 namespace BS.Application.Features.Payments.Queries
 {
-    public class PaymentList
+    public class UnitPaymentList
     {
-        public class PaymentListQuery : ListSearchParamDTO, IRequest<PaymentEnvelope>
+        public class UnitPaymentListQuery : ListSearchParamDTO, IRequest<PaymentEnvelope>
         {
             public string DepartmentId { get; set; }
             public string Title { get; set; }
@@ -29,7 +29,7 @@ namespace BS.Application.Features.Payments.Queries
             public string PId { get; set; }
         }
 
-        public class PaymentListHandLer : IRequestHandler<PaymentListQuery, PaymentEnvelope>
+        public class UnitPaymentListHandLer : IRequestHandler<UnitPaymentListQuery, PaymentEnvelope>
         {
             private readonly IUnitOfWork _unitOfWork;
             private readonly IUserAccessor _userAccessor;
@@ -39,7 +39,7 @@ namespace BS.Application.Features.Payments.Queries
             private readonly IAdjustChar _adjustChar;
 
 
-            public PaymentListHandLer(IUnitOfWork unitOfWork, IUserAccessor userAccessor, IMapper mapper, IFileHelper fileHelper, IPersianDate persianDate, IAdjustChar adjustChar)
+            public UnitPaymentListHandLer(IUnitOfWork unitOfWork, IUserAccessor userAccessor, IMapper mapper, IFileHelper fileHelper, IPersianDate persianDate, IAdjustChar adjustChar)
             {
                 _unitOfWork = unitOfWork;
                 _userAccessor = userAccessor;
@@ -48,7 +48,7 @@ namespace BS.Application.Features.Payments.Queries
                 _persianDate = persianDate;
                 _adjustChar = adjustChar;
             }
-            public async Task<PaymentEnvelope> Handle(PaymentListQuery request, CancellationToken cancellationToken)
+            public async Task<PaymentEnvelope> Handle(UnitPaymentListQuery request, CancellationToken cancellationToken)
             {
                 var user = await _userAccessor.GetUserData();
                 if (user == null)
@@ -60,7 +60,7 @@ namespace BS.Application.Features.Payments.Queries
                              join typeTable in _unitOfWork.refCodeRepositoryAsync.Query() on new { Id = paymentTeble.PaymentType, Domain = "payment-type" } equals new { Id = typeTable.Code, Domain = typeTable.Domain }
                              join statusTable in _unitOfWork.refCodeRepositoryAsync.Query() on new { Id = paymentTeble.PaymentStatus, Domain = "payment-status" } equals new { Id = statusTable.Code, Domain = statusTable.Domain }
                              join departmentTable in _unitOfWork.departmentRepositoryAsync.Query() on paymentTeble.DepartmentId equals departmentTable.Id
-                             where paymentTeble.IsDeleted == false
+                             where paymentTeble.IsDeleted == false && paymentTeble.DepartmentId == user.DepartmentId
                              orderby paymentTeble.InsertDate
                              select new PaymentListItemDTO
                              {
@@ -69,36 +69,7 @@ namespace BS.Application.Features.Payments.Queries
                                  PId = paymentTeble.PID,
                                  Title = typeTable.Title,
                                  StatusTitle = statusTable.Title,
-                                 Status = paymentTeble.PaymentStatus,
-                                 Amount = int.Parse(paymentTeble.Amount) > 0 ? int.Parse(paymentTeble.Amount).ToString("#,0") : "رایگان",
-                                 PDate = paymentTeble.PDate,
-                                 PTime = paymentTeble.PTime,
-                                 ExpireDate = paymentTeble.PaymentType == 1 ? _persianDate.toShamsi(paymentTeble.InsertDate.AddDays(15)) : _persianDate.toShamsi(paymentTeble.InsertDate.AddYears(1)),
-                                 IsActivated = paymentTeble.PaymentType == 1 ? (paymentTeble.InsertDate.AddDays(15) > DateTime.Now ? false : true) : (paymentTeble.PaymentStatus == 2 ? false : (paymentTeble.InsertDate.AddYears(1) > DateTime.Now ? false : true)),
-                                 Department = departmentTable.Title
-
-                             });
-
-                if (!string.IsNullOrEmpty(request.DepartmentId))
-                {
-                    Guid departmentId;
-                    if (!Guid.TryParse(request.DepartmentId, out departmentId))
-                        throw new RestException(HttpStatusCode.BadRequest, "خطا، مقدار پارامتر ورودی صحیح نیست...");
-
-                    query = (from paymentTeble in _unitOfWork.paymentRepositoryAsync.Query()
-                             join typeTable in _unitOfWork.refCodeRepositoryAsync.Query() on new { Id = paymentTeble.PaymentType, Domain = "payment-type" } equals new { Id = typeTable.Code, Domain = typeTable.Domain }
-                             join statusTable in _unitOfWork.refCodeRepositoryAsync.Query() on new { Id = paymentTeble.PaymentStatus, Domain = "payment-status" } equals new { Id = statusTable.Code, Domain = statusTable.Domain }
-                             join departmentTable in _unitOfWork.departmentRepositoryAsync.Query() on paymentTeble.DepartmentId equals departmentTable.Id
-                             where paymentTeble.DepartmentId == departmentId && paymentTeble.IsDeleted == false
-                             orderby paymentTeble.InsertDate
-                             select new PaymentListItemDTO
-                             {
-                                 Id = paymentTeble.Id.ToString().ToLower(),
-                                 Key = paymentTeble.Id.ToString().ToLower(),
-                                 PId = paymentTeble.PID,
-                                 Title = typeTable.Title,
-                                 StatusTitle = statusTable.Title,
-                                 Status = paymentTeble.PaymentStatus,
+                                 Status=paymentTeble.PaymentStatus,
                                  Amount = int.Parse(paymentTeble.Amount) > 0 ? int.Parse(paymentTeble.Amount).ToString("#,0") : "رایگان",
                                  PDate = paymentTeble.PDate,
                                  PTime = paymentTeble.PTime,
@@ -106,8 +77,7 @@ namespace BS.Application.Features.Payments.Queries
                                  IsActivated = paymentTeble.PaymentType == 1 ? (paymentTeble.InsertDate.AddDays(15) < DateTime.Now ? false : true) : (paymentTeble.PaymentStatus == 2 ? false : (paymentTeble.InsertDate.AddYears(1) < DateTime.Now ? false : true)),
                                  Department = departmentTable.Title
 
-                             });
-                }
+                             }) ;
 
                 #region Search
 
@@ -128,7 +98,7 @@ namespace BS.Application.Features.Payments.Queries
 
                 #region Order by
 
-                if (string.IsNullOrEmpty(request.SortColumn))
+                if (!string.IsNullOrEmpty(request.SortColumn))
                     query = query.OrderBy($"{request.SortColumn} {request.SortDirection}");
 
                 else

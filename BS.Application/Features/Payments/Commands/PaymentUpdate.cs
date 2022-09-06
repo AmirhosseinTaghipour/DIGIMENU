@@ -51,7 +51,7 @@ namespace BS.Application.Features.Payments.Commands
                 if (paymentOld == null)
                     throw new RestException(HttpStatusCode.NotFound, "خطا، کاربری یافت نشد");
 
-                if(paymentOld.PaymentStatus!=1 || paymentOld.EntityName!= PaymentType.Demo.ToString())
+                if (paymentOld.PaymentType != 1)
                     throw new RestException(HttpStatusCode.NotFound, "خطا، امکان تمدید تنها برای اشتراک 15 روزه دمو وجود دارد.");
 
                 paymentOld.IsDeleted = false;
@@ -63,11 +63,11 @@ namespace BS.Application.Features.Payments.Commands
                 var payment = new Payment();
                 var paymentId = Guid.NewGuid();
                 payment.Id = paymentId;
-                payment.EntityId = paymentOld.EntityId;
+                payment.DepartmentId = paymentOld.DepartmentId;
                 payment.PID = ++pId;
                 payment.InsertDate = DateTime.Now;
                 payment.InsertUser = _userAccessor.GetCurrentUserName().ToLower();
-                payment.EntityName = PaymentType.Demo.ToString();
+                payment.PaymentType = 1;
                 payment.PaymentStatus = 1;
 
 
